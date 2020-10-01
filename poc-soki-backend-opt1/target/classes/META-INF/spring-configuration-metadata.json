@@ -1,0 +1,33 @@
+{
+  "hints": [],
+  "groups": [
+    {
+      "sourceType": "org.arun.springoauth.config.SecurityProperties",
+      "name": "rest.security",
+      "type": "org.arun.springoauth.config.SecurityProperties"
+    },
+    {
+      "sourceType": "org.arun.springoauth.config.SecurityProperties",
+      "name": "rest.security.cors",
+      "type": "org.arun.springoauth.config.SecurityProperties$Cors"
+    }
+  ],
+  "properties": [
+    {
+      "sourceType": "org.arun.springoauth.config.SecurityProperties",
+      "name": "rest.security.api-matcher",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "org.arun.springoauth.config.SecurityProperties",
+      "defaultValue": false,
+      "name": "rest.security.enabled",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "sourceType": "org.arun.springoauth.config.SecurityProperties",
+      "name": "rest.security.issuer-uri",
+      "type": "java.lang.String"
+    }
+  ]
+}
