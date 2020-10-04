@@ -14,6 +14,11 @@
 /target
 /bin
 
+# Eclipse files/dirs
+.project
+.classpath
+.settings
+
 # Package Files #
 *.jar
 *.war

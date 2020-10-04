@@ -1,51 +1,82 @@
-version: '3'
+# version: '3'
+version: '2.0'
 
 # TO START THE DESIRED CONTAINERS:
-
 # - PostgreSQL and Web SQL Clients Databases Only:
 #    > clear && docker-compose start db-mysql-hybris db-mysql-cloudservices db-postgresql-pocs app-infra-phpmyadmin app-infra-pgadmin4
-
+# - To start Only PhycusApp Database Services:
+#    > clear && docker-compose up app-infra-db-mysql-phycusshfc app-infra-swagger-editor
+#
+# - To start the infra needed by KeyCloak Services:
+#    > clear && docker-compose up app-infra-db-mysql-phycusshfc app-infra-db-mysql-keycloak app-infra-phpmyadmin app-infra-mailserver app-infra-swagger-editor
+# - To start only Databases:
+#    > clear && docker-compose up app-infra-keycloak
 
 services:
 
-    db-postgresql-hubject:  # port: 5432:5432
+    app-infra-db-postgresql-poc-01:  # port: 5432:5432
         image: kartoza/postgis:${POSTGRESQL_VERSION}
-        container_name: db-postgresql-hubject
+        container_name: app-infra-db-postgresql-poc-01
         environment:
-            POSTGRES_DB: hubject
-            #  POSTGRES_DBNAME: hubject
-            POSTGRES_USER: hubjectdev
-            POSTGRES_PASSWORD: hubjectpwd
-            POSTGRES_MULTIPLE_EXTENSIONS: "postgis,hstore,postgis_topology,postgis_raster,pgrouting"
-            DEFAULT_ENCODING: "en_US.UTF-8"
+            POSTGRES_DB: DBPoc-SpringOAuth2-Keycloak
+            #  POSTGRES_DBNAME: DBPoc-SpringOAuth2-Keycloak
+            POSTGRES_USER: dbamaster01
+            POSTGRES_PASSWORD: 1a88a1
+            POSTGRES_MULTIPLE_EXTENSIONS: "postgis,hstore,postgis_topology,postgis_raster,pgrouting,postgres_fdw"
+            DEFAULT_ENCODING: "UTF-8"
             DEFAULT_COLLATION: "id_ID.utf8"
             DEFAULT_CTYPE: "en_US.UTF-8"
-            RECREATE_DATADIR: "true"
+            RECREATE_DATADIR: "false"
             POSTGRES_TEMPLATE_EXTENSIONS: "true"
             IP_LIST: "*"
         ports:
             - "5432:5432"
         volumes:
-            - vlmcfg-postgresql-srv-01-data:/var/lib/postgresql
-            - ${SCRIPTS_POSTGRESQL_SRV_01_PATH}/01-init-dbs-schemas.sql:/docker-entrypoint-initdb.d/01-init-dbs-schemas.sql
-        #  - ${SCRIPTS_POSTGRESQL_SRV_01_PATH}/00-create-users.sql:/docker-entrypoint-initdb.d/00-create-users.sql
+            - vlmcfg-postgresql-srv-02-data:/var/lib/postgresql
+        #    - ${SCRIPTS_POSTGRESQL_SRV_01_PATH}/01-init-dbs-schemas.sql:/docker-entrypoint-initdb.d/01-init-dbs-schemas.sql
+        #    - ${SCRIPTS_POSTGRESQL_SRV_01_PATH}/00-create-users.sql:/docker-entrypoint-initdb.d/00-create-users.sql
         networks:
-            - hubjectDevToolsEnv-Network
+            - PoC-DevToolsEnv-Network
 
 
-    #  db-postgresql-hubject:  # port: 5432:5432
-    #    image: mdillon/postgis
-    #    container_name: db-postgresql-hubject
-    #    environment:
-    #      POSTGRES_DB: hubject
-    #      POSTGRES_USER: hubjectdev
-    #      POSTGRES_PASSWORD: hubjectpwd
-    #    ports:
-    #      - "5432:5432"
-    #    volumes:
-    #      - vlmcfg-postgresql-srv-01-data:/var/lib/postgresql
-    #    networks:
-    #      - hubjectDevToolsEnv-Network
+    app-infra-keycloak:
+        image: jboss/keycloak:${KEYCLOAK_VERSION}
+        container_name: app-infra-keycloak
+        command:
+          [
+                  '-b',
+                  '0.0.0.0',
+                  '-Dkeycloak.migration.action=import',
+                  '-Dkeycloak.migration.provider=dir',
+                  '-Dkeycloak.migration.dir=/opt/jboss/keycloak/realm-config',
+                  '-Dkeycloak.migration.strategy=OVERWRITE_EXISTING',
+                  '-Djboss.socket.binding.port-offset=1000',
+                  '-Dkeycloak.profile.feature.upload_scripts=enabled',
+          ]
+        volumes:
+            - ./persistences-storages/keycloak/configs/realm-config:/opt/jboss/keycloak/realm-config
+        environment:
+            - DB_VENDOR=POSTGRES
+            - DB_ADDR=app-infra-db-postgresql-poc-01
+            - DB_DATABASE=DBPoc-SpringOAuth2-Keycloak
+        #    - DB_SCHEMA=shm-keycloak
+            - DB_USER=dbamaster01
+            - DB_PASSWORD=1a88a1
+            - KEYCLOAK_USER=admin
+            - KEYCLOAK_PASSWORD=Pa55w0rd
+            # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
+            # - JDBC_PARAMS="useSSL=false;connectTimeout=30000;verifyServerCertificate=false;"
+        ports:
+            - 9080:9080
+            - 9443:9443
+            - 10990:10990
+        depends_on:
+            - app-infra-db-postgresql-poc-01
+        links:
+            - app-infra-db-postgresql-poc-01
+        #  restart: 'always'
+        networks:
+            - PoC-DevToolsEnv-Network
 
 
     app-infra-pgadmin4: # port: 16543:80
@@ -57,248 +88,58 @@ services:
         ports:
             - "16543:80"
         depends_on:
-            - db-postgresql-hubject
+            - app-infra-db-postgresql-poc-01
         networks:
-            - hubjectDevToolsEnv-Network
+            - PoC-DevToolsEnv-Network
+
+
+    # app-infra-mailserver:
+    #    image: tvial/docker-mailserver:latest
+    #    hostname: fake-mailserver
+    #    domainname: poc-soki.com
+    #    container_name: app-infra-mailserver
+    #    ports:
+    #        - "25:25"
+    #        - "143:143"
+    #        - "465:465"
+    #        - "587:587"
+    #        - "993:993"
+    #    volumes:
+    #        #    - vlmcfg-maildata:/var/mail
+    #        #    - vlmcfg-mailstate:/var/mail-state
+    #        #    - vlmcfg-maillogs:/var/log/mail
+    #        - ./persistences-storages/mail-server/data/:/var/mail
+    #        - ./persistences-storages/mail-server/state/:/var/mail-state
+    #        - ./persistences-storages/mail-server/logs/:/var/log/mail
+    #        - ./persistences-storages/mail-server/configs/:/tmp/docker-mailserver/
+    #    environment:
+    #        - ENABLE_SPAMASSASSIN=1
+    #        - ENABLE_CLAMAV=1
+    #        - ENABLE_FAIL2BAN=1
+    #        - ENABLE_POSTGREY=1
+    #        - ONE_DIR=1
+    #        - DMS_DEBUG=0
+    #    cap_add:
+    #        - NET_ADMIN
+    #        - SYS_PTRACE
+    #    networks:
+    #        - PoC-DevToolsEnv-Network
 
 
 # Networks configurations
 networks:
-    hubjectDevToolsEnv-Network:
+    PoC-DevToolsEnv-Network:
         driver: bridge
-
 
 
 # Volumes for persisting data, see https://docs.docker.com/engine/admin/volumes/volumes/
 volumes:
 
-    vlmcfg-dynamodb-srv01-data:
+    vlmcfg-postgresql-srv-02-data:
         driver_opts:
             type: none
             o: bind
-            device: ${VOLUME_DINAMODB_SRV_01_DATA_PATH}
-
-    vlmcfg-elasticsearch-srv01-data:
-        driver_opts:
-            type: none
-            o: bind
-            device: ${VOLUME_ELASTICSEARCH_SRV_01_DATA_PATH}
-
-    vlmcfg-postgresql-srv-01-data:
-        driver_opts:
-            type: none
-            o: bind
-            device: ${VOLUME_POSTGRESQL_SRV_01_DATA_PATH}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-version: '2.0'
-
-# TO START THE DESIRED CONTAINERS:
-# - To start Only PhycusApp Database Services:
-#    > clear && docker-compose up app-infra-db-mysql-phycusshfc app-infra-swagger-editor
-#
-# - To start the infra needed by KeyCloak Services:
-#    > clear && docker-compose up app-infra-db-mysql-phycusshfc app-infra-db-mysql-keycloak app-infra-phpmyadmin app-infra-mailserver app-infra-swagger-editor
-# - To start only Databases:
-#    > clear && docker-compose up app-infra-keycloak
-
-
-services:
-
-    app-infra-db-mysql-phycusshfc:  # port: 3306:3306
-        image: mysql/mysql-server:${MYSQL_VERSION}
-        container_name: db-mysql-phycusshfc
-        volumes:
-            - vlmcfg-mysql-srv-01-data:/var/lib/mysql:rw,delegated
-            - ./persistences-storages/mysql-srv-01/init-scripts/00-create-users.sql:/docker-entrypoint-initdb.d/00-create-users.sql:ro
-            - ./persistences-storages/mysql-srv-01/init-scripts/01-init-dbs-schemas.sql:/docker-entrypoint-initdb.d/01-init-dbs-schemas.sql:ro
-        #    - ./persistences-storages/⁨mysql-srv-01/dumpsDBs/01-phycusshfc-dump-to-load.sql:/db/dumpsToImport/01-phycusshfc-dump-to-load.sql
-        restart: 'always'
-        expose:
-            - '3306'
-        ports:
-            - '3306:3306'
-        environment:
-            - MYSQL_ALLOW_EMPTY_PASSWORD=yes
-            - MYSQL_USER=root
-            - MYSQL_PASSWORD=root
-            - MYSQL_ROOT_PASSWORD=root
-        #    - MYSQL_ROOT_HOST=0.0.0.0
-        command: mysqld --lower_case_table_names=1 --skip-ssl=1 --character_set_server=utf8mb4 --explicit_defaults_for_timestamp --log-error-verbosity --default-authentication-plugin=mysql_native_password --default-authentication-plugin=mysql_native_password
-        networks:
-            - devToolsEnv-Network
-
-
-    app-infra-db-mysql-keycloak:  # port: 3307:3306
-        image: mysql/mysql-server:${MYSQL_VERSION}
-        container_name: db-mysql-keycloak
-        volumes:
-            - vlmcfg-mysql-srv-02-data:/var/lib/mysql:rw,delegated
-            - ./persistences-storages/mysql-srv-02/init-scripts/00-create-users.sql:/docker-entrypoint-initdb.d/00-create-users.sql:ro
-            - ./persistences-storages/mysql-srv-02/init-scripts/01-init-dbs-schemas.sql:/docker-entrypoint-initdb.d/01-init-dbs-schemas.sql:ro
-        #    - ./persistences-storages/⁨mysql-srv-02/dumpsDBs/01-keycloak-dump-to-load.sql:/db/dumpsToImport/01-keycloak-dump-to-load.sql
-        restart: 'always'
-        expose:
-            - '3306'
-        ports:
-            - '3307:3306'
-        environment:
-            - MYSQL_ALLOW_EMPTY_PASSWORD=yes
-            - MYSQL_USER=root
-            - MYSQL_PASSWORD=root
-            - MYSQL_ROOT_PASSWORD=root
-        #    - MYSQL_ROOT_HOST=0.0.0.0
-        # healthcheck:
-        #    test: ["CMD", "mysqladmin", "ping", "--silent"]
-        command: mysqld --lower_case_table_names=1 --skip-ssl=1 --character_set_server=utf8mb4 --explicit_defaults_for_timestamp --log-error-verbosity --default-authentication-plugin=mysql_native_password --default-authentication-plugin=mysql_native_password
-        networks:
-            - devToolsEnv-Network
-
-
-    app-infra-phpmyadmin: # port: 89:80
-        image: phpmyadmin/phpmyadmin:latest
-        container_name: app-infra-phpmyadmin
-        links:
-        #    - app-infra-db-mysql-phycusshfc
-            - app-infra-db-mysql-keycloak
-        ports:
-            - 9999:80
-        environment:
-            - PMA_ARBITRARY=1
-        depends_on:
-            - app-infra-db-mysql-phycusshfc
-            - app-infra-db-mysql-keycloak
-        networks:
-            - devToolsEnv-Network
-
-
-    app-infra-mailserver:
-        image: tvial/docker-mailserver:latest
-        hostname: fake-mailserver
-        domainname: phycusapp.com
-        container_name: app-infra-mailserver
-        ports:
-            - "25:25"
-            - "143:143"
-            - "465:465"
-            - "587:587"
-            - "993:993"
-        volumes:
-        #    - vlmcfg-maildata:/var/mail
-        #    - vlmcfg-mailstate:/var/mail-state
-        #    - vlmcfg-maillogs:/var/log/mail
-            - ./persistences-storages/mail-server/configs/:/tmp/docker-mailserver/
-        environment:
-            - ENABLE_SPAMASSASSIN=1
-            - ENABLE_CLAMAV=1
-            - ENABLE_FAIL2BAN=1
-            - ENABLE_POSTGREY=1
-            - ONE_DIR=1
-            - DMS_DEBUG=0
-        cap_add:
-            - NET_ADMIN
-            - SYS_PTRACE
-        networks:
-            - devToolsEnv-Network
-
-
-    app-infra-keycloak:
-        image: jboss/keycloak:10.0.0
-        container_name: app-infra-keycloak
-        command:
-          [
-              '-b',
-              '0.0.0.0',
-              '-Dkeycloak.migration.action=import',
-              '-Dkeycloak.migration.provider=dir',
-              '-Dkeycloak.migration.dir=/opt/jboss/keycloak/realm-config',
-              '-Dkeycloak.migration.strategy=OVERWRITE_EXISTING',
-              '-Djboss.socket.binding.port-offset=1000',
-              '-Dkeycloak.profile.feature.upload_scripts=enabled',
-          ]
-        volumes:
-            - ./persistences-storages/keycloak/configs/realm-config:/opt/jboss/keycloak/realm-config
-        environment:
-            - DB_VENDOR=MYSQL
-            - DB_ADDR=app-infra-db-mysql-keycloak
-            - DB_DATABASE=DBKeyCloak
-            - DB_USER=dbakeycloak
-            - DB_PASSWORD=1a88a1
-            - KEYCLOAK_USER=admin
-            - KEYCLOAK_PASSWORD=Pa55w0rd
-            # - DB_SCHEMA=public
-            # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
-            # - JDBC_PARAMS="useSSL=false;connectTimeout=30000;verifyServerCertificate=false;"
-        ports:
-            - 9080:9080
-            - 9443:9443
-            - 10990:10990
-        depends_on:
-            - app-infra-db-mysql-keycloak
-        links:
-            - app-infra-db-mysql-keycloak
-      #  restart: 'always'
-        networks:
-            - devToolsEnv-Network
-
-
-    app-infra-swagger-editor:
-        image: swaggerapi/swagger-editor:latest
-        container_name: app-infra-swagger-editor
-        ports:
-            - 7742:8080
-        networks:
-            - devToolsEnv-Network
-
-
-# Networks configurations
-networks:
-    devToolsEnv-Network:
-        driver: bridge
-
-
-
-# Volumes for persisting data, see https://docs.docker.com/engine/admin/volumes/volumes/
-volumes:
-
-    vlmcfg-mysql-srv-01-data:
-        driver_opts:
-            type: none
-            o: bind
-            device: ${VOLUME_MYSQL_SRV_01_DATA_PATH}
-
-    vlmcfg-mysql-srv-02-data:
-        driver_opts:
-            type: none
-            o: bind
-            device: ${VOLUME_MYSQL_SRV_02_DATA_PATH}
+            device: ${VOLUME_POSTGRESQL_SRV_02_DATA_PATH}
 
     vlmcfg-maildata:
         driver_opts:
