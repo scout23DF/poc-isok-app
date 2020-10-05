@@ -9,9 +9,6 @@
  */
 package pt.com.joaopedro.pocs.springoauth2keycloak.config;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -19,6 +16,12 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import pt.com.joaopedro.pocs.springoauth2keycloak.dtos.JWTTokenDTO;
+
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * SecurityContextUtils is used to get username and roles to set created by, last updated by fields.
@@ -29,6 +32,8 @@ public class SecurityContextUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(SecurityContextUtils.class);
 
     private static final String ANONYMOUS = "anonymous";
+
+    private static Map<String, JWTTokenDTO> ALL_CREATED_JWTTOKENS_MAP = new LinkedHashMap<>();
 
     private SecurityContextUtils() {
     }
@@ -66,5 +71,9 @@ public class SecurityContextUtils {
                     .forEach(e -> roles.add(e.getAuthority()));
         }
         return roles;
+    }
+
+    public static Map<String, JWTTokenDTO> getAllCreatedJwttokensMap() {
+        return ALL_CREATED_JWTTOKENS_MAP;
     }
 }

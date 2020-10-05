@@ -82,7 +82,7 @@ public class JwtAccessTokenCustomizer extends DefaultAccessTokenConverter implem
                 .elements()
                 .forEachRemaining(e -> e.path(ROLE_ELEMENT_IN_JWT)
                         .elements()
-                        .forEachRemaining(r -> rolesWithPrefix.add(SecurityProperties.DEFAULT_PREFIX_ROLES_NAMES + r.asText())));
+                        .forEachRemaining(r -> rolesWithPrefix.add(ConstantsApp.DEFAULT_PREFIX_ROLES_NAMES + r.asText())));
 
         final List<GrantedAuthority> authorityList = AuthorityUtils.createAuthorityList(rolesWithPrefix.toArray(new String[0]));
         LOG.debug("End extractRoles: roles = {}", authorityList);

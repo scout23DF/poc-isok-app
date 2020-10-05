@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import pt.com.joaopedro.pocs.springoauth2keycloak.config.ConstantsApp;
 import pt.com.joaopedro.pocs.springoauth2keycloak.config.SecurityContextUtils;
 import pt.com.joaopedro.pocs.springoauth2keycloak.config.SecurityProperties;
 import pt.com.joaopedro.pocs.springoauth2keycloak.dtos.UserDTO;
@@ -50,13 +51,13 @@ public class AuthOIDCProxyController {
     }
 
     @GetMapping(path = "/private/username")
-    @PreAuthorize("hasAnyAuthority(\"" + SecurityProperties.DEFAULT_PREFIX_ROLES_NAMES + "BASIC_REGISTERED_CLIENT_ROLE\")")
+    @PreAuthorize("hasAnyAuthority(\"" + ConstantsApp.DEFAULT_PREFIX_ROLES_NAMES + "BASIC_REGISTERED_CLIENT_ROLE\")")
     public ResponseEntity<String> getAuthorizedUserName() {
         return ResponseEntity.ok(SecurityContextUtils.getUserName());
     }
 
     @GetMapping(path = "/private/roles")
-    @PreAuthorize("hasAnyAuthority(\"" + SecurityProperties.DEFAULT_PREFIX_ROLES_NAMES + "BASIC_REGISTERED_CLIENT_ROLE\")")
+    @PreAuthorize("hasAnyAuthority(\"" + ConstantsApp.DEFAULT_PREFIX_ROLES_NAMES + "BASIC_REGISTERED_CLIENT_ROLE\")")
     public ResponseEntity<Set<String>> getAuthorizedUserRoles() {
         return ResponseEntity.ok(SecurityContextUtils.getUserRoles());
     }

@@ -6,8 +6,10 @@ import org.springframework.boot.autoconfigure.security.oauth2.resource.ResourceS
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
@@ -46,6 +48,16 @@ public class SecurityConfigurer extends ResourceServerConfigurerAdapter {
     resources.resourceId(resourceServerProperties.getResourceId());
   }
 
+  // @Override
+  public void configure(WebSecurity web) {
+    web.ignoring()
+            .antMatchers(HttpMethod.OPTIONS, "/**")
+            .antMatchers("/app/**/*.{js,html}")
+            .antMatchers("/i18n/**")
+            .antMatchers("/content/**")
+            .antMatchers("/swagger-ui/index.html")
+            .antMatchers("/test/**");
+  }
 
   @Override
   public void configure(final HttpSecurity http) throws Exception {
@@ -60,8 +72,8 @@ public class SecurityConfigurer extends ResourceServerConfigurerAdapter {
         .csrf()
         .disable()
         .authorizeRequests()
-        .antMatchers(securityProperties.getApiMatcher())
-        .authenticated();
+        .antMatchers(securityProperties.getApiMatcher()).authenticated()
+        .antMatchers("/swagger-ui/**").permitAll();
 
   }
 

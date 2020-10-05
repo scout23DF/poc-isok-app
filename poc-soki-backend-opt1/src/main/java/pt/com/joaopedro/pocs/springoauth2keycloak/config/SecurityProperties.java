@@ -1,6 +1,5 @@
 package pt.com.joaopedro.pocs.springoauth2keycloak.config;
 
-import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -8,14 +7,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsConfiguration;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Component
 @Configuration
 @ConfigurationProperties(prefix = "rest.security")
 public class SecurityProperties {
-
-  public static final String DEFAULT_PREFIX_ROLES_NAMES = "ROLE_FROM_KC_";
 
   private boolean enabled;
   private String apiMatcher;

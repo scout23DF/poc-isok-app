@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 /**
  * View Model object for storing a JWTToken
  */
@@ -34,5 +36,31 @@ public class JWTTokenDTO {
 
     @JsonProperty("scope")
     private String scope;
+
+    private LocalDateTime lastDateTimeAccessToken;
+    private LocalDateTime lastDateTimeRefreshToken;
+
+
+    public Boolean isAccessTokenExpired() {
+        Boolean bolResult = false;
+        LocalDateTime checkingTime = LocalDateTime.now();
+
+        if (getAccessToken() != null && getExpiresIn() != null && getLastDateTimeAccessToken() != null) {
+            bolResult = getLastDateTimeAccessToken().plusSeconds(getExpiresIn()).isBefore(checkingTime);
+        }
+
+        return bolResult;
+    }
+
+    public Boolean isRefreshTokenExpired() {
+        Boolean bolResult = false;
+        LocalDateTime checkingTime = LocalDateTime.now();
+
+        if (getRefreshToken() != null && getRefreshExpiresIn() != null && getLastDateTimeRefreshToken() != null) {
+            bolResult = getLastDateTimeRefreshToken().plusSeconds(getRefreshExpiresIn()).isBefore(checkingTime);
+        }
+
+        return bolResult;
+    }
 
 }

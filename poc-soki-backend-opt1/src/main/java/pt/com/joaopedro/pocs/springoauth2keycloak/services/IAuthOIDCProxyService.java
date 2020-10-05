@@ -10,7 +10,7 @@ public interface IAuthOIDCProxyService {
     public UserDTO createUser(UserDTO pUserDTO);
     public UserDTO updateUser(UserDTO pUserDTO);
     public AcknowledgeResultDTO deleteUser(String pLogin);
-    public Optional<UserDTO> searchUserById(String pUserID, String pJWTAdminToken);
+    public Optional<UserDTO> searchUserById(String pUserID);
     public Optional<UserDTO> searchUserByUsername(String pUsername);
     public Optional<UserDTO> searchUserByLoginIgnoreCase(String pEmail);
     public List<UserDTO> getAllUsers();
