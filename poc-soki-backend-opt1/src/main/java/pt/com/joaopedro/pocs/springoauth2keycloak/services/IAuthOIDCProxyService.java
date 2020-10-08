@@ -12,7 +12,7 @@ public interface IAuthOIDCProxyService {
     public AcknowledgeResultDTO deleteUser(String pLogin);
     public Optional<UserDTO> searchUserById(String pUserID);
     public Optional<UserDTO> searchUserByUsername(String pUsername);
-    public Optional<UserDTO> searchUserByLoginIgnoreCase(String pEmail);
+    public Optional<UserDTO> searchUserByEmail(String pEmail);
     public List<UserDTO> getAllUsers();
     public List<String> getRolesCurrentLoggedUser();
     public AuthenticatedUserDTO authenticateUser(LoginInfoDTO pLoginInfoDTO);

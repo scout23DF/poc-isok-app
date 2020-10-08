@@ -15,6 +15,7 @@ public class KeyCloakParamsHolderDTO {
     private String clientId;
     private String clientSecret;
     private String refreshToken;
+    private String scope;
 
 
     public MultiValueMap<String, String> getAsMultiValueMapForFirstLogin() {
@@ -23,6 +24,18 @@ public class KeyCloakParamsHolderDTO {
         resultParamsDTO.add("password", getPassword());
         resultParamsDTO.add("grant_type", getGrantType());
         resultParamsDTO.add("client_id", getClientId());
+
+        return resultParamsDTO;
+    }
+
+    public MultiValueMap<String, String> getAsMultiValueMapForRegularUserLogin() {
+        MultiValueMap<String, String> resultParamsDTO = new LinkedMultiValueMap<>();
+        resultParamsDTO.add("username", getUsername());
+        resultParamsDTO.add("password", getPassword());
+        resultParamsDTO.add("grant_type", getGrantType());
+        resultParamsDTO.add("client_id", getClientId());
+        resultParamsDTO.add("client_secret", getClientSecret());
+        resultParamsDTO.add("scope", getScope());
 
         return resultParamsDTO;
     }

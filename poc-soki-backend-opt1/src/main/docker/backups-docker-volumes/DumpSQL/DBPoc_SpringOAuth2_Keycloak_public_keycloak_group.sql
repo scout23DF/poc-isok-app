@@ -1,19 +1,3 @@
-create table keycloak_group
-(
-    id           varchar(36) not null
-        constraint constraint_group
-            primary key,
-    name         varchar(255),
-    parent_group varchar(36) not null,
-    realm_id     varchar(36)
-        constraint fk_group_realm
-            references realm,
-    constraint sibling_names
-        unique (realm_id, parent_group, name)
-);
-
-alter table keycloak_group
-    owner to dbamaster01;
-
-grant select on keycloak_group to replicator;
-
+insert into public.keycloak_group (id, name, parent_group, realm_id) values ('c2c30d34-ae5d-409e-a444-0a59ac7ccfe4', 'REGION01_GROUP', ' ', 'PoC-Soki-Realm-01');
+insert into public.keycloak_group (id, name, parent_group, realm_id) values ('9e7488ea-1729-42d9-a561-304bdd2c17b5', 'REGION02_GROUP', ' ', 'PoC-Soki-Realm-01');
+insert into public.keycloak_group (id, name, parent_group, realm_id) values ('9a2babf8-82a0-4031-b0e5-18276d5c69c6', 'REGION03_GROUP', ' ', 'PoC-Soki-Realm-01');

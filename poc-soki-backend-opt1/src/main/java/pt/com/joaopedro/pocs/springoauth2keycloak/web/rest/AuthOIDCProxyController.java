@@ -6,8 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pt.com.joaopedro.pocs.springoauth2keycloak.config.ConstantsApp;
-import pt.com.joaopedro.pocs.springoauth2keycloak.config.SecurityContextUtils;
-import pt.com.joaopedro.pocs.springoauth2keycloak.config.SecurityProperties;
+import pt.com.joaopedro.pocs.springoauth2keycloak.dtos.AcknowledgeResultDTO;
+import pt.com.joaopedro.pocs.springoauth2keycloak.dtos.AuthenticatedUserDTO;
+import pt.com.joaopedro.pocs.springoauth2keycloak.dtos.LoginInfoDTO;
+import pt.com.joaopedro.pocs.springoauth2keycloak.security.SecurityContextUtils;
 import pt.com.joaopedro.pocs.springoauth2keycloak.dtos.UserDTO;
 import pt.com.joaopedro.pocs.springoauth2keycloak.exceptions.BadRequestAlertException;
 import pt.com.joaopedro.pocs.springoauth2keycloak.exceptions.EmailAlreadyUsedException;
@@ -40,7 +42,7 @@ public class AuthOIDCProxyController {
             // Lowercase the user login before comparing with database
         } else if (authOIDCProxyService.searchUserByUsername(pUserDTO.getUsername().toLowerCase()).isPresent()) {
             throw new LoginAlreadyUsedException();
-        } else if (authOIDCProxyService.searchUserByLoginIgnoreCase(pUserDTO.getEmail()).isPresent()) {
+        } else if (authOIDCProxyService.searchUserByEmail(pUserDTO.getEmail()).isPresent()) {
             throw new EmailAlreadyUsedException();
         } else {
             UserDTO newUserDTO = authOIDCProxyService.createUser(pUserDTO);
@@ -48,6 +50,28 @@ public class AuthOIDCProxyController {
             return ResponseEntity.created(new URI("/api/sso/users/" + newUserDTO.getUsername()))
                                  .body(newUserDTO);
         }
+    }
+
+    @PostMapping("/public/login")
+    @PreAuthorize("hasAnyAuthority('ROLE_ANONYMOUS')")
+    public ResponseEntity<AuthenticatedUserDTO> authenticateLogin(@Valid @RequestBody LoginInfoDTO pLoginInfoDTO) throws URISyntaxException {
+        AuthenticatedUserDTO loggedAuthUserDTO = null;
+
+        loggedAuthUserDTO = authOIDCProxyService.authenticateUser(pLoginInfoDTO);
+
+        return ResponseEntity.created(new URI("/api/sso/users/" + loggedAuthUserDTO.getUserDTO().getUsername()))
+                             .body(loggedAuthUserDTO);
+
+    }
+
+    @PostMapping("/private/logout")
+    @PreAuthorize("hasAnyAuthority(\"" + ConstantsApp.DEFAULT_PREFIX_ROLES_NAMES + "BASIC_REGISTERED_CLIENT_ROLE\")")
+    public ResponseEntity<AcknowledgeResultDTO> logoutUser(@Valid @RequestBody AuthenticatedUserDTO pAuthUserDTO) {
+        AcknowledgeResultDTO ackResult = null;
+
+        ackResult = authOIDCProxyService.doLogoutUser(pAuthUserDTO);
+
+        return ResponseEntity.ok(ackResult);
     }
 
     @GetMapping(path = "/private/username")

@@ -1,8 +1,11 @@
 package pt.com.joaopedro.pocs.springoauth2keycloak.services.oidcproviders.keycloak.representations;
 
 import lombok.Data;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 @Data
+@RequiredArgsConstructor
 public class KCCredentialRepresentation {
 
     public static final String SECRET = "secret";
@@ -12,16 +15,24 @@ public class KCCredentialRepresentation {
     public static final String KERBEROS = "kerberos";
 
     private String id;
+
+    @NonNull
     private String type;
+
     private String userLabel;
+
     private Long createdDate;
+
     private String secretData;
+
     private String credentialData;
+
     private Integer priority;
 
+    @NonNull
     private String value;
 
     // only used when updating a credential.  Might set required action
-    protected Boolean temporary;
+    protected Boolean temporary = false;
 
 }
