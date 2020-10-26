@@ -1,3855 +1,6056 @@
--- phpMyAdmin SQL Dump
--- version 5.0.2
--- https://www.phpmyadmin.net/
 --
--- Host: db-mysql-keycloak
--- Tempo de geração: 24-Mar-2020 às 22:44
--- Versão do servidor: 8.0.19
--- versão do PHP: 7.4.4
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 12.4 (Debian 12.4-1.pgdg100+1)
+-- Dumped by pg_dump version 12.4 (Ubuntu 12.4-0ubuntu0.20.04.1)
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+DROP DATABASE IF EXISTS "DBPoc-SpringOAuth2-Keycloak";
+
+--
+-- Name: DBPoc-SpringOAuth2-Keycloak; Type: DATABASE; Schema: -; Owner: dbamaster01
+--
+
+CREATE DATABASE "DBPoc-SpringOAuth2-Keycloak" WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'C.UTF-8' LC_CTYPE = 'C.UTF-8';
+
+
+ALTER DATABASE "DBPoc-SpringOAuth2-Keycloak" OWNER TO dbamaster01;
+
+\connect -reuse-previous=on "dbname='DBPoc-SpringOAuth2-Keycloak'"
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: admin_event_entity; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.admin_event_entity (
+    id character varying(36) NOT NULL,
+    admin_event_time bigint,
+    realm_id character varying(255),
+    operation_type character varying(255),
+    auth_realm_id character varying(255),
+    auth_client_id character varying(255),
+    auth_user_id character varying(255),
+    ip_address character varying(255),
+    resource_path character varying(2550),
+    representation text,
+    error character varying(255),
+    resource_type character varying(64)
+);
+
+
+ALTER TABLE public.admin_event_entity OWNER TO dbamaster01;
+
+--
+-- Name: associated_policy; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.associated_policy (
+    policy_id character varying(36) NOT NULL,
+    associated_policy_id character varying(36) NOT NULL
+);
+
+
+ALTER TABLE public.associated_policy OWNER TO dbamaster01;
+
+--
+-- Name: authentication_execution; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.authentication_execution (
+    id character varying(36) NOT NULL,
+    alias character varying(255),
+    authenticator character varying(36),
+    realm_id character varying(36),
+    flow_id character varying(36),
+    requirement integer,
+    priority integer,
+    authenticator_flow boolean DEFAULT false NOT NULL,
+    auth_flow_id character varying(36),
+    auth_config character varying(36)
+);
+
+
+ALTER TABLE public.authentication_execution OWNER TO dbamaster01;
+
+--
+-- Name: authentication_flow; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.authentication_flow (
+    id character varying(36) NOT NULL,
+    alias character varying(255),
+    description character varying(255),
+    realm_id character varying(36),
+    provider_id character varying(36) DEFAULT 'basic-flow'::character varying NOT NULL,
+    top_level boolean DEFAULT false NOT NULL,
+    built_in boolean DEFAULT false NOT NULL
+);
+
+
+ALTER TABLE public.authentication_flow OWNER TO dbamaster01;
+
+--
+-- Name: authenticator_config; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.authenticator_config (
+    id character varying(36) NOT NULL,
+    alias character varying(255),
+    realm_id character varying(36)
+);
+
+
+ALTER TABLE public.authenticator_config OWNER TO dbamaster01;
+
+--
+-- Name: authenticator_config_entry; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.authenticator_config_entry (
+    authenticator_id character varying(36) NOT NULL,
+    value text,
+    name character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.authenticator_config_entry OWNER TO dbamaster01;
+
+--
+-- Name: broker_link; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.broker_link (
+    identity_provider character varying(255) NOT NULL,
+    storage_provider_id character varying(255),
+    realm_id character varying(36) NOT NULL,
+    broker_user_id character varying(255),
+    broker_username character varying(255),
+    token text,
+    user_id character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.broker_link OWNER TO dbamaster01;
+
+--
+-- Name: client; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.client (
+    id character varying(36) NOT NULL,
+    enabled boolean DEFAULT false NOT NULL,
+    full_scope_allowed boolean DEFAULT false NOT NULL,
+    client_id character varying(255),
+    not_before integer,
+    public_client boolean DEFAULT false NOT NULL,
+    secret character varying(255),
+    base_url character varying(255),
+    bearer_only boolean DEFAULT false NOT NULL,
+    management_url character varying(255),
+    surrogate_auth_required boolean DEFAULT false NOT NULL,
+    realm_id character varying(36),
+    protocol character varying(255),
+    node_rereg_timeout integer DEFAULT 0,
+    frontchannel_logout boolean DEFAULT false NOT NULL,
+    consent_required boolean DEFAULT false NOT NULL,
+    name character varying(255),
+    service_accounts_enabled boolean DEFAULT false NOT NULL,
+    client_authenticator_type character varying(255),
+    root_url character varying(255),
+    description character varying(255),
+    registration_token character varying(255),
+    standard_flow_enabled boolean DEFAULT true NOT NULL,
+    implicit_flow_enabled boolean DEFAULT false NOT NULL,
+    direct_access_grants_enabled boolean DEFAULT false NOT NULL,
+    always_display_in_console boolean DEFAULT false NOT NULL
+);
+
+
+ALTER TABLE public.client OWNER TO dbamaster01;
+
+--
+-- Name: client_attributes; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.client_attributes (
+    client_id character varying(36) NOT NULL,
+    value character varying(4000),
+    name character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.client_attributes OWNER TO dbamaster01;
+
+--
+-- Name: client_auth_flow_bindings; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.client_auth_flow_bindings (
+    client_id character varying(36) NOT NULL,
+    flow_id character varying(36),
+    binding_name character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.client_auth_flow_bindings OWNER TO dbamaster01;
+
+--
+-- Name: client_default_roles; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.client_default_roles (
+    client_id character varying(36) NOT NULL,
+    role_id character varying(36) NOT NULL
+);
+
+
+ALTER TABLE public.client_default_roles OWNER TO dbamaster01;
+
+--
+-- Name: client_initial_access; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.client_initial_access (
+    id character varying(36) NOT NULL,
+    realm_id character varying(36) NOT NULL,
+    "timestamp" integer,
+    expiration integer,
+    count integer,
+    remaining_count integer
+);
+
+
+ALTER TABLE public.client_initial_access OWNER TO dbamaster01;
+
+--
+-- Name: client_node_registrations; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.client_node_registrations (
+    client_id character varying(36) NOT NULL,
+    value integer,
+    name character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.client_node_registrations OWNER TO dbamaster01;
+
+--
+-- Name: client_scope; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.client_scope (
+    id character varying(36) NOT NULL,
+    name character varying(255),
+    realm_id character varying(36),
+    description character varying(255),
+    protocol character varying(255)
+);
+
+
+ALTER TABLE public.client_scope OWNER TO dbamaster01;
+
+--
+-- Name: client_scope_attributes; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.client_scope_attributes (
+    scope_id character varying(36) NOT NULL,
+    value character varying(2048),
+    name character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.client_scope_attributes OWNER TO dbamaster01;
+
+--
+-- Name: client_scope_client; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.client_scope_client (
+    client_id character varying(36) NOT NULL,
+    scope_id character varying(36) NOT NULL,
+    default_scope boolean DEFAULT false NOT NULL
+);
+
+
+ALTER TABLE public.client_scope_client OWNER TO dbamaster01;
+
+--
+-- Name: client_scope_role_mapping; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.client_scope_role_mapping (
+    scope_id character varying(36) NOT NULL,
+    role_id character varying(36) NOT NULL
+);
+
+
+ALTER TABLE public.client_scope_role_mapping OWNER TO dbamaster01;
+
+--
+-- Name: client_session; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.client_session (
+    id character varying(36) NOT NULL,
+    client_id character varying(36),
+    redirect_uri character varying(255),
+    state character varying(255),
+    "timestamp" integer,
+    session_id character varying(36),
+    auth_method character varying(255),
+    realm_id character varying(255),
+    auth_user_id character varying(36),
+    current_action character varying(36)
+);
+
+
+ALTER TABLE public.client_session OWNER TO dbamaster01;
+
+--
+-- Name: client_session_auth_status; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.client_session_auth_status (
+    authenticator character varying(36) NOT NULL,
+    status integer,
+    client_session character varying(36) NOT NULL
+);
+
+
+ALTER TABLE public.client_session_auth_status OWNER TO dbamaster01;
+
+--
+-- Name: client_session_note; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.client_session_note (
+    name character varying(255) NOT NULL,
+    value character varying(255),
+    client_session character varying(36) NOT NULL
+);
+
+
+ALTER TABLE public.client_session_note OWNER TO dbamaster01;
+
+--
+-- Name: client_session_prot_mapper; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.client_session_prot_mapper (
+    protocol_mapper_id character varying(36) NOT NULL,
+    client_session character varying(36) NOT NULL
+);
+
+
+ALTER TABLE public.client_session_prot_mapper OWNER TO dbamaster01;
+
+--
+-- Name: client_session_role; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.client_session_role (
+    role_id character varying(255) NOT NULL,
+    client_session character varying(36) NOT NULL
+);
+
+
+ALTER TABLE public.client_session_role OWNER TO dbamaster01;
+
+--
+-- Name: client_user_session_note; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.client_user_session_note (
+    name character varying(255) NOT NULL,
+    value character varying(2048),
+    client_session character varying(36) NOT NULL
+);
+
+
+ALTER TABLE public.client_user_session_note OWNER TO dbamaster01;
+
+--
+-- Name: component; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.component (
+    id character varying(36) NOT NULL,
+    name character varying(255),
+    parent_id character varying(36),
+    provider_id character varying(36),
+    provider_type character varying(255),
+    realm_id character varying(36),
+    sub_type character varying(255)
+);
+
+
+ALTER TABLE public.component OWNER TO dbamaster01;
+
+--
+-- Name: component_config; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.component_config (
+    id character varying(36) NOT NULL,
+    component_id character varying(36) NOT NULL,
+    name character varying(255) NOT NULL,
+    value character varying(4000)
+);
+
+
+ALTER TABLE public.component_config OWNER TO dbamaster01;
+
+--
+-- Name: composite_role; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.composite_role (
+    composite character varying(36) NOT NULL,
+    child_role character varying(36) NOT NULL
+);
+
+
+ALTER TABLE public.composite_role OWNER TO dbamaster01;
+
+--
+-- Name: credential; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.credential (
+    id character varying(36) NOT NULL,
+    salt bytea,
+    type character varying(255),
+    user_id character varying(36),
+    created_date bigint,
+    user_label character varying(255),
+    secret_data text,
+    credential_data text,
+    priority integer
+);
+
+
+ALTER TABLE public.credential OWNER TO dbamaster01;
+
+--
+-- Name: databasechangelog; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.databasechangelog (
+    id character varying(255) NOT NULL,
+    author character varying(255) NOT NULL,
+    filename character varying(255) NOT NULL,
+    dateexecuted timestamp without time zone NOT NULL,
+    orderexecuted integer NOT NULL,
+    exectype character varying(10) NOT NULL,
+    md5sum character varying(35),
+    description character varying(255),
+    comments character varying(255),
+    tag character varying(255),
+    liquibase character varying(20),
+    contexts character varying(255),
+    labels character varying(255),
+    deployment_id character varying(10)
+);
+
+
+ALTER TABLE public.databasechangelog OWNER TO dbamaster01;
+
+--
+-- Name: databasechangeloglock; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.databasechangeloglock (
+    id integer NOT NULL,
+    locked boolean NOT NULL,
+    lockgranted timestamp without time zone,
+    lockedby character varying(255)
+);
+
+
+ALTER TABLE public.databasechangeloglock OWNER TO dbamaster01;
+
+--
+-- Name: default_client_scope; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.default_client_scope (
+    realm_id character varying(36) NOT NULL,
+    scope_id character varying(36) NOT NULL,
+    default_scope boolean DEFAULT false NOT NULL
+);
+
+
+ALTER TABLE public.default_client_scope OWNER TO dbamaster01;
+
+--
+-- Name: event_entity; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.event_entity (
+    id character varying(36) NOT NULL,
+    client_id character varying(255),
+    details_json character varying(2550),
+    error character varying(255),
+    ip_address character varying(255),
+    realm_id character varying(255),
+    session_id character varying(255),
+    event_time bigint,
+    type character varying(255),
+    user_id character varying(255)
+);
+
+
+ALTER TABLE public.event_entity OWNER TO dbamaster01;
+
+--
+-- Name: fed_user_attribute; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.fed_user_attribute (
+    id character varying(36) NOT NULL,
+    name character varying(255) NOT NULL,
+    user_id character varying(255) NOT NULL,
+    realm_id character varying(36) NOT NULL,
+    storage_provider_id character varying(36),
+    value character varying(2024)
+);
+
+
+ALTER TABLE public.fed_user_attribute OWNER TO dbamaster01;
+
+--
+-- Name: fed_user_consent; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.fed_user_consent (
+    id character varying(36) NOT NULL,
+    client_id character varying(255),
+    user_id character varying(255) NOT NULL,
+    realm_id character varying(36) NOT NULL,
+    storage_provider_id character varying(36),
+    created_date bigint,
+    last_updated_date bigint,
+    client_storage_provider character varying(36),
+    external_client_id character varying(255)
+);
+
+
+ALTER TABLE public.fed_user_consent OWNER TO dbamaster01;
+
+--
+-- Name: fed_user_consent_cl_scope; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.fed_user_consent_cl_scope (
+    user_consent_id character varying(36) NOT NULL,
+    scope_id character varying(36) NOT NULL
+);
+
+
+ALTER TABLE public.fed_user_consent_cl_scope OWNER TO dbamaster01;
+
+--
+-- Name: fed_user_credential; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.fed_user_credential (
+    id character varying(36) NOT NULL,
+    salt bytea,
+    type character varying(255),
+    created_date bigint,
+    user_id character varying(255) NOT NULL,
+    realm_id character varying(36) NOT NULL,
+    storage_provider_id character varying(36),
+    user_label character varying(255),
+    secret_data text,
+    credential_data text,
+    priority integer
+);
+
+
+ALTER TABLE public.fed_user_credential OWNER TO dbamaster01;
+
+--
+-- Name: fed_user_group_membership; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.fed_user_group_membership (
+    group_id character varying(36) NOT NULL,
+    user_id character varying(255) NOT NULL,
+    realm_id character varying(36) NOT NULL,
+    storage_provider_id character varying(36)
+);
+
+
+ALTER TABLE public.fed_user_group_membership OWNER TO dbamaster01;
+
+--
+-- Name: fed_user_required_action; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.fed_user_required_action (
+    required_action character varying(255) DEFAULT ' '::character varying NOT NULL,
+    user_id character varying(255) NOT NULL,
+    realm_id character varying(36) NOT NULL,
+    storage_provider_id character varying(36)
+);
+
+
+ALTER TABLE public.fed_user_required_action OWNER TO dbamaster01;
+
+--
+-- Name: fed_user_role_mapping; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.fed_user_role_mapping (
+    role_id character varying(36) NOT NULL,
+    user_id character varying(255) NOT NULL,
+    realm_id character varying(36) NOT NULL,
+    storage_provider_id character varying(36)
+);
+
+
+ALTER TABLE public.fed_user_role_mapping OWNER TO dbamaster01;
+
+--
+-- Name: federated_identity; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.federated_identity (
+    identity_provider character varying(255) NOT NULL,
+    realm_id character varying(36),
+    federated_user_id character varying(255),
+    federated_username character varying(255),
+    token text,
+    user_id character varying(36) NOT NULL
+);
+
+
+ALTER TABLE public.federated_identity OWNER TO dbamaster01;
+
+--
+-- Name: federated_user; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.federated_user (
+    id character varying(255) NOT NULL,
+    storage_provider_id character varying(255),
+    realm_id character varying(36) NOT NULL
+);
+
+
+ALTER TABLE public.federated_user OWNER TO dbamaster01;
+
+--
+-- Name: group_attribute; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.group_attribute (
+    id character varying(36) DEFAULT 'sybase-needs-something-here'::character varying NOT NULL,
+    name character varying(255) NOT NULL,
+    value character varying(255),
+    group_id character varying(36) NOT NULL
+);
+
+
+ALTER TABLE public.group_attribute OWNER TO dbamaster01;
+
+--
+-- Name: group_role_mapping; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.group_role_mapping (
+    role_id character varying(36) NOT NULL,
+    group_id character varying(36) NOT NULL
+);
+
+
+ALTER TABLE public.group_role_mapping OWNER TO dbamaster01;
+
+--
+-- Name: identity_provider; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.identity_provider (
+    internal_id character varying(36) NOT NULL,
+    enabled boolean DEFAULT false NOT NULL,
+    provider_alias character varying(255),
+    provider_id character varying(255),
+    store_token boolean DEFAULT false NOT NULL,
+    authenticate_by_default boolean DEFAULT false NOT NULL,
+    realm_id character varying(36),
+    add_token_role boolean DEFAULT true NOT NULL,
+    trust_email boolean DEFAULT false NOT NULL,
+    first_broker_login_flow_id character varying(36),
+    post_broker_login_flow_id character varying(36),
+    provider_display_name character varying(255),
+    link_only boolean DEFAULT false NOT NULL
+);
+
+
+ALTER TABLE public.identity_provider OWNER TO dbamaster01;
+
+--
+-- Name: identity_provider_config; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.identity_provider_config (
+    identity_provider_id character varying(36) NOT NULL,
+    value text,
+    name character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.identity_provider_config OWNER TO dbamaster01;
+
+--
+-- Name: identity_provider_mapper; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.identity_provider_mapper (
+    id character varying(36) NOT NULL,
+    name character varying(255) NOT NULL,
+    idp_alias character varying(255) NOT NULL,
+    idp_mapper_name character varying(255) NOT NULL,
+    realm_id character varying(36) NOT NULL
+);
+
+
+ALTER TABLE public.identity_provider_mapper OWNER TO dbamaster01;
+
+--
+-- Name: idp_mapper_config; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.idp_mapper_config (
+    idp_mapper_id character varying(36) NOT NULL,
+    value text,
+    name character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.idp_mapper_config OWNER TO dbamaster01;
+
+--
+-- Name: keycloak_group; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.keycloak_group (
+    id character varying(36) NOT NULL,
+    name character varying(255),
+    parent_group character varying(36) NOT NULL,
+    realm_id character varying(36)
+);
+
+
+ALTER TABLE public.keycloak_group OWNER TO dbamaster01;
+
+--
+-- Name: keycloak_role; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.keycloak_role (
+    id character varying(36) NOT NULL,
+    client_realm_constraint character varying(255),
+    client_role boolean DEFAULT false NOT NULL,
+    description character varying(255),
+    name character varying(255),
+    realm_id character varying(255),
+    client character varying(36),
+    realm character varying(36)
+);
+
+
+ALTER TABLE public.keycloak_role OWNER TO dbamaster01;
+
+--
+-- Name: migration_model; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.migration_model (
+    id character varying(36) NOT NULL,
+    version character varying(36),
+    update_time bigint DEFAULT 0 NOT NULL
+);
+
+
+ALTER TABLE public.migration_model OWNER TO dbamaster01;
+
+--
+-- Name: offline_client_session; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.offline_client_session (
+    user_session_id character varying(36) NOT NULL,
+    client_id character varying(255) NOT NULL,
+    offline_flag character varying(4) NOT NULL,
+    "timestamp" integer,
+    data text,
+    client_storage_provider character varying(36) DEFAULT 'local'::character varying NOT NULL,
+    external_client_id character varying(255) DEFAULT 'local'::character varying NOT NULL
+);
+
+
+ALTER TABLE public.offline_client_session OWNER TO dbamaster01;
+
+--
+-- Name: offline_user_session; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.offline_user_session (
+    user_session_id character varying(36) NOT NULL,
+    user_id character varying(255) NOT NULL,
+    realm_id character varying(36) NOT NULL,
+    created_on integer NOT NULL,
+    offline_flag character varying(4) NOT NULL,
+    data text,
+    last_session_refresh integer DEFAULT 0 NOT NULL
+);
+
+
+ALTER TABLE public.offline_user_session OWNER TO dbamaster01;
+
+--
+-- Name: policy_config; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.policy_config (
+    policy_id character varying(36) NOT NULL,
+    name character varying(255) NOT NULL,
+    value text
+);
+
+
+ALTER TABLE public.policy_config OWNER TO dbamaster01;
+
+--
+-- Name: protocol_mapper; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.protocol_mapper (
+    id character varying(36) NOT NULL,
+    name character varying(255) NOT NULL,
+    protocol character varying(255) NOT NULL,
+    protocol_mapper_name character varying(255) NOT NULL,
+    client_id character varying(36),
+    client_scope_id character varying(36)
+);
+
+
+ALTER TABLE public.protocol_mapper OWNER TO dbamaster01;
+
+--
+-- Name: protocol_mapper_config; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.protocol_mapper_config (
+    protocol_mapper_id character varying(36) NOT NULL,
+    value text,
+    name character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.protocol_mapper_config OWNER TO dbamaster01;
+
+--
+-- Name: realm; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.realm (
+    id character varying(36) NOT NULL,
+    access_code_lifespan integer,
+    user_action_lifespan integer,
+    access_token_lifespan integer,
+    account_theme character varying(255),
+    admin_theme character varying(255),
+    email_theme character varying(255),
+    enabled boolean DEFAULT false NOT NULL,
+    events_enabled boolean DEFAULT false NOT NULL,
+    events_expiration bigint,
+    login_theme character varying(255),
+    name character varying(255),
+    not_before integer,
+    password_policy character varying(2550),
+    registration_allowed boolean DEFAULT false NOT NULL,
+    remember_me boolean DEFAULT false NOT NULL,
+    reset_password_allowed boolean DEFAULT false NOT NULL,
+    social boolean DEFAULT false NOT NULL,
+    ssl_required character varying(255),
+    sso_idle_timeout integer,
+    sso_max_lifespan integer,
+    update_profile_on_soc_login boolean DEFAULT false NOT NULL,
+    verify_email boolean DEFAULT false NOT NULL,
+    master_admin_client character varying(36),
+    login_lifespan integer,
+    internationalization_enabled boolean DEFAULT false NOT NULL,
+    default_locale character varying(255),
+    reg_email_as_username boolean DEFAULT false NOT NULL,
+    admin_events_enabled boolean DEFAULT false NOT NULL,
+    admin_events_details_enabled boolean DEFAULT false NOT NULL,
+    edit_username_allowed boolean DEFAULT false NOT NULL,
+    otp_policy_counter integer DEFAULT 0,
+    otp_policy_window integer DEFAULT 1,
+    otp_policy_period integer DEFAULT 30,
+    otp_policy_digits integer DEFAULT 6,
+    otp_policy_alg character varying(36) DEFAULT 'HmacSHA1'::character varying,
+    otp_policy_type character varying(36) DEFAULT 'totp'::character varying,
+    browser_flow character varying(36),
+    registration_flow character varying(36),
+    direct_grant_flow character varying(36),
+    reset_credentials_flow character varying(36),
+    client_auth_flow character varying(36),
+    offline_session_idle_timeout integer DEFAULT 0,
+    revoke_refresh_token boolean DEFAULT false NOT NULL,
+    access_token_life_implicit integer DEFAULT 0,
+    login_with_email_allowed boolean DEFAULT true NOT NULL,
+    duplicate_emails_allowed boolean DEFAULT false NOT NULL,
+    docker_auth_flow character varying(36),
+    refresh_token_max_reuse integer DEFAULT 0,
+    allow_user_managed_access boolean DEFAULT false NOT NULL,
+    sso_max_lifespan_remember_me integer DEFAULT 0 NOT NULL,
+    sso_idle_timeout_remember_me integer DEFAULT 0 NOT NULL
+);
+
+
+ALTER TABLE public.realm OWNER TO dbamaster01;
+
+--
+-- Name: realm_attribute; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.realm_attribute (
+    name character varying(255) NOT NULL,
+    value character varying(255),
+    realm_id character varying(36) NOT NULL
+);
+
+
+ALTER TABLE public.realm_attribute OWNER TO dbamaster01;
+
+--
+-- Name: realm_default_groups; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.realm_default_groups (
+    realm_id character varying(36) NOT NULL,
+    group_id character varying(36) NOT NULL
+);
+
+
+ALTER TABLE public.realm_default_groups OWNER TO dbamaster01;
+
+--
+-- Name: realm_default_roles; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.realm_default_roles (
+    realm_id character varying(36) NOT NULL,
+    role_id character varying(36) NOT NULL
+);
+
+
+ALTER TABLE public.realm_default_roles OWNER TO dbamaster01;
+
+--
+-- Name: realm_enabled_event_types; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.realm_enabled_event_types (
+    realm_id character varying(36) NOT NULL,
+    value character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.realm_enabled_event_types OWNER TO dbamaster01;
+
+--
+-- Name: realm_events_listeners; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.realm_events_listeners (
+    realm_id character varying(36) NOT NULL,
+    value character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.realm_events_listeners OWNER TO dbamaster01;
+
+--
+-- Name: realm_required_credential; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.realm_required_credential (
+    type character varying(255) NOT NULL,
+    form_label character varying(255),
+    input boolean DEFAULT false NOT NULL,
+    secret boolean DEFAULT false NOT NULL,
+    realm_id character varying(36) NOT NULL
+);
+
+
+ALTER TABLE public.realm_required_credential OWNER TO dbamaster01;
+
+--
+-- Name: realm_smtp_config; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.realm_smtp_config (
+    realm_id character varying(36) NOT NULL,
+    value character varying(255),
+    name character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.realm_smtp_config OWNER TO dbamaster01;
+
+--
+-- Name: realm_supported_locales; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.realm_supported_locales (
+    realm_id character varying(36) NOT NULL,
+    value character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.realm_supported_locales OWNER TO dbamaster01;
+
+--
+-- Name: redirect_uris; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.redirect_uris (
+    client_id character varying(36) NOT NULL,
+    value character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.redirect_uris OWNER TO dbamaster01;
+
+--
+-- Name: required_action_config; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.required_action_config (
+    required_action_id character varying(36) NOT NULL,
+    value text,
+    name character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.required_action_config OWNER TO dbamaster01;
+
+--
+-- Name: required_action_provider; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.required_action_provider (
+    id character varying(36) NOT NULL,
+    alias character varying(255),
+    name character varying(255),
+    realm_id character varying(36),
+    enabled boolean DEFAULT false NOT NULL,
+    default_action boolean DEFAULT false NOT NULL,
+    provider_id character varying(255),
+    priority integer
+);
+
+
+ALTER TABLE public.required_action_provider OWNER TO dbamaster01;
+
+--
+-- Name: resource_attribute; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.resource_attribute (
+    id character varying(36) DEFAULT 'sybase-needs-something-here'::character varying NOT NULL,
+    name character varying(255) NOT NULL,
+    value character varying(255),
+    resource_id character varying(36) NOT NULL
+);
+
+
+ALTER TABLE public.resource_attribute OWNER TO dbamaster01;
+
+--
+-- Name: resource_policy; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.resource_policy (
+    resource_id character varying(36) NOT NULL,
+    policy_id character varying(36) NOT NULL
+);
+
+
+ALTER TABLE public.resource_policy OWNER TO dbamaster01;
+
+--
+-- Name: resource_scope; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.resource_scope (
+    resource_id character varying(36) NOT NULL,
+    scope_id character varying(36) NOT NULL
+);
+
+
+ALTER TABLE public.resource_scope OWNER TO dbamaster01;
+
+--
+-- Name: resource_server; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.resource_server (
+    id character varying(36) NOT NULL,
+    allow_rs_remote_mgmt boolean DEFAULT false NOT NULL,
+    policy_enforce_mode character varying(15) NOT NULL,
+    decision_strategy smallint DEFAULT 1 NOT NULL
+);
+
+
+ALTER TABLE public.resource_server OWNER TO dbamaster01;
+
+--
+-- Name: resource_server_perm_ticket; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.resource_server_perm_ticket (
+    id character varying(36) NOT NULL,
+    owner character varying(255) NOT NULL,
+    requester character varying(255) NOT NULL,
+    created_timestamp bigint NOT NULL,
+    granted_timestamp bigint,
+    resource_id character varying(36) NOT NULL,
+    scope_id character varying(36),
+    resource_server_id character varying(36) NOT NULL,
+    policy_id character varying(36)
+);
+
+
+ALTER TABLE public.resource_server_perm_ticket OWNER TO dbamaster01;
+
+--
+-- Name: resource_server_policy; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.resource_server_policy (
+    id character varying(36) NOT NULL,
+    name character varying(255) NOT NULL,
+    description character varying(255),
+    type character varying(255) NOT NULL,
+    decision_strategy character varying(20),
+    logic character varying(20),
+    resource_server_id character varying(36) NOT NULL,
+    owner character varying(255)
+);
+
+
+ALTER TABLE public.resource_server_policy OWNER TO dbamaster01;
+
+--
+-- Name: resource_server_resource; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.resource_server_resource (
+    id character varying(36) NOT NULL,
+    name character varying(255) NOT NULL,
+    type character varying(255),
+    icon_uri character varying(255),
+    owner character varying(255) NOT NULL,
+    resource_server_id character varying(36) NOT NULL,
+    owner_managed_access boolean DEFAULT false NOT NULL,
+    display_name character varying(255)
+);
+
+
+ALTER TABLE public.resource_server_resource OWNER TO dbamaster01;
+
+--
+-- Name: resource_server_scope; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.resource_server_scope (
+    id character varying(36) NOT NULL,
+    name character varying(255) NOT NULL,
+    icon_uri character varying(255),
+    resource_server_id character varying(36) NOT NULL,
+    display_name character varying(255)
+);
+
+
+ALTER TABLE public.resource_server_scope OWNER TO dbamaster01;
+
+--
+-- Name: resource_uris; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.resource_uris (
+    resource_id character varying(36) NOT NULL,
+    value character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.resource_uris OWNER TO dbamaster01;
+
+--
+-- Name: role_attribute; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.role_attribute (
+    id character varying(36) NOT NULL,
+    role_id character varying(36) NOT NULL,
+    name character varying(255) NOT NULL,
+    value character varying(255)
+);
+
+
+ALTER TABLE public.role_attribute OWNER TO dbamaster01;
+
+--
+-- Name: scope_mapping; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.scope_mapping (
+    client_id character varying(36) NOT NULL,
+    role_id character varying(36) NOT NULL
+);
+
+
+ALTER TABLE public.scope_mapping OWNER TO dbamaster01;
+
+--
+-- Name: scope_policy; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.scope_policy (
+    scope_id character varying(36) NOT NULL,
+    policy_id character varying(36) NOT NULL
+);
+
+
+ALTER TABLE public.scope_policy OWNER TO dbamaster01;
+
+--
+-- Name: user_attribute; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.user_attribute (
+    name character varying(255) NOT NULL,
+    value character varying(255),
+    user_id character varying(36) NOT NULL,
+    id character varying(36) DEFAULT 'sybase-needs-something-here'::character varying NOT NULL
+);
+
+
+ALTER TABLE public.user_attribute OWNER TO dbamaster01;
+
+--
+-- Name: user_consent; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.user_consent (
+    id character varying(36) NOT NULL,
+    client_id character varying(255),
+    user_id character varying(36) NOT NULL,
+    created_date bigint,
+    last_updated_date bigint,
+    client_storage_provider character varying(36),
+    external_client_id character varying(255)
+);
+
+
+ALTER TABLE public.user_consent OWNER TO dbamaster01;
+
+--
+-- Name: user_consent_client_scope; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.user_consent_client_scope (
+    user_consent_id character varying(36) NOT NULL,
+    scope_id character varying(36) NOT NULL
+);
+
+
+ALTER TABLE public.user_consent_client_scope OWNER TO dbamaster01;
+
+--
+-- Name: user_entity; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.user_entity (
+    id character varying(36) NOT NULL,
+    email character varying(255),
+    email_constraint character varying(255),
+    email_verified boolean DEFAULT false NOT NULL,
+    enabled boolean DEFAULT false NOT NULL,
+    federation_link character varying(255),
+    first_name character varying(255),
+    last_name character varying(255),
+    realm_id character varying(255),
+    username character varying(255),
+    created_timestamp bigint,
+    service_account_client_link character varying(255),
+    not_before integer DEFAULT 0 NOT NULL
+);
+
+
+ALTER TABLE public.user_entity OWNER TO dbamaster01;
+
+--
+-- Name: user_federation_config; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.user_federation_config (
+    user_federation_provider_id character varying(36) NOT NULL,
+    value character varying(255),
+    name character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.user_federation_config OWNER TO dbamaster01;
+
+--
+-- Name: user_federation_mapper; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.user_federation_mapper (
+    id character varying(36) NOT NULL,
+    name character varying(255) NOT NULL,
+    federation_provider_id character varying(36) NOT NULL,
+    federation_mapper_type character varying(255) NOT NULL,
+    realm_id character varying(36) NOT NULL
+);
+
+
+ALTER TABLE public.user_federation_mapper OWNER TO dbamaster01;
+
+--
+-- Name: user_federation_mapper_config; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.user_federation_mapper_config (
+    user_federation_mapper_id character varying(36) NOT NULL,
+    value character varying(255),
+    name character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.user_federation_mapper_config OWNER TO dbamaster01;
+
+--
+-- Name: user_federation_provider; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.user_federation_provider (
+    id character varying(36) NOT NULL,
+    changed_sync_period integer,
+    display_name character varying(255),
+    full_sync_period integer,
+    last_sync integer,
+    priority integer,
+    provider_name character varying(255),
+    realm_id character varying(36)
+);
+
+
+ALTER TABLE public.user_federation_provider OWNER TO dbamaster01;
+
+--
+-- Name: user_group_membership; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.user_group_membership (
+    group_id character varying(36) NOT NULL,
+    user_id character varying(36) NOT NULL
+);
+
+
+ALTER TABLE public.user_group_membership OWNER TO dbamaster01;
+
+--
+-- Name: user_required_action; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.user_required_action (
+    user_id character varying(36) NOT NULL,
+    required_action character varying(255) DEFAULT ' '::character varying NOT NULL
+);
+
+
+ALTER TABLE public.user_required_action OWNER TO dbamaster01;
+
+--
+-- Name: user_role_mapping; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.user_role_mapping (
+    role_id character varying(255) NOT NULL,
+    user_id character varying(36) NOT NULL
+);
+
+
+ALTER TABLE public.user_role_mapping OWNER TO dbamaster01;
+
+--
+-- Name: user_session; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.user_session (
+    id character varying(36) NOT NULL,
+    auth_method character varying(255),
+    ip_address character varying(255),
+    last_session_refresh integer,
+    login_username character varying(255),
+    realm_id character varying(255),
+    remember_me boolean DEFAULT false NOT NULL,
+    started integer,
+    user_id character varying(255),
+    user_session_state integer,
+    broker_session_id character varying(255),
+    broker_user_id character varying(255)
+);
+
+
+ALTER TABLE public.user_session OWNER TO dbamaster01;
+
+--
+-- Name: user_session_note; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.user_session_note (
+    user_session character varying(36) NOT NULL,
+    name character varying(255) NOT NULL,
+    value character varying(2048)
+);
+
+
+ALTER TABLE public.user_session_note OWNER TO dbamaster01;
+
+--
+-- Name: username_login_failure; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.username_login_failure (
+    realm_id character varying(36) NOT NULL,
+    username character varying(255) NOT NULL,
+    failed_login_not_before integer,
+    last_failure bigint,
+    last_ip_failure character varying(255),
+    num_failures integer
+);
+
+
+ALTER TABLE public.username_login_failure OWNER TO dbamaster01;
+
+--
+-- Name: web_origins; Type: TABLE; Schema: public; Owner: dbamaster01
+--
+
+CREATE TABLE public.web_origins (
+    client_id character varying(36) NOT NULL,
+    value character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.web_origins OWNER TO dbamaster01;
+
+--
+-- Data for Name: admin_event_entity; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: associated_policy; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.associated_policy (policy_id, associated_policy_id) VALUES ('f8f18532-afdb-42bb-9b0f-62a9ae0e560c', '474663d9-fd0b-472f-be43-174cec89167b');
+
+
+--
+-- Data for Name: authentication_execution; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('171eb2e4-0537-4d02-86b7-bc2b88f749a0', NULL, 'auth-cookie', 'master', 'e2421ed3-640f-428c-a36d-b0b69aac8397', 2, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('a1ac0caa-a960-4fc0-b3a2-0a500f5ef499', NULL, 'auth-spnego', 'master', 'e2421ed3-640f-428c-a36d-b0b69aac8397', 3, 20, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('8a7ef767-eb81-4ef8-bf45-d7a11d544b3a', NULL, 'identity-provider-redirector', 'master', 'e2421ed3-640f-428c-a36d-b0b69aac8397', 2, 25, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('fa3f79cc-cf78-491e-a964-83a6adb6617a', NULL, NULL, 'master', 'e2421ed3-640f-428c-a36d-b0b69aac8397', 2, 30, true, '1d08752a-042e-470a-a2b5-237bb74e43a3', NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('b4a4d750-2bfc-43c3-8d09-199318186c17', NULL, 'auth-username-password-form', 'master', '1d08752a-042e-470a-a2b5-237bb74e43a3', 0, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('469a8fd0-5ca8-42ed-8e20-81ec639fe02d', NULL, NULL, 'master', '1d08752a-042e-470a-a2b5-237bb74e43a3', 1, 20, true, 'f6435aee-ede4-46da-8642-3a869efdc804', NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('cc679f3a-60c9-4d58-8066-e70b1fe675d9', NULL, 'conditional-user-configured', 'master', 'f6435aee-ede4-46da-8642-3a869efdc804', 0, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('effeca2d-0818-4767-9990-7c6e31d42635', NULL, 'auth-otp-form', 'master', 'f6435aee-ede4-46da-8642-3a869efdc804', 0, 20, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('dc3079c5-2e66-4820-b519-3e85e257e7ca', NULL, 'direct-grant-validate-username', 'master', '8792a834-dc93-49c2-80c1-0c231b6b3417', 0, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('6f46400e-138f-4cc2-9936-f9e7b0d5fe8d', NULL, 'direct-grant-validate-password', 'master', '8792a834-dc93-49c2-80c1-0c231b6b3417', 0, 20, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('5f114f51-613b-4f97-819a-8c437e97c140', NULL, NULL, 'master', '8792a834-dc93-49c2-80c1-0c231b6b3417', 1, 30, true, '0128f94c-6774-4ac2-ab7a-b256c09d6fa3', NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('4ea09a98-95e0-4509-a706-1a4a830e6db4', NULL, 'conditional-user-configured', 'master', '0128f94c-6774-4ac2-ab7a-b256c09d6fa3', 0, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('6dfa8f3e-0bde-4108-863f-68e4139fac82', NULL, 'direct-grant-validate-otp', 'master', '0128f94c-6774-4ac2-ab7a-b256c09d6fa3', 0, 20, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('b30a922b-a5e5-481a-a3c7-1daf5882c2a5', NULL, 'registration-page-form', 'master', 'e0aa35a8-63c1-44ec-8dc5-8a46775bd416', 0, 10, true, 'f9df1de7-b28e-4cf0-b3b9-53ce6a00241a', NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('7e4b1a79-b07f-492c-97a5-ed045332996f', NULL, 'registration-user-creation', 'master', 'f9df1de7-b28e-4cf0-b3b9-53ce6a00241a', 0, 20, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('e715f37b-c29c-46be-a16c-721ede186429', NULL, 'registration-profile-action', 'master', 'f9df1de7-b28e-4cf0-b3b9-53ce6a00241a', 0, 40, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('0c43efa6-fb6f-4d9a-9129-6f2f56e3812c', NULL, 'registration-password-action', 'master', 'f9df1de7-b28e-4cf0-b3b9-53ce6a00241a', 0, 50, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('5487bb7b-841d-47b1-ba32-2cb64f822e9a', NULL, 'registration-recaptcha-action', 'master', 'f9df1de7-b28e-4cf0-b3b9-53ce6a00241a', 3, 60, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('073e1fd0-9dc4-4861-ae04-66e42aa49512', NULL, 'reset-credentials-choose-user', 'master', '22ff9a1b-e8a2-4c5f-9d9c-829b85bb8291', 0, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('25d48db7-20e8-4fde-ade5-625ea7f38111', NULL, 'reset-credential-email', 'master', '22ff9a1b-e8a2-4c5f-9d9c-829b85bb8291', 0, 20, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('dd5f54aa-68c8-4cfd-b7cc-03f6c093289d', NULL, 'reset-password', 'master', '22ff9a1b-e8a2-4c5f-9d9c-829b85bb8291', 0, 30, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('0f5f432e-44f5-455c-967e-595e21375d10', NULL, NULL, 'master', '22ff9a1b-e8a2-4c5f-9d9c-829b85bb8291', 1, 40, true, '60fb30b5-b2ee-4456-8b60-b3f6c0ef51ba', NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('f42924ac-474e-4ac4-b1c1-dd3c6b9b352a', NULL, 'conditional-user-configured', 'master', '60fb30b5-b2ee-4456-8b60-b3f6c0ef51ba', 0, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('1ad28f8d-b243-4253-ac35-509c8c398bfd', NULL, 'reset-otp', 'master', '60fb30b5-b2ee-4456-8b60-b3f6c0ef51ba', 0, 20, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('a6bef052-0c53-48da-b30a-afa44660fdd8', NULL, 'client-secret', 'master', '9c2d37f2-0034-46ff-a79b-c9bea9106063', 2, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('be42ede8-79a4-495c-b8c6-9b4525ce7a47', NULL, 'client-jwt', 'master', '9c2d37f2-0034-46ff-a79b-c9bea9106063', 2, 20, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('187b66c5-4f95-4e4e-bc19-02829ee8a2bc', NULL, 'client-secret-jwt', 'master', '9c2d37f2-0034-46ff-a79b-c9bea9106063', 2, 30, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('2d171732-7333-4438-9e78-a6bf1949e529', NULL, 'client-x509', 'master', '9c2d37f2-0034-46ff-a79b-c9bea9106063', 2, 40, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('8ddba87e-eda6-46c6-969e-7fb9cd6cf60e', NULL, 'idp-review-profile', 'master', '91d600e3-2a57-4f30-b95f-7f46047d42a7', 0, 10, false, NULL, 'c8e6aecf-e441-405d-a898-f6cb4d8b6bdd');
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('475f6fae-0138-45da-8c36-bf7d6e0b6e60', NULL, NULL, 'master', '91d600e3-2a57-4f30-b95f-7f46047d42a7', 0, 20, true, '43ce4d49-611d-4bd0-b2e9-559a527128ef', NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('166b3963-f818-45b6-b348-de6173e5f32c', NULL, 'idp-create-user-if-unique', 'master', '43ce4d49-611d-4bd0-b2e9-559a527128ef', 2, 10, false, NULL, '3aa102b0-10b3-4bcb-a9d8-029b1e3d3d85');
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('452aca20-6594-4a9a-a39a-1fcffd0d4e28', NULL, NULL, 'master', '43ce4d49-611d-4bd0-b2e9-559a527128ef', 2, 20, true, 'f95c536a-f64c-4b72-9dcd-db6a081da540', NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('617fd84a-b351-48ad-bbe1-3825095a5704', NULL, 'idp-confirm-link', 'master', 'f95c536a-f64c-4b72-9dcd-db6a081da540', 0, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('0daab27e-6277-457f-b736-1787ca41825f', NULL, NULL, 'master', 'f95c536a-f64c-4b72-9dcd-db6a081da540', 0, 20, true, '03750696-8ae3-4ed0-857e-db1be570caeb', NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('8e908eec-bbe7-4544-85ed-08c3ce9b51f2', NULL, 'idp-email-verification', 'master', '03750696-8ae3-4ed0-857e-db1be570caeb', 2, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('73bae085-6e8d-4c91-825b-e694d9da9d31', NULL, NULL, 'master', '03750696-8ae3-4ed0-857e-db1be570caeb', 2, 20, true, '76a91357-3268-4707-aafe-d36a84c4d252', NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('3ecd3bf9-2f34-4a3f-9b4e-6cf4308f85e5', NULL, 'idp-username-password-form', 'master', '76a91357-3268-4707-aafe-d36a84c4d252', 0, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('635f6ef1-f633-4329-bfaf-c5775069788d', NULL, NULL, 'master', '76a91357-3268-4707-aafe-d36a84c4d252', 1, 20, true, '525d4b66-e3a9-4963-8715-f4163271fb40', NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('b70ab9b3-e39a-401e-977b-1a17bc8a3f29', NULL, 'conditional-user-configured', 'master', '525d4b66-e3a9-4963-8715-f4163271fb40', 0, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('ad9a9ce4-195b-4e14-b1ca-786fc407a167', NULL, 'auth-otp-form', 'master', '525d4b66-e3a9-4963-8715-f4163271fb40', 0, 20, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('dce3fd65-ed46-4be8-9299-1049def10e49', NULL, 'http-basic-authenticator', 'master', '3bf82565-c72e-41b4-8f54-8552aa6abb03', 0, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('e207632c-a82a-482f-9328-dfd460013f2e', NULL, 'docker-http-basic-authenticator', 'master', '6d46a9c3-db40-4126-a1c0-e80d8ca3ef21', 0, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('ab482ce5-caac-48f4-b053-9e8a650990a2', NULL, 'no-cookie-redirect', 'master', '4a23d1a2-a7bb-490e-9cdf-6894bfce6d79', 0, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('29516d42-dd9c-436e-831c-acb3831c814d', NULL, NULL, 'master', '4a23d1a2-a7bb-490e-9cdf-6894bfce6d79', 0, 20, true, '19892e01-5fd5-460c-a49b-c3769d3d78c6', NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('c4045760-ee4a-4996-96ab-675bfa9c709c', NULL, 'basic-auth', 'master', '19892e01-5fd5-460c-a49b-c3769d3d78c6', 0, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('f140f56f-ba7f-4b82-86a4-d8a1223a9fdc', NULL, 'basic-auth-otp', 'master', '19892e01-5fd5-460c-a49b-c3769d3d78c6', 3, 20, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('41d92402-0b38-4135-8a40-705b9b841e29', NULL, 'auth-spnego', 'master', '19892e01-5fd5-460c-a49b-c3769d3d78c6', 3, 30, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('b71e7173-0fb0-45ff-89f0-9f4871b0e092', NULL, 'auth-cookie', 'PoC-Soki-Realm-01', '2c0c1961-ff54-475f-8c2f-b8eee5057963', 2, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('d08d5955-eb6f-4603-be7c-c855b3a9cb2a', NULL, 'auth-spnego', 'PoC-Soki-Realm-01', '2c0c1961-ff54-475f-8c2f-b8eee5057963', 3, 20, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('d1e4e9ec-e485-4da8-823d-228100b8f15f', NULL, 'identity-provider-redirector', 'PoC-Soki-Realm-01', '2c0c1961-ff54-475f-8c2f-b8eee5057963', 2, 25, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('a598d2da-ade0-4a92-810c-af0c118c3eec', NULL, NULL, 'PoC-Soki-Realm-01', '2c0c1961-ff54-475f-8c2f-b8eee5057963', 2, 30, true, 'b608c428-9033-4e61-8cff-e99734881afd', NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('52116c61-a494-4465-a48a-d8b5c3158526', NULL, 'auth-username-password-form', 'PoC-Soki-Realm-01', 'b608c428-9033-4e61-8cff-e99734881afd', 0, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('f950e537-dfaa-4efe-a7af-784059f5f6b7', NULL, NULL, 'PoC-Soki-Realm-01', 'b608c428-9033-4e61-8cff-e99734881afd', 1, 20, true, '89de50e1-808f-4beb-89f2-ca3759b171d9', NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('c1a7a384-0ada-4598-8b90-aafe99cf986e', NULL, 'conditional-user-configured', 'PoC-Soki-Realm-01', '89de50e1-808f-4beb-89f2-ca3759b171d9', 0, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('65daeb6a-0a28-42f5-9506-cd2f938677a7', NULL, 'auth-otp-form', 'PoC-Soki-Realm-01', '89de50e1-808f-4beb-89f2-ca3759b171d9', 0, 20, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('2cd1aa16-6934-49cf-af14-b9225c6bc552', NULL, 'direct-grant-validate-username', 'PoC-Soki-Realm-01', '8466abf3-f22d-4ee2-a74a-4dc84be73796', 0, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('a0ac7062-4d55-4a49-8681-61bfde9c50f8', NULL, 'direct-grant-validate-password', 'PoC-Soki-Realm-01', '8466abf3-f22d-4ee2-a74a-4dc84be73796', 0, 20, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('e8480ec4-3fd5-4bd1-ace6-56506751dda4', NULL, NULL, 'PoC-Soki-Realm-01', '8466abf3-f22d-4ee2-a74a-4dc84be73796', 1, 30, true, 'd3b5d2e8-b6b0-44ea-9e53-7b81339de30e', NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('3e9d84a0-0e99-4572-b79b-82bb2b76605f', NULL, 'conditional-user-configured', 'PoC-Soki-Realm-01', 'd3b5d2e8-b6b0-44ea-9e53-7b81339de30e', 0, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('aa47dd7c-5ae0-4453-ae0d-2afdf2fa9783', NULL, 'direct-grant-validate-otp', 'PoC-Soki-Realm-01', 'd3b5d2e8-b6b0-44ea-9e53-7b81339de30e', 0, 20, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('07ba35c1-d3dd-49dd-867f-2f5bb57b9c05', NULL, 'registration-page-form', 'PoC-Soki-Realm-01', '544a14d2-b811-4bfc-b356-fb6f885673a2', 0, 10, true, '6ad8f559-86fd-47c5-8b38-ffe4914281c7', NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('a7600720-e455-4f02-96be-945db742e3af', NULL, 'registration-user-creation', 'PoC-Soki-Realm-01', '6ad8f559-86fd-47c5-8b38-ffe4914281c7', 0, 20, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('9e434952-a907-4039-8ef5-d6647d6ef8e5', NULL, 'registration-profile-action', 'PoC-Soki-Realm-01', '6ad8f559-86fd-47c5-8b38-ffe4914281c7', 0, 40, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('24dc37d2-7f4d-4cb4-978e-b0d723e49bae', NULL, 'registration-password-action', 'PoC-Soki-Realm-01', '6ad8f559-86fd-47c5-8b38-ffe4914281c7', 0, 50, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('33867d52-8e88-43ee-87f6-a7881306ac3d', NULL, 'registration-recaptcha-action', 'PoC-Soki-Realm-01', '6ad8f559-86fd-47c5-8b38-ffe4914281c7', 3, 60, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('c8211e8a-536c-4187-a948-f33efa2ea74a', NULL, 'reset-credentials-choose-user', 'PoC-Soki-Realm-01', '213bf824-1e46-4b02-a8f5-4b7d336b1c9e', 0, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('8b84de0b-2c1e-4f01-9e5b-58da40d99403', NULL, 'reset-credential-email', 'PoC-Soki-Realm-01', '213bf824-1e46-4b02-a8f5-4b7d336b1c9e', 0, 20, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('5da13e0d-3611-4d87-8ec7-22e253e95c70', NULL, 'reset-password', 'PoC-Soki-Realm-01', '213bf824-1e46-4b02-a8f5-4b7d336b1c9e', 0, 30, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('ba637773-dea1-4f7b-8a57-54deaa1232d6', NULL, NULL, 'PoC-Soki-Realm-01', '213bf824-1e46-4b02-a8f5-4b7d336b1c9e', 1, 40, true, '42d66b02-4af7-432d-a764-72e87ba72a86', NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('a8f91351-7abb-426c-8632-16de953083b2', NULL, 'conditional-user-configured', 'PoC-Soki-Realm-01', '42d66b02-4af7-432d-a764-72e87ba72a86', 0, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('b35ae52f-65da-4c3a-83f0-12d81fba34a2', NULL, 'reset-otp', 'PoC-Soki-Realm-01', '42d66b02-4af7-432d-a764-72e87ba72a86', 0, 20, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('5b62669e-5c53-4d16-a5c4-44463d66c0e5', NULL, 'client-secret', 'PoC-Soki-Realm-01', '70a0a3d3-6218-4326-88bf-9e2465a11af9', 2, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('e7cbf4ce-85a8-440f-ab1b-4dde87ecdb83', NULL, 'client-jwt', 'PoC-Soki-Realm-01', '70a0a3d3-6218-4326-88bf-9e2465a11af9', 2, 20, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('2de3f1b8-2274-48aa-8c64-52707e95d9fe', NULL, 'client-secret-jwt', 'PoC-Soki-Realm-01', '70a0a3d3-6218-4326-88bf-9e2465a11af9', 2, 30, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('f344b29b-c897-4d4a-b513-1e5c796049df', NULL, 'client-x509', 'PoC-Soki-Realm-01', '70a0a3d3-6218-4326-88bf-9e2465a11af9', 2, 40, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('4160ce5f-fa1d-42b7-866c-b62256fbcac9', NULL, 'idp-review-profile', 'PoC-Soki-Realm-01', 'ba13dd23-fe6a-46bd-845e-954e037314e2', 0, 10, false, NULL, 'de39db2e-1248-4964-a164-5228cb2b0756');
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('53359c9c-8dc5-4fc7-945a-c273cb0906a4', NULL, NULL, 'PoC-Soki-Realm-01', 'ba13dd23-fe6a-46bd-845e-954e037314e2', 0, 20, true, '1e066871-e99f-4627-b4ba-09d1b373e9f6', NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('a81240ab-6eae-496e-baa8-650e45cda612', NULL, 'idp-create-user-if-unique', 'PoC-Soki-Realm-01', '1e066871-e99f-4627-b4ba-09d1b373e9f6', 2, 10, false, NULL, '8ebbc1be-64d0-486f-ae49-a05cf3a4aff5');
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('f89bc10c-a1d8-4790-b157-4e81bc475815', NULL, NULL, 'PoC-Soki-Realm-01', '1e066871-e99f-4627-b4ba-09d1b373e9f6', 2, 20, true, '890651f4-bd46-498b-bcdb-736af9ff9724', NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('2dbfbf8f-8f42-4630-88c0-fa4d144d9fe6', NULL, 'idp-confirm-link', 'PoC-Soki-Realm-01', '890651f4-bd46-498b-bcdb-736af9ff9724', 0, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('89aca052-860b-4894-b46b-b224ab36d424', NULL, NULL, 'PoC-Soki-Realm-01', '890651f4-bd46-498b-bcdb-736af9ff9724', 0, 20, true, '89790159-7d84-42d9-8dae-774269699875', NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('a7cb10e9-afbc-443a-9eac-a0e0926de922', NULL, 'idp-email-verification', 'PoC-Soki-Realm-01', '89790159-7d84-42d9-8dae-774269699875', 2, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('ed322e68-d088-40cf-a580-67a73326a95b', NULL, NULL, 'PoC-Soki-Realm-01', '89790159-7d84-42d9-8dae-774269699875', 2, 20, true, 'aeac48dd-e7ec-481d-83f9-4e0385a8a91f', NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('4b9e816d-6c89-49c6-96c4-3481535497d4', NULL, 'idp-username-password-form', 'PoC-Soki-Realm-01', 'aeac48dd-e7ec-481d-83f9-4e0385a8a91f', 0, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('8a6556f4-84b3-41d5-96da-fb60a79b6ec6', NULL, NULL, 'PoC-Soki-Realm-01', 'aeac48dd-e7ec-481d-83f9-4e0385a8a91f', 1, 20, true, 'e4890a4c-91e2-4aac-9e6a-139be3f48fe7', NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('dd524bbc-c741-48e1-a9cd-9ba1090608ee', NULL, 'conditional-user-configured', 'PoC-Soki-Realm-01', 'e4890a4c-91e2-4aac-9e6a-139be3f48fe7', 0, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('90f9b0da-cb39-4e6a-be96-57d77833b5fd', NULL, 'auth-otp-form', 'PoC-Soki-Realm-01', 'e4890a4c-91e2-4aac-9e6a-139be3f48fe7', 0, 20, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('12ad2d85-f6ba-4db6-afd5-cf9564786c55', NULL, 'http-basic-authenticator', 'PoC-Soki-Realm-01', '62b0aa18-95a9-478e-a328-ab7fd0417801', 0, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('be16e7e7-d840-4d12-ac95-c33b1e808547', NULL, 'docker-http-basic-authenticator', 'PoC-Soki-Realm-01', '90f9fa6c-bd54-46a1-b979-82e853b15a4e', 0, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('3ddb2721-75ee-40df-b331-0344d28b67fb', NULL, 'no-cookie-redirect', 'PoC-Soki-Realm-01', '769b70b8-13da-4684-ba19-c64e4e9f8b3b', 0, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('64fd6532-6698-4595-83f0-e9e595ce3cd5', NULL, NULL, 'PoC-Soki-Realm-01', '769b70b8-13da-4684-ba19-c64e4e9f8b3b', 0, 20, true, '4969e303-9b66-4f9c-ac9a-baa3e2b0915a', NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('d9239f95-8e41-4911-83d1-bd816abe8c39', NULL, 'basic-auth', 'PoC-Soki-Realm-01', '4969e303-9b66-4f9c-ac9a-baa3e2b0915a', 0, 10, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('384cdc78-c14a-4298-8cfa-e88ebdc0da1e', NULL, 'basic-auth-otp', 'PoC-Soki-Realm-01', '4969e303-9b66-4f9c-ac9a-baa3e2b0915a', 3, 20, false, NULL, NULL);
+INSERT INTO public.authentication_execution (id, alias, authenticator, realm_id, flow_id, requirement, priority, authenticator_flow, auth_flow_id, auth_config) VALUES ('34af55df-8725-4980-b68a-699f5180583f', NULL, 'auth-spnego', 'PoC-Soki-Realm-01', '4969e303-9b66-4f9c-ac9a-baa3e2b0915a', 3, 30, false, NULL, NULL);
+
+
+--
+-- Data for Name: authentication_flow; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('e2421ed3-640f-428c-a36d-b0b69aac8397', 'browser', 'browser based authentication', 'master', 'basic-flow', true, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('1d08752a-042e-470a-a2b5-237bb74e43a3', 'forms', 'Username, password, otp and other auth forms.', 'master', 'basic-flow', false, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('f6435aee-ede4-46da-8642-3a869efdc804', 'Browser - Conditional OTP', 'Flow to determine if the OTP is required for the authentication', 'master', 'basic-flow', false, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('8792a834-dc93-49c2-80c1-0c231b6b3417', 'direct grant', 'OpenID Connect Resource Owner Grant', 'master', 'basic-flow', true, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('0128f94c-6774-4ac2-ab7a-b256c09d6fa3', 'Direct Grant - Conditional OTP', 'Flow to determine if the OTP is required for the authentication', 'master', 'basic-flow', false, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('e0aa35a8-63c1-44ec-8dc5-8a46775bd416', 'registration', 'registration flow', 'master', 'basic-flow', true, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('f9df1de7-b28e-4cf0-b3b9-53ce6a00241a', 'registration form', 'registration form', 'master', 'form-flow', false, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('22ff9a1b-e8a2-4c5f-9d9c-829b85bb8291', 'reset credentials', 'Reset credentials for a user if they forgot their password or something', 'master', 'basic-flow', true, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('60fb30b5-b2ee-4456-8b60-b3f6c0ef51ba', 'Reset - Conditional OTP', 'Flow to determine if the OTP should be reset or not. Set to REQUIRED to force.', 'master', 'basic-flow', false, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('9c2d37f2-0034-46ff-a79b-c9bea9106063', 'clients', 'Base authentication for clients', 'master', 'client-flow', true, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('91d600e3-2a57-4f30-b95f-7f46047d42a7', 'first broker login', 'Actions taken after first broker login with identity provider account, which is not yet linked to any Keycloak account', 'master', 'basic-flow', true, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('43ce4d49-611d-4bd0-b2e9-559a527128ef', 'User creation or linking', 'Flow for the existing/non-existing user alternatives', 'master', 'basic-flow', false, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('f95c536a-f64c-4b72-9dcd-db6a081da540', 'Handle Existing Account', 'Handle what to do if there is existing account with same email/username like authenticated identity provider', 'master', 'basic-flow', false, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('03750696-8ae3-4ed0-857e-db1be570caeb', 'Account verification options', 'Method with which to verity the existing account', 'master', 'basic-flow', false, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('76a91357-3268-4707-aafe-d36a84c4d252', 'Verify Existing Account by Re-authentication', 'Reauthentication of existing account', 'master', 'basic-flow', false, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('525d4b66-e3a9-4963-8715-f4163271fb40', 'First broker login - Conditional OTP', 'Flow to determine if the OTP is required for the authentication', 'master', 'basic-flow', false, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('3bf82565-c72e-41b4-8f54-8552aa6abb03', 'saml ecp', 'SAML ECP Profile Authentication Flow', 'master', 'basic-flow', true, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('6d46a9c3-db40-4126-a1c0-e80d8ca3ef21', 'docker auth', 'Used by Docker clients to authenticate against the IDP', 'master', 'basic-flow', true, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('4a23d1a2-a7bb-490e-9cdf-6894bfce6d79', 'http challenge', 'An authentication flow based on challenge-response HTTP Authentication Schemes', 'master', 'basic-flow', true, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('19892e01-5fd5-460c-a49b-c3769d3d78c6', 'Authentication Options', 'Authentication options.', 'master', 'basic-flow', false, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('2c0c1961-ff54-475f-8c2f-b8eee5057963', 'browser', 'browser based authentication', 'PoC-Soki-Realm-01', 'basic-flow', true, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('b608c428-9033-4e61-8cff-e99734881afd', 'forms', 'Username, password, otp and other auth forms.', 'PoC-Soki-Realm-01', 'basic-flow', false, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('89de50e1-808f-4beb-89f2-ca3759b171d9', 'Browser - Conditional OTP', 'Flow to determine if the OTP is required for the authentication', 'PoC-Soki-Realm-01', 'basic-flow', false, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('8466abf3-f22d-4ee2-a74a-4dc84be73796', 'direct grant', 'OpenID Connect Resource Owner Grant', 'PoC-Soki-Realm-01', 'basic-flow', true, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('d3b5d2e8-b6b0-44ea-9e53-7b81339de30e', 'Direct Grant - Conditional OTP', 'Flow to determine if the OTP is required for the authentication', 'PoC-Soki-Realm-01', 'basic-flow', false, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('544a14d2-b811-4bfc-b356-fb6f885673a2', 'registration', 'registration flow', 'PoC-Soki-Realm-01', 'basic-flow', true, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('6ad8f559-86fd-47c5-8b38-ffe4914281c7', 'registration form', 'registration form', 'PoC-Soki-Realm-01', 'form-flow', false, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('213bf824-1e46-4b02-a8f5-4b7d336b1c9e', 'reset credentials', 'Reset credentials for a user if they forgot their password or something', 'PoC-Soki-Realm-01', 'basic-flow', true, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('42d66b02-4af7-432d-a764-72e87ba72a86', 'Reset - Conditional OTP', 'Flow to determine if the OTP should be reset or not. Set to REQUIRED to force.', 'PoC-Soki-Realm-01', 'basic-flow', false, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('70a0a3d3-6218-4326-88bf-9e2465a11af9', 'clients', 'Base authentication for clients', 'PoC-Soki-Realm-01', 'client-flow', true, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('ba13dd23-fe6a-46bd-845e-954e037314e2', 'first broker login', 'Actions taken after first broker login with identity provider account, which is not yet linked to any Keycloak account', 'PoC-Soki-Realm-01', 'basic-flow', true, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('1e066871-e99f-4627-b4ba-09d1b373e9f6', 'User creation or linking', 'Flow for the existing/non-existing user alternatives', 'PoC-Soki-Realm-01', 'basic-flow', false, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('890651f4-bd46-498b-bcdb-736af9ff9724', 'Handle Existing Account', 'Handle what to do if there is existing account with same email/username like authenticated identity provider', 'PoC-Soki-Realm-01', 'basic-flow', false, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('89790159-7d84-42d9-8dae-774269699875', 'Account verification options', 'Method with which to verity the existing account', 'PoC-Soki-Realm-01', 'basic-flow', false, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('aeac48dd-e7ec-481d-83f9-4e0385a8a91f', 'Verify Existing Account by Re-authentication', 'Reauthentication of existing account', 'PoC-Soki-Realm-01', 'basic-flow', false, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('e4890a4c-91e2-4aac-9e6a-139be3f48fe7', 'First broker login - Conditional OTP', 'Flow to determine if the OTP is required for the authentication', 'PoC-Soki-Realm-01', 'basic-flow', false, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('62b0aa18-95a9-478e-a328-ab7fd0417801', 'saml ecp', 'SAML ECP Profile Authentication Flow', 'PoC-Soki-Realm-01', 'basic-flow', true, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('90f9fa6c-bd54-46a1-b979-82e853b15a4e', 'docker auth', 'Used by Docker clients to authenticate against the IDP', 'PoC-Soki-Realm-01', 'basic-flow', true, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('769b70b8-13da-4684-ba19-c64e4e9f8b3b', 'http challenge', 'An authentication flow based on challenge-response HTTP Authentication Schemes', 'PoC-Soki-Realm-01', 'basic-flow', true, true);
+INSERT INTO public.authentication_flow (id, alias, description, realm_id, provider_id, top_level, built_in) VALUES ('4969e303-9b66-4f9c-ac9a-baa3e2b0915a', 'Authentication Options', 'Authentication options.', 'PoC-Soki-Realm-01', 'basic-flow', false, true);
+
+
+--
+-- Data for Name: authenticator_config; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.authenticator_config (id, alias, realm_id) VALUES ('c8e6aecf-e441-405d-a898-f6cb4d8b6bdd', 'review profile config', 'master');
+INSERT INTO public.authenticator_config (id, alias, realm_id) VALUES ('3aa102b0-10b3-4bcb-a9d8-029b1e3d3d85', 'create unique user config', 'master');
+INSERT INTO public.authenticator_config (id, alias, realm_id) VALUES ('de39db2e-1248-4964-a164-5228cb2b0756', 'review profile config', 'PoC-Soki-Realm-01');
+INSERT INTO public.authenticator_config (id, alias, realm_id) VALUES ('8ebbc1be-64d0-486f-ae49-a05cf3a4aff5', 'create unique user config', 'PoC-Soki-Realm-01');
+
+
+--
+-- Data for Name: authenticator_config_entry; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.authenticator_config_entry (authenticator_id, value, name) VALUES ('c8e6aecf-e441-405d-a898-f6cb4d8b6bdd', 'missing', 'update.profile.on.first.login');
+INSERT INTO public.authenticator_config_entry (authenticator_id, value, name) VALUES ('3aa102b0-10b3-4bcb-a9d8-029b1e3d3d85', 'false', 'require.password.update.after.registration');
+INSERT INTO public.authenticator_config_entry (authenticator_id, value, name) VALUES ('de39db2e-1248-4964-a164-5228cb2b0756', 'missing', 'update.profile.on.first.login');
+INSERT INTO public.authenticator_config_entry (authenticator_id, value, name) VALUES ('8ebbc1be-64d0-486f-ae49-a05cf3a4aff5', 'false', 'require.password.update.after.registration');
+
+
+--
+-- Data for Name: broker_link; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: client; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.client (id, enabled, full_scope_allowed, client_id, not_before, public_client, secret, base_url, bearer_only, management_url, surrogate_auth_required, realm_id, protocol, node_rereg_timeout, frontchannel_logout, consent_required, name, service_accounts_enabled, client_authenticator_type, root_url, description, registration_token, standard_flow_enabled, implicit_flow_enabled, direct_access_grants_enabled, always_display_in_console) VALUES ('72ae90e4-4635-4bd9-9605-a1d8898d6a96', true, true, 'master-realm', 0, false, 'e53da711-d446-44d0-9822-cfab46dc25d3', NULL, true, NULL, false, 'master', NULL, 0, false, false, 'master Realm', false, 'client-secret', NULL, NULL, NULL, true, false, false, false);
+INSERT INTO public.client (id, enabled, full_scope_allowed, client_id, not_before, public_client, secret, base_url, bearer_only, management_url, surrogate_auth_required, realm_id, protocol, node_rereg_timeout, frontchannel_logout, consent_required, name, service_accounts_enabled, client_authenticator_type, root_url, description, registration_token, standard_flow_enabled, implicit_flow_enabled, direct_access_grants_enabled, always_display_in_console) VALUES ('7794d3b1-3f3b-4baa-991a-aa74b0cd6cea', true, false, 'account', 0, false, 'c9d9c0cd-9455-40ae-bef3-ca0e47be038b', '/realms/master/account/', false, NULL, false, 'master', 'openid-connect', 0, false, false, '${client_account}', false, 'client-secret', '${authBaseUrl}', NULL, NULL, true, false, false, false);
+INSERT INTO public.client (id, enabled, full_scope_allowed, client_id, not_before, public_client, secret, base_url, bearer_only, management_url, surrogate_auth_required, realm_id, protocol, node_rereg_timeout, frontchannel_logout, consent_required, name, service_accounts_enabled, client_authenticator_type, root_url, description, registration_token, standard_flow_enabled, implicit_flow_enabled, direct_access_grants_enabled, always_display_in_console) VALUES ('7b8f81bd-32fa-4952-bf35-9b7ab46ca70f', true, false, 'account-console', 0, true, '628ddd06-089a-4d2a-a62e-1c849bde9229', '/realms/master/account/', false, NULL, false, 'master', 'openid-connect', 0, false, false, '${client_account-console}', false, 'client-secret', '${authBaseUrl}', NULL, NULL, true, false, false, false);
+INSERT INTO public.client (id, enabled, full_scope_allowed, client_id, not_before, public_client, secret, base_url, bearer_only, management_url, surrogate_auth_required, realm_id, protocol, node_rereg_timeout, frontchannel_logout, consent_required, name, service_accounts_enabled, client_authenticator_type, root_url, description, registration_token, standard_flow_enabled, implicit_flow_enabled, direct_access_grants_enabled, always_display_in_console) VALUES ('ecdd0f72-2c87-46bc-b2f1-65039807e553', true, false, 'broker', 0, false, '1d330ff5-4d80-44e4-8782-46484872a6d8', NULL, false, NULL, false, 'master', 'openid-connect', 0, false, false, '${client_broker}', false, 'client-secret', NULL, NULL, NULL, true, false, false, false);
+INSERT INTO public.client (id, enabled, full_scope_allowed, client_id, not_before, public_client, secret, base_url, bearer_only, management_url, surrogate_auth_required, realm_id, protocol, node_rereg_timeout, frontchannel_logout, consent_required, name, service_accounts_enabled, client_authenticator_type, root_url, description, registration_token, standard_flow_enabled, implicit_flow_enabled, direct_access_grants_enabled, always_display_in_console) VALUES ('0acb1dc9-e951-4a48-8581-9436e7da12cc', true, false, 'security-admin-console', 0, true, '9393243b-038f-491f-b8d4-f282c03733cf', '/admin/master/console/', false, NULL, false, 'master', 'openid-connect', 0, false, false, '${client_security-admin-console}', false, 'client-secret', '${authAdminUrl}', NULL, NULL, true, false, false, false);
+INSERT INTO public.client (id, enabled, full_scope_allowed, client_id, not_before, public_client, secret, base_url, bearer_only, management_url, surrogate_auth_required, realm_id, protocol, node_rereg_timeout, frontchannel_logout, consent_required, name, service_accounts_enabled, client_authenticator_type, root_url, description, registration_token, standard_flow_enabled, implicit_flow_enabled, direct_access_grants_enabled, always_display_in_console) VALUES ('ae50f480-f41a-4da3-acff-247fc7c1f4e2', true, false, 'admin-cli', 0, true, '71f37f60-6eb7-4fd3-ac00-e8f9c2f564a1', NULL, false, NULL, false, 'master', 'openid-connect', 0, false, false, '${client_admin-cli}', false, 'client-secret', NULL, NULL, NULL, false, false, true, false);
+INSERT INTO public.client (id, enabled, full_scope_allowed, client_id, not_before, public_client, secret, base_url, bearer_only, management_url, surrogate_auth_required, realm_id, protocol, node_rereg_timeout, frontchannel_logout, consent_required, name, service_accounts_enabled, client_authenticator_type, root_url, description, registration_token, standard_flow_enabled, implicit_flow_enabled, direct_access_grants_enabled, always_display_in_console) VALUES ('1b7a1f93-5791-449b-b19a-7c8892118d6e', true, true, 'PoC-Soki-Realm-01-realm', 0, false, '7166ceb5-54a8-4bb4-b840-adf53ebc97f4', NULL, true, NULL, false, 'master', NULL, 0, false, false, 'PoC-Soki-Realm-01 Realm', false, 'client-secret', NULL, NULL, NULL, true, false, false, false);
+INSERT INTO public.client (id, enabled, full_scope_allowed, client_id, not_before, public_client, secret, base_url, bearer_only, management_url, surrogate_auth_required, realm_id, protocol, node_rereg_timeout, frontchannel_logout, consent_required, name, service_accounts_enabled, client_authenticator_type, root_url, description, registration_token, standard_flow_enabled, implicit_flow_enabled, direct_access_grants_enabled, always_display_in_console) VALUES ('21320440-b1b3-435c-9932-b05251af5396', true, false, 'realm-management', 0, false, '74405412-c6ed-4ceb-a872-a981a4b80e8c', NULL, true, NULL, false, 'PoC-Soki-Realm-01', 'openid-connect', 0, false, false, '${client_realm-management}', false, 'client-secret', NULL, NULL, NULL, true, false, false, false);
+INSERT INTO public.client (id, enabled, full_scope_allowed, client_id, not_before, public_client, secret, base_url, bearer_only, management_url, surrogate_auth_required, realm_id, protocol, node_rereg_timeout, frontchannel_logout, consent_required, name, service_accounts_enabled, client_authenticator_type, root_url, description, registration_token, standard_flow_enabled, implicit_flow_enabled, direct_access_grants_enabled, always_display_in_console) VALUES ('d14028a0-d831-42db-ab01-6cf86a9d9f51', true, false, 'account', 0, false, '607bb898-f155-4f46-9f92-8b2a20add91e', '/realms/PoC-Soki-Realm-01/account/', false, NULL, false, 'PoC-Soki-Realm-01', 'openid-connect', 0, false, false, '${client_account}', false, 'client-secret', '${authBaseUrl}', NULL, NULL, true, false, false, false);
+INSERT INTO public.client (id, enabled, full_scope_allowed, client_id, not_before, public_client, secret, base_url, bearer_only, management_url, surrogate_auth_required, realm_id, protocol, node_rereg_timeout, frontchannel_logout, consent_required, name, service_accounts_enabled, client_authenticator_type, root_url, description, registration_token, standard_flow_enabled, implicit_flow_enabled, direct_access_grants_enabled, always_display_in_console) VALUES ('95a91113-a1ca-48e9-a0e7-5320c3f6422a', true, false, 'account-console', 0, true, '0eabde8c-d32f-4fe3-b048-f376a8981971', '/realms/PoC-Soki-Realm-01/account/', false, NULL, false, 'PoC-Soki-Realm-01', 'openid-connect', 0, false, false, '${client_account-console}', false, 'client-secret', '${authBaseUrl}', NULL, NULL, true, false, false, false);
+INSERT INTO public.client (id, enabled, full_scope_allowed, client_id, not_before, public_client, secret, base_url, bearer_only, management_url, surrogate_auth_required, realm_id, protocol, node_rereg_timeout, frontchannel_logout, consent_required, name, service_accounts_enabled, client_authenticator_type, root_url, description, registration_token, standard_flow_enabled, implicit_flow_enabled, direct_access_grants_enabled, always_display_in_console) VALUES ('3ce0da36-54ad-4911-b510-6b871451ed63', true, false, 'broker', 0, false, 'fc6a7a47-0574-4d28-ac69-6a018bf28b1d', NULL, false, NULL, false, 'PoC-Soki-Realm-01', 'openid-connect', 0, false, false, '${client_broker}', false, 'client-secret', NULL, NULL, NULL, true, false, false, false);
+INSERT INTO public.client (id, enabled, full_scope_allowed, client_id, not_before, public_client, secret, base_url, bearer_only, management_url, surrogate_auth_required, realm_id, protocol, node_rereg_timeout, frontchannel_logout, consent_required, name, service_accounts_enabled, client_authenticator_type, root_url, description, registration_token, standard_flow_enabled, implicit_flow_enabled, direct_access_grants_enabled, always_display_in_console) VALUES ('bcb37c06-40e2-4f8d-9b11-9eb94138e598', true, false, 'security-admin-console', 0, true, 'f0b8b7f0-28cf-445a-b7b5-01574f96c8e8', '/admin/PoC-Soki-Realm-01/console/', false, NULL, false, 'PoC-Soki-Realm-01', 'openid-connect', 0, false, false, '${client_security-admin-console}', false, 'client-secret', '${authAdminUrl}', NULL, NULL, true, false, false, false);
+INSERT INTO public.client (id, enabled, full_scope_allowed, client_id, not_before, public_client, secret, base_url, bearer_only, management_url, surrogate_auth_required, realm_id, protocol, node_rereg_timeout, frontchannel_logout, consent_required, name, service_accounts_enabled, client_authenticator_type, root_url, description, registration_token, standard_flow_enabled, implicit_flow_enabled, direct_access_grants_enabled, always_display_in_console) VALUES ('d5a22857-1082-48ee-a0b3-7fd65a5f92dd', true, false, 'admin-cli', 0, true, 'e3bc24de-9206-4e29-862b-fb9cc7896a16', NULL, false, NULL, false, 'PoC-Soki-Realm-01', 'openid-connect', 0, false, false, '${client_admin-cli}', false, 'client-secret', NULL, NULL, NULL, false, false, true, false);
+INSERT INTO public.client (id, enabled, full_scope_allowed, client_id, not_before, public_client, secret, base_url, bearer_only, management_url, surrogate_auth_required, realm_id, protocol, node_rereg_timeout, frontchannel_logout, consent_required, name, service_accounts_enabled, client_authenticator_type, root_url, description, registration_token, standard_flow_enabled, implicit_flow_enabled, direct_access_grants_enabled, always_display_in_console) VALUES ('5067ce51-37f0-46a5-bfa2-984543e80361', true, true, 'PoC-Soki-App-Client-01', 0, false, 'd90508dd-916f-4215-824b-6cd29f8ec49f', NULL, false, 'http://localhost:8085', false, 'PoC-Soki-Realm-01', 'openid-connect', -1, false, false, NULL, true, 'client-secret', 'http://localhost:8085', NULL, NULL, true, false, true, false);
+
+
+--
+-- Data for Name: client_attributes; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.client_attributes (client_id, value, name) VALUES ('7b8f81bd-32fa-4952-bf35-9b7ab46ca70f', 'S256', 'pkce.code.challenge.method');
+INSERT INTO public.client_attributes (client_id, value, name) VALUES ('0acb1dc9-e951-4a48-8581-9436e7da12cc', 'S256', 'pkce.code.challenge.method');
+INSERT INTO public.client_attributes (client_id, value, name) VALUES ('95a91113-a1ca-48e9-a0e7-5320c3f6422a', 'S256', 'pkce.code.challenge.method');
+INSERT INTO public.client_attributes (client_id, value, name) VALUES ('bcb37c06-40e2-4f8d-9b11-9eb94138e598', 'S256', 'pkce.code.challenge.method');
+INSERT INTO public.client_attributes (client_id, value, name) VALUES ('5067ce51-37f0-46a5-bfa2-984543e80361', 'false', 'saml.server.signature');
+INSERT INTO public.client_attributes (client_id, value, name) VALUES ('5067ce51-37f0-46a5-bfa2-984543e80361', 'false', 'saml.server.signature.keyinfo.ext');
+INSERT INTO public.client_attributes (client_id, value, name) VALUES ('5067ce51-37f0-46a5-bfa2-984543e80361', 'false', 'saml.assertion.signature');
+INSERT INTO public.client_attributes (client_id, value, name) VALUES ('5067ce51-37f0-46a5-bfa2-984543e80361', 'false', 'saml.client.signature');
+INSERT INTO public.client_attributes (client_id, value, name) VALUES ('5067ce51-37f0-46a5-bfa2-984543e80361', 'false', 'saml.encrypt');
+INSERT INTO public.client_attributes (client_id, value, name) VALUES ('5067ce51-37f0-46a5-bfa2-984543e80361', 'false', 'saml.authnstatement');
+INSERT INTO public.client_attributes (client_id, value, name) VALUES ('5067ce51-37f0-46a5-bfa2-984543e80361', 'false', 'saml.onetimeuse.condition');
+INSERT INTO public.client_attributes (client_id, value, name) VALUES ('5067ce51-37f0-46a5-bfa2-984543e80361', 'false', 'saml_force_name_id_format');
+INSERT INTO public.client_attributes (client_id, value, name) VALUES ('5067ce51-37f0-46a5-bfa2-984543e80361', 'false', 'saml.multivalued.roles');
+INSERT INTO public.client_attributes (client_id, value, name) VALUES ('5067ce51-37f0-46a5-bfa2-984543e80361', 'false', 'saml.force.post.binding');
+INSERT INTO public.client_attributes (client_id, value, name) VALUES ('5067ce51-37f0-46a5-bfa2-984543e80361', 'false', 'exclude.session.state.from.auth.response');
+INSERT INTO public.client_attributes (client_id, value, name) VALUES ('5067ce51-37f0-46a5-bfa2-984543e80361', 'false', 'tls.client.certificate.bound.access.tokens');
+INSERT INTO public.client_attributes (client_id, value, name) VALUES ('5067ce51-37f0-46a5-bfa2-984543e80361', 'false', 'display.on.consent.screen');
+
+
+--
+-- Data for Name: client_auth_flow_bindings; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: client_default_roles; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.client_default_roles (client_id, role_id) VALUES ('7794d3b1-3f3b-4baa-991a-aa74b0cd6cea', '5325dae2-4ad5-4519-bf07-f43721c3896c');
+INSERT INTO public.client_default_roles (client_id, role_id) VALUES ('7794d3b1-3f3b-4baa-991a-aa74b0cd6cea', 'c441ff20-25c7-4c70-88e6-431925120e72');
+INSERT INTO public.client_default_roles (client_id, role_id) VALUES ('d14028a0-d831-42db-ab01-6cf86a9d9f51', 'b284cb80-aba0-4511-bc09-415b47ea7280');
+INSERT INTO public.client_default_roles (client_id, role_id) VALUES ('d14028a0-d831-42db-ab01-6cf86a9d9f51', 'cd6ee10f-e970-4684-bfb5-4852ab788461');
+
+
+--
+-- Data for Name: client_initial_access; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: client_node_registrations; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: client_scope; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.client_scope (id, name, realm_id, description, protocol) VALUES ('700b4f56-7e63-40a5-bf6f-0a978279b2f0', 'offline_access', 'master', 'OpenID Connect built-in scope: offline_access', 'openid-connect');
+INSERT INTO public.client_scope (id, name, realm_id, description, protocol) VALUES ('1a290f56-e5e4-4a99-b5d8-70fc0bb80f97', 'role_list', 'master', 'SAML role list', 'saml');
+INSERT INTO public.client_scope (id, name, realm_id, description, protocol) VALUES ('b8cf8179-455c-4dce-a32f-335744d3b704', 'profile', 'master', 'OpenID Connect built-in scope: profile', 'openid-connect');
+INSERT INTO public.client_scope (id, name, realm_id, description, protocol) VALUES ('0c84ea01-a6b6-42f3-a8ba-aec260c86634', 'email', 'master', 'OpenID Connect built-in scope: email', 'openid-connect');
+INSERT INTO public.client_scope (id, name, realm_id, description, protocol) VALUES ('e6d4c1e6-036f-4018-9609-a0e205a4a507', 'address', 'master', 'OpenID Connect built-in scope: address', 'openid-connect');
+INSERT INTO public.client_scope (id, name, realm_id, description, protocol) VALUES ('941518b6-63f2-4912-8cc5-7b45a0b90d40', 'phone', 'master', 'OpenID Connect built-in scope: phone', 'openid-connect');
+INSERT INTO public.client_scope (id, name, realm_id, description, protocol) VALUES ('b786157b-6a00-4d21-8394-68404975701f', 'roles', 'master', 'OpenID Connect scope for add user roles to the access token', 'openid-connect');
+INSERT INTO public.client_scope (id, name, realm_id, description, protocol) VALUES ('e5e89fa9-ac8b-421e-a6fd-a0e9c0f098cd', 'web-origins', 'master', 'OpenID Connect scope for add allowed web origins to the access token', 'openid-connect');
+INSERT INTO public.client_scope (id, name, realm_id, description, protocol) VALUES ('17d991f7-11aa-41d6-87e8-8a5ad30923a8', 'microprofile-jwt', 'master', 'Microprofile - JWT built-in scope', 'openid-connect');
+INSERT INTO public.client_scope (id, name, realm_id, description, protocol) VALUES ('be6e0330-f101-456c-9dc8-bb2770104a01', 'offline_access', 'PoC-Soki-Realm-01', 'OpenID Connect built-in scope: offline_access', 'openid-connect');
+INSERT INTO public.client_scope (id, name, realm_id, description, protocol) VALUES ('2ea32f36-8a2d-4565-8000-267954d1b466', 'role_list', 'PoC-Soki-Realm-01', 'SAML role list', 'saml');
+INSERT INTO public.client_scope (id, name, realm_id, description, protocol) VALUES ('8358ec8f-e794-451a-b3e9-e1a99664992f', 'profile', 'PoC-Soki-Realm-01', 'OpenID Connect built-in scope: profile', 'openid-connect');
+INSERT INTO public.client_scope (id, name, realm_id, description, protocol) VALUES ('3171e3d6-69ba-4732-8815-bf279b192da5', 'email', 'PoC-Soki-Realm-01', 'OpenID Connect built-in scope: email', 'openid-connect');
+INSERT INTO public.client_scope (id, name, realm_id, description, protocol) VALUES ('644b2967-63ed-4559-a91c-dc65b8b1de55', 'address', 'PoC-Soki-Realm-01', 'OpenID Connect built-in scope: address', 'openid-connect');
+INSERT INTO public.client_scope (id, name, realm_id, description, protocol) VALUES ('92f27ece-595a-497d-a8a4-d7d5d94a44d9', 'phone', 'PoC-Soki-Realm-01', 'OpenID Connect built-in scope: phone', 'openid-connect');
+INSERT INTO public.client_scope (id, name, realm_id, description, protocol) VALUES ('1af671a3-3e34-4044-bcce-932600fbe78b', 'roles', 'PoC-Soki-Realm-01', 'OpenID Connect scope for add user roles to the access token', 'openid-connect');
+INSERT INTO public.client_scope (id, name, realm_id, description, protocol) VALUES ('d59ffc54-01fb-4cd2-8668-885d7846c3fe', 'web-origins', 'PoC-Soki-Realm-01', 'OpenID Connect scope for add allowed web origins to the access token', 'openid-connect');
+INSERT INTO public.client_scope (id, name, realm_id, description, protocol) VALUES ('abbf3a3a-e7e3-4095-8143-361e788921e4', 'microprofile-jwt', 'PoC-Soki-Realm-01', 'Microprofile - JWT built-in scope', 'openid-connect');
+
+
+--
+-- Data for Name: client_scope_attributes; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('700b4f56-7e63-40a5-bf6f-0a978279b2f0', 'true', 'display.on.consent.screen');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('700b4f56-7e63-40a5-bf6f-0a978279b2f0', '${offlineAccessScopeConsentText}', 'consent.screen.text');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('1a290f56-e5e4-4a99-b5d8-70fc0bb80f97', 'true', 'display.on.consent.screen');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('1a290f56-e5e4-4a99-b5d8-70fc0bb80f97', '${samlRoleListScopeConsentText}', 'consent.screen.text');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('b8cf8179-455c-4dce-a32f-335744d3b704', 'true', 'display.on.consent.screen');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('b8cf8179-455c-4dce-a32f-335744d3b704', '${profileScopeConsentText}', 'consent.screen.text');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('b8cf8179-455c-4dce-a32f-335744d3b704', 'true', 'include.in.token.scope');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('0c84ea01-a6b6-42f3-a8ba-aec260c86634', 'true', 'display.on.consent.screen');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('0c84ea01-a6b6-42f3-a8ba-aec260c86634', '${emailScopeConsentText}', 'consent.screen.text');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('0c84ea01-a6b6-42f3-a8ba-aec260c86634', 'true', 'include.in.token.scope');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('e6d4c1e6-036f-4018-9609-a0e205a4a507', 'true', 'display.on.consent.screen');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('e6d4c1e6-036f-4018-9609-a0e205a4a507', '${addressScopeConsentText}', 'consent.screen.text');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('e6d4c1e6-036f-4018-9609-a0e205a4a507', 'true', 'include.in.token.scope');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('941518b6-63f2-4912-8cc5-7b45a0b90d40', 'true', 'display.on.consent.screen');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('941518b6-63f2-4912-8cc5-7b45a0b90d40', '${phoneScopeConsentText}', 'consent.screen.text');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('941518b6-63f2-4912-8cc5-7b45a0b90d40', 'true', 'include.in.token.scope');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('b786157b-6a00-4d21-8394-68404975701f', 'true', 'display.on.consent.screen');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('b786157b-6a00-4d21-8394-68404975701f', '${rolesScopeConsentText}', 'consent.screen.text');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('b786157b-6a00-4d21-8394-68404975701f', 'false', 'include.in.token.scope');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('e5e89fa9-ac8b-421e-a6fd-a0e9c0f098cd', 'false', 'display.on.consent.screen');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('e5e89fa9-ac8b-421e-a6fd-a0e9c0f098cd', '', 'consent.screen.text');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('e5e89fa9-ac8b-421e-a6fd-a0e9c0f098cd', 'false', 'include.in.token.scope');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('17d991f7-11aa-41d6-87e8-8a5ad30923a8', 'false', 'display.on.consent.screen');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('17d991f7-11aa-41d6-87e8-8a5ad30923a8', 'true', 'include.in.token.scope');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('be6e0330-f101-456c-9dc8-bb2770104a01', 'true', 'display.on.consent.screen');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('be6e0330-f101-456c-9dc8-bb2770104a01', '${offlineAccessScopeConsentText}', 'consent.screen.text');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('2ea32f36-8a2d-4565-8000-267954d1b466', 'true', 'display.on.consent.screen');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('2ea32f36-8a2d-4565-8000-267954d1b466', '${samlRoleListScopeConsentText}', 'consent.screen.text');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('8358ec8f-e794-451a-b3e9-e1a99664992f', 'true', 'display.on.consent.screen');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('8358ec8f-e794-451a-b3e9-e1a99664992f', '${profileScopeConsentText}', 'consent.screen.text');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('8358ec8f-e794-451a-b3e9-e1a99664992f', 'true', 'include.in.token.scope');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('3171e3d6-69ba-4732-8815-bf279b192da5', 'true', 'display.on.consent.screen');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('3171e3d6-69ba-4732-8815-bf279b192da5', '${emailScopeConsentText}', 'consent.screen.text');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('3171e3d6-69ba-4732-8815-bf279b192da5', 'true', 'include.in.token.scope');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('644b2967-63ed-4559-a91c-dc65b8b1de55', 'true', 'display.on.consent.screen');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('644b2967-63ed-4559-a91c-dc65b8b1de55', '${addressScopeConsentText}', 'consent.screen.text');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('644b2967-63ed-4559-a91c-dc65b8b1de55', 'true', 'include.in.token.scope');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('92f27ece-595a-497d-a8a4-d7d5d94a44d9', 'true', 'display.on.consent.screen');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('92f27ece-595a-497d-a8a4-d7d5d94a44d9', '${phoneScopeConsentText}', 'consent.screen.text');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('92f27ece-595a-497d-a8a4-d7d5d94a44d9', 'true', 'include.in.token.scope');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('1af671a3-3e34-4044-bcce-932600fbe78b', 'true', 'display.on.consent.screen');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('1af671a3-3e34-4044-bcce-932600fbe78b', '${rolesScopeConsentText}', 'consent.screen.text');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('d59ffc54-01fb-4cd2-8668-885d7846c3fe', 'false', 'display.on.consent.screen');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('d59ffc54-01fb-4cd2-8668-885d7846c3fe', '', 'consent.screen.text');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('d59ffc54-01fb-4cd2-8668-885d7846c3fe', 'false', 'include.in.token.scope');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('abbf3a3a-e7e3-4095-8143-361e788921e4', 'false', 'display.on.consent.screen');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('abbf3a3a-e7e3-4095-8143-361e788921e4', 'true', 'include.in.token.scope');
+INSERT INTO public.client_scope_attributes (scope_id, value, name) VALUES ('1af671a3-3e34-4044-bcce-932600fbe78b', 'true', 'include.in.token.scope');
+
+
+--
+-- Data for Name: client_scope_client; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('7794d3b1-3f3b-4baa-991a-aa74b0cd6cea', '1a290f56-e5e4-4a99-b5d8-70fc0bb80f97', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('7b8f81bd-32fa-4952-bf35-9b7ab46ca70f', '1a290f56-e5e4-4a99-b5d8-70fc0bb80f97', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('ae50f480-f41a-4da3-acff-247fc7c1f4e2', '1a290f56-e5e4-4a99-b5d8-70fc0bb80f97', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('ecdd0f72-2c87-46bc-b2f1-65039807e553', '1a290f56-e5e4-4a99-b5d8-70fc0bb80f97', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('72ae90e4-4635-4bd9-9605-a1d8898d6a96', '1a290f56-e5e4-4a99-b5d8-70fc0bb80f97', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('0acb1dc9-e951-4a48-8581-9436e7da12cc', '1a290f56-e5e4-4a99-b5d8-70fc0bb80f97', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('7794d3b1-3f3b-4baa-991a-aa74b0cd6cea', '0c84ea01-a6b6-42f3-a8ba-aec260c86634', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('7794d3b1-3f3b-4baa-991a-aa74b0cd6cea', 'b8cf8179-455c-4dce-a32f-335744d3b704', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('7794d3b1-3f3b-4baa-991a-aa74b0cd6cea', 'e5e89fa9-ac8b-421e-a6fd-a0e9c0f098cd', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('7794d3b1-3f3b-4baa-991a-aa74b0cd6cea', 'b786157b-6a00-4d21-8394-68404975701f', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('7b8f81bd-32fa-4952-bf35-9b7ab46ca70f', '0c84ea01-a6b6-42f3-a8ba-aec260c86634', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('7b8f81bd-32fa-4952-bf35-9b7ab46ca70f', 'b8cf8179-455c-4dce-a32f-335744d3b704', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('7b8f81bd-32fa-4952-bf35-9b7ab46ca70f', 'e5e89fa9-ac8b-421e-a6fd-a0e9c0f098cd', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('7b8f81bd-32fa-4952-bf35-9b7ab46ca70f', 'b786157b-6a00-4d21-8394-68404975701f', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('ae50f480-f41a-4da3-acff-247fc7c1f4e2', '0c84ea01-a6b6-42f3-a8ba-aec260c86634', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('ae50f480-f41a-4da3-acff-247fc7c1f4e2', 'b8cf8179-455c-4dce-a32f-335744d3b704', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('ae50f480-f41a-4da3-acff-247fc7c1f4e2', 'e5e89fa9-ac8b-421e-a6fd-a0e9c0f098cd', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('ae50f480-f41a-4da3-acff-247fc7c1f4e2', 'b786157b-6a00-4d21-8394-68404975701f', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('ecdd0f72-2c87-46bc-b2f1-65039807e553', '0c84ea01-a6b6-42f3-a8ba-aec260c86634', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('ecdd0f72-2c87-46bc-b2f1-65039807e553', 'b8cf8179-455c-4dce-a32f-335744d3b704', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('ecdd0f72-2c87-46bc-b2f1-65039807e553', 'e5e89fa9-ac8b-421e-a6fd-a0e9c0f098cd', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('ecdd0f72-2c87-46bc-b2f1-65039807e553', 'b786157b-6a00-4d21-8394-68404975701f', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('72ae90e4-4635-4bd9-9605-a1d8898d6a96', '0c84ea01-a6b6-42f3-a8ba-aec260c86634', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('72ae90e4-4635-4bd9-9605-a1d8898d6a96', 'b8cf8179-455c-4dce-a32f-335744d3b704', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('72ae90e4-4635-4bd9-9605-a1d8898d6a96', 'e5e89fa9-ac8b-421e-a6fd-a0e9c0f098cd', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('72ae90e4-4635-4bd9-9605-a1d8898d6a96', 'b786157b-6a00-4d21-8394-68404975701f', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('0acb1dc9-e951-4a48-8581-9436e7da12cc', '0c84ea01-a6b6-42f3-a8ba-aec260c86634', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('0acb1dc9-e951-4a48-8581-9436e7da12cc', 'b8cf8179-455c-4dce-a32f-335744d3b704', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('0acb1dc9-e951-4a48-8581-9436e7da12cc', 'e5e89fa9-ac8b-421e-a6fd-a0e9c0f098cd', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('0acb1dc9-e951-4a48-8581-9436e7da12cc', 'b786157b-6a00-4d21-8394-68404975701f', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('7794d3b1-3f3b-4baa-991a-aa74b0cd6cea', '941518b6-63f2-4912-8cc5-7b45a0b90d40', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('7794d3b1-3f3b-4baa-991a-aa74b0cd6cea', '17d991f7-11aa-41d6-87e8-8a5ad30923a8', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('7794d3b1-3f3b-4baa-991a-aa74b0cd6cea', 'e6d4c1e6-036f-4018-9609-a0e205a4a507', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('7794d3b1-3f3b-4baa-991a-aa74b0cd6cea', '700b4f56-7e63-40a5-bf6f-0a978279b2f0', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('7b8f81bd-32fa-4952-bf35-9b7ab46ca70f', '941518b6-63f2-4912-8cc5-7b45a0b90d40', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('7b8f81bd-32fa-4952-bf35-9b7ab46ca70f', '17d991f7-11aa-41d6-87e8-8a5ad30923a8', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('7b8f81bd-32fa-4952-bf35-9b7ab46ca70f', 'e6d4c1e6-036f-4018-9609-a0e205a4a507', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('7b8f81bd-32fa-4952-bf35-9b7ab46ca70f', '700b4f56-7e63-40a5-bf6f-0a978279b2f0', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('ae50f480-f41a-4da3-acff-247fc7c1f4e2', '941518b6-63f2-4912-8cc5-7b45a0b90d40', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('ae50f480-f41a-4da3-acff-247fc7c1f4e2', '17d991f7-11aa-41d6-87e8-8a5ad30923a8', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('ae50f480-f41a-4da3-acff-247fc7c1f4e2', 'e6d4c1e6-036f-4018-9609-a0e205a4a507', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('ae50f480-f41a-4da3-acff-247fc7c1f4e2', '700b4f56-7e63-40a5-bf6f-0a978279b2f0', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('ecdd0f72-2c87-46bc-b2f1-65039807e553', '941518b6-63f2-4912-8cc5-7b45a0b90d40', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('ecdd0f72-2c87-46bc-b2f1-65039807e553', '17d991f7-11aa-41d6-87e8-8a5ad30923a8', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('ecdd0f72-2c87-46bc-b2f1-65039807e553', 'e6d4c1e6-036f-4018-9609-a0e205a4a507', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('ecdd0f72-2c87-46bc-b2f1-65039807e553', '700b4f56-7e63-40a5-bf6f-0a978279b2f0', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('72ae90e4-4635-4bd9-9605-a1d8898d6a96', '941518b6-63f2-4912-8cc5-7b45a0b90d40', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('72ae90e4-4635-4bd9-9605-a1d8898d6a96', '17d991f7-11aa-41d6-87e8-8a5ad30923a8', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('72ae90e4-4635-4bd9-9605-a1d8898d6a96', 'e6d4c1e6-036f-4018-9609-a0e205a4a507', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('72ae90e4-4635-4bd9-9605-a1d8898d6a96', '700b4f56-7e63-40a5-bf6f-0a978279b2f0', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('0acb1dc9-e951-4a48-8581-9436e7da12cc', '941518b6-63f2-4912-8cc5-7b45a0b90d40', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('0acb1dc9-e951-4a48-8581-9436e7da12cc', '17d991f7-11aa-41d6-87e8-8a5ad30923a8', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('0acb1dc9-e951-4a48-8581-9436e7da12cc', 'e6d4c1e6-036f-4018-9609-a0e205a4a507', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('0acb1dc9-e951-4a48-8581-9436e7da12cc', '700b4f56-7e63-40a5-bf6f-0a978279b2f0', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('1b7a1f93-5791-449b-b19a-7c8892118d6e', '1a290f56-e5e4-4a99-b5d8-70fc0bb80f97', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('1b7a1f93-5791-449b-b19a-7c8892118d6e', '0c84ea01-a6b6-42f3-a8ba-aec260c86634', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('1b7a1f93-5791-449b-b19a-7c8892118d6e', 'b8cf8179-455c-4dce-a32f-335744d3b704', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('1b7a1f93-5791-449b-b19a-7c8892118d6e', 'e5e89fa9-ac8b-421e-a6fd-a0e9c0f098cd', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('1b7a1f93-5791-449b-b19a-7c8892118d6e', 'b786157b-6a00-4d21-8394-68404975701f', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('1b7a1f93-5791-449b-b19a-7c8892118d6e', '941518b6-63f2-4912-8cc5-7b45a0b90d40', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('1b7a1f93-5791-449b-b19a-7c8892118d6e', '17d991f7-11aa-41d6-87e8-8a5ad30923a8', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('1b7a1f93-5791-449b-b19a-7c8892118d6e', 'e6d4c1e6-036f-4018-9609-a0e205a4a507', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('1b7a1f93-5791-449b-b19a-7c8892118d6e', '700b4f56-7e63-40a5-bf6f-0a978279b2f0', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('d14028a0-d831-42db-ab01-6cf86a9d9f51', '2ea32f36-8a2d-4565-8000-267954d1b466', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('95a91113-a1ca-48e9-a0e7-5320c3f6422a', '2ea32f36-8a2d-4565-8000-267954d1b466', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('d5a22857-1082-48ee-a0b3-7fd65a5f92dd', '2ea32f36-8a2d-4565-8000-267954d1b466', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('3ce0da36-54ad-4911-b510-6b871451ed63', '2ea32f36-8a2d-4565-8000-267954d1b466', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('21320440-b1b3-435c-9932-b05251af5396', '2ea32f36-8a2d-4565-8000-267954d1b466', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('bcb37c06-40e2-4f8d-9b11-9eb94138e598', '2ea32f36-8a2d-4565-8000-267954d1b466', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('d14028a0-d831-42db-ab01-6cf86a9d9f51', '8358ec8f-e794-451a-b3e9-e1a99664992f', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('d14028a0-d831-42db-ab01-6cf86a9d9f51', '3171e3d6-69ba-4732-8815-bf279b192da5', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('d14028a0-d831-42db-ab01-6cf86a9d9f51', 'd59ffc54-01fb-4cd2-8668-885d7846c3fe', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('d14028a0-d831-42db-ab01-6cf86a9d9f51', '1af671a3-3e34-4044-bcce-932600fbe78b', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('95a91113-a1ca-48e9-a0e7-5320c3f6422a', '8358ec8f-e794-451a-b3e9-e1a99664992f', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('95a91113-a1ca-48e9-a0e7-5320c3f6422a', '3171e3d6-69ba-4732-8815-bf279b192da5', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('95a91113-a1ca-48e9-a0e7-5320c3f6422a', 'd59ffc54-01fb-4cd2-8668-885d7846c3fe', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('95a91113-a1ca-48e9-a0e7-5320c3f6422a', '1af671a3-3e34-4044-bcce-932600fbe78b', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('d5a22857-1082-48ee-a0b3-7fd65a5f92dd', '8358ec8f-e794-451a-b3e9-e1a99664992f', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('d5a22857-1082-48ee-a0b3-7fd65a5f92dd', '3171e3d6-69ba-4732-8815-bf279b192da5', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('d5a22857-1082-48ee-a0b3-7fd65a5f92dd', 'd59ffc54-01fb-4cd2-8668-885d7846c3fe', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('d5a22857-1082-48ee-a0b3-7fd65a5f92dd', '1af671a3-3e34-4044-bcce-932600fbe78b', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('3ce0da36-54ad-4911-b510-6b871451ed63', '8358ec8f-e794-451a-b3e9-e1a99664992f', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('3ce0da36-54ad-4911-b510-6b871451ed63', '3171e3d6-69ba-4732-8815-bf279b192da5', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('3ce0da36-54ad-4911-b510-6b871451ed63', 'd59ffc54-01fb-4cd2-8668-885d7846c3fe', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('3ce0da36-54ad-4911-b510-6b871451ed63', '1af671a3-3e34-4044-bcce-932600fbe78b', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('21320440-b1b3-435c-9932-b05251af5396', '8358ec8f-e794-451a-b3e9-e1a99664992f', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('21320440-b1b3-435c-9932-b05251af5396', '3171e3d6-69ba-4732-8815-bf279b192da5', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('21320440-b1b3-435c-9932-b05251af5396', 'd59ffc54-01fb-4cd2-8668-885d7846c3fe', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('21320440-b1b3-435c-9932-b05251af5396', '1af671a3-3e34-4044-bcce-932600fbe78b', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('bcb37c06-40e2-4f8d-9b11-9eb94138e598', '8358ec8f-e794-451a-b3e9-e1a99664992f', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('bcb37c06-40e2-4f8d-9b11-9eb94138e598', '3171e3d6-69ba-4732-8815-bf279b192da5', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('bcb37c06-40e2-4f8d-9b11-9eb94138e598', 'd59ffc54-01fb-4cd2-8668-885d7846c3fe', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('bcb37c06-40e2-4f8d-9b11-9eb94138e598', '1af671a3-3e34-4044-bcce-932600fbe78b', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('d14028a0-d831-42db-ab01-6cf86a9d9f51', 'be6e0330-f101-456c-9dc8-bb2770104a01', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('d14028a0-d831-42db-ab01-6cf86a9d9f51', 'abbf3a3a-e7e3-4095-8143-361e788921e4', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('d14028a0-d831-42db-ab01-6cf86a9d9f51', '644b2967-63ed-4559-a91c-dc65b8b1de55', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('d14028a0-d831-42db-ab01-6cf86a9d9f51', '92f27ece-595a-497d-a8a4-d7d5d94a44d9', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('95a91113-a1ca-48e9-a0e7-5320c3f6422a', 'be6e0330-f101-456c-9dc8-bb2770104a01', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('95a91113-a1ca-48e9-a0e7-5320c3f6422a', 'abbf3a3a-e7e3-4095-8143-361e788921e4', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('95a91113-a1ca-48e9-a0e7-5320c3f6422a', '644b2967-63ed-4559-a91c-dc65b8b1de55', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('95a91113-a1ca-48e9-a0e7-5320c3f6422a', '92f27ece-595a-497d-a8a4-d7d5d94a44d9', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('d5a22857-1082-48ee-a0b3-7fd65a5f92dd', 'be6e0330-f101-456c-9dc8-bb2770104a01', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('d5a22857-1082-48ee-a0b3-7fd65a5f92dd', 'abbf3a3a-e7e3-4095-8143-361e788921e4', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('d5a22857-1082-48ee-a0b3-7fd65a5f92dd', '644b2967-63ed-4559-a91c-dc65b8b1de55', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('d5a22857-1082-48ee-a0b3-7fd65a5f92dd', '92f27ece-595a-497d-a8a4-d7d5d94a44d9', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('3ce0da36-54ad-4911-b510-6b871451ed63', 'be6e0330-f101-456c-9dc8-bb2770104a01', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('3ce0da36-54ad-4911-b510-6b871451ed63', 'abbf3a3a-e7e3-4095-8143-361e788921e4', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('3ce0da36-54ad-4911-b510-6b871451ed63', '644b2967-63ed-4559-a91c-dc65b8b1de55', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('3ce0da36-54ad-4911-b510-6b871451ed63', '92f27ece-595a-497d-a8a4-d7d5d94a44d9', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('21320440-b1b3-435c-9932-b05251af5396', 'be6e0330-f101-456c-9dc8-bb2770104a01', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('21320440-b1b3-435c-9932-b05251af5396', 'abbf3a3a-e7e3-4095-8143-361e788921e4', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('21320440-b1b3-435c-9932-b05251af5396', '644b2967-63ed-4559-a91c-dc65b8b1de55', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('21320440-b1b3-435c-9932-b05251af5396', '92f27ece-595a-497d-a8a4-d7d5d94a44d9', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('bcb37c06-40e2-4f8d-9b11-9eb94138e598', 'be6e0330-f101-456c-9dc8-bb2770104a01', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('bcb37c06-40e2-4f8d-9b11-9eb94138e598', 'abbf3a3a-e7e3-4095-8143-361e788921e4', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('bcb37c06-40e2-4f8d-9b11-9eb94138e598', '644b2967-63ed-4559-a91c-dc65b8b1de55', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('bcb37c06-40e2-4f8d-9b11-9eb94138e598', '92f27ece-595a-497d-a8a4-d7d5d94a44d9', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('5067ce51-37f0-46a5-bfa2-984543e80361', '2ea32f36-8a2d-4565-8000-267954d1b466', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('5067ce51-37f0-46a5-bfa2-984543e80361', '8358ec8f-e794-451a-b3e9-e1a99664992f', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('5067ce51-37f0-46a5-bfa2-984543e80361', '3171e3d6-69ba-4732-8815-bf279b192da5', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('5067ce51-37f0-46a5-bfa2-984543e80361', 'd59ffc54-01fb-4cd2-8668-885d7846c3fe', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('5067ce51-37f0-46a5-bfa2-984543e80361', '1af671a3-3e34-4044-bcce-932600fbe78b', true);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('5067ce51-37f0-46a5-bfa2-984543e80361', 'be6e0330-f101-456c-9dc8-bb2770104a01', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('5067ce51-37f0-46a5-bfa2-984543e80361', 'abbf3a3a-e7e3-4095-8143-361e788921e4', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('5067ce51-37f0-46a5-bfa2-984543e80361', '644b2967-63ed-4559-a91c-dc65b8b1de55', false);
+INSERT INTO public.client_scope_client (client_id, scope_id, default_scope) VALUES ('5067ce51-37f0-46a5-bfa2-984543e80361', '92f27ece-595a-497d-a8a4-d7d5d94a44d9', false);
+
+
+--
+-- Data for Name: client_scope_role_mapping; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.client_scope_role_mapping (scope_id, role_id) VALUES ('700b4f56-7e63-40a5-bf6f-0a978279b2f0', '8f628a3e-3a1d-41b6-8a4c-ef418e2f01b6');
+INSERT INTO public.client_scope_role_mapping (scope_id, role_id) VALUES ('be6e0330-f101-456c-9dc8-bb2770104a01', '68465770-630c-4aa4-98a4-63a810c7aa91');
+
+
+--
+-- Data for Name: client_session; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: client_session_auth_status; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: client_session_note; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: client_session_prot_mapper; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: client_session_role; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: client_user_session_note; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: component; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.component (id, name, parent_id, provider_id, provider_type, realm_id, sub_type) VALUES ('5dca6888-a14e-49fd-912e-eb4d32f5fd2c', 'Trusted Hosts', 'master', 'trusted-hosts', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'master', 'anonymous');
+INSERT INTO public.component (id, name, parent_id, provider_id, provider_type, realm_id, sub_type) VALUES ('86afd2ce-c198-447b-b5af-f0f6a543cc03', 'Consent Required', 'master', 'consent-required', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'master', 'anonymous');
+INSERT INTO public.component (id, name, parent_id, provider_id, provider_type, realm_id, sub_type) VALUES ('f459e908-413e-4cd8-b7f7-10d057ef74d4', 'Full Scope Disabled', 'master', 'scope', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'master', 'anonymous');
+INSERT INTO public.component (id, name, parent_id, provider_id, provider_type, realm_id, sub_type) VALUES ('94f4b010-fa7e-4fa7-803d-fc2af053ffa0', 'Max Clients Limit', 'master', 'max-clients', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'master', 'anonymous');
+INSERT INTO public.component (id, name, parent_id, provider_id, provider_type, realm_id, sub_type) VALUES ('093492b8-d02e-4db2-88c4-0bb423dcacea', 'Allowed Protocol Mapper Types', 'master', 'allowed-protocol-mappers', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'master', 'anonymous');
+INSERT INTO public.component (id, name, parent_id, provider_id, provider_type, realm_id, sub_type) VALUES ('ce1ded20-b675-459e-89a8-ac752a2f356c', 'Allowed Client Scopes', 'master', 'allowed-client-templates', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'master', 'anonymous');
+INSERT INTO public.component (id, name, parent_id, provider_id, provider_type, realm_id, sub_type) VALUES ('85f469a3-65fe-417a-aea5-a3fd3b9200a8', 'Allowed Protocol Mapper Types', 'master', 'allowed-protocol-mappers', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'master', 'authenticated');
+INSERT INTO public.component (id, name, parent_id, provider_id, provider_type, realm_id, sub_type) VALUES ('5486006d-640f-4256-8f8c-e87810fc3248', 'Allowed Client Scopes', 'master', 'allowed-client-templates', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'master', 'authenticated');
+INSERT INTO public.component (id, name, parent_id, provider_id, provider_type, realm_id, sub_type) VALUES ('36907b15-31b4-42de-93af-4ed9181b998a', 'fallback-HS256', 'master', 'hmac-generated', 'org.keycloak.keys.KeyProvider', 'master', NULL);
+INSERT INTO public.component (id, name, parent_id, provider_id, provider_type, realm_id, sub_type) VALUES ('46cd88cc-29f9-44b2-bdcf-718ab434411a', 'fallback-RS256', 'master', 'rsa-generated', 'org.keycloak.keys.KeyProvider', 'master', NULL);
+INSERT INTO public.component (id, name, parent_id, provider_id, provider_type, realm_id, sub_type) VALUES ('88d15524-5ef0-4418-9cca-ae869befcc91', 'rsa-generated', 'PoC-Soki-Realm-01', 'rsa-generated', 'org.keycloak.keys.KeyProvider', 'PoC-Soki-Realm-01', NULL);
+INSERT INTO public.component (id, name, parent_id, provider_id, provider_type, realm_id, sub_type) VALUES ('b5506abc-eb9f-408e-b9e6-4070d64d5903', 'hmac-generated', 'PoC-Soki-Realm-01', 'hmac-generated', 'org.keycloak.keys.KeyProvider', 'PoC-Soki-Realm-01', NULL);
+INSERT INTO public.component (id, name, parent_id, provider_id, provider_type, realm_id, sub_type) VALUES ('f45384cf-21bd-4a64-a1da-c9a86eab4dd6', 'aes-generated', 'PoC-Soki-Realm-01', 'aes-generated', 'org.keycloak.keys.KeyProvider', 'PoC-Soki-Realm-01', NULL);
+INSERT INTO public.component (id, name, parent_id, provider_id, provider_type, realm_id, sub_type) VALUES ('2bb6f943-1886-4d24-8254-e9c3c80642e1', 'Trusted Hosts', 'PoC-Soki-Realm-01', 'trusted-hosts', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'PoC-Soki-Realm-01', 'anonymous');
+INSERT INTO public.component (id, name, parent_id, provider_id, provider_type, realm_id, sub_type) VALUES ('8132f8e1-d50e-44cf-8009-f06b52b9fed1', 'Consent Required', 'PoC-Soki-Realm-01', 'consent-required', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'PoC-Soki-Realm-01', 'anonymous');
+INSERT INTO public.component (id, name, parent_id, provider_id, provider_type, realm_id, sub_type) VALUES ('cb45bb47-7f19-47ba-bc29-8f98128ac2a3', 'Full Scope Disabled', 'PoC-Soki-Realm-01', 'scope', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'PoC-Soki-Realm-01', 'anonymous');
+INSERT INTO public.component (id, name, parent_id, provider_id, provider_type, realm_id, sub_type) VALUES ('8444f2a0-5a25-450c-af9b-19b867c19c32', 'Max Clients Limit', 'PoC-Soki-Realm-01', 'max-clients', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'PoC-Soki-Realm-01', 'anonymous');
+INSERT INTO public.component (id, name, parent_id, provider_id, provider_type, realm_id, sub_type) VALUES ('0a10a28b-ac15-4e04-a846-6dcfa3a34bdd', 'Allowed Protocol Mapper Types', 'PoC-Soki-Realm-01', 'allowed-protocol-mappers', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'PoC-Soki-Realm-01', 'anonymous');
+INSERT INTO public.component (id, name, parent_id, provider_id, provider_type, realm_id, sub_type) VALUES ('bd27e2d8-ddb4-41a0-8c0e-90013c678d34', 'Allowed Client Scopes', 'PoC-Soki-Realm-01', 'allowed-client-templates', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'PoC-Soki-Realm-01', 'anonymous');
+INSERT INTO public.component (id, name, parent_id, provider_id, provider_type, realm_id, sub_type) VALUES ('c13de266-ba61-426c-b751-b72e04262fa4', 'Allowed Protocol Mapper Types', 'PoC-Soki-Realm-01', 'allowed-protocol-mappers', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'PoC-Soki-Realm-01', 'authenticated');
+INSERT INTO public.component (id, name, parent_id, provider_id, provider_type, realm_id, sub_type) VALUES ('2c1a96ba-fc4d-4273-83d2-120de2603009', 'Allowed Client Scopes', 'PoC-Soki-Realm-01', 'allowed-client-templates', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'PoC-Soki-Realm-01', 'authenticated');
+
+
+--
+-- Data for Name: component_config; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('94e1409c-aad4-4289-9fad-24cea6eb0fba', '5dca6888-a14e-49fd-912e-eb4d32f5fd2c', 'client-uris-must-match', 'true');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('1cba1f31-8d67-4f27-ad2c-a9e99c4e6ceb', '5dca6888-a14e-49fd-912e-eb4d32f5fd2c', 'host-sending-registration-request-must-match', 'true');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('0506106c-c414-4aa1-9fd1-092a9ba0a5f4', 'ce1ded20-b675-459e-89a8-ac752a2f356c', 'allow-default-scopes', 'true');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('fc79ff6e-ff57-4010-8186-4a1db14efc21', '85f469a3-65fe-417a-aea5-a3fd3b9200a8', 'allowed-protocol-mapper-types', 'saml-role-list-mapper');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('3779fe6d-1815-4652-8e41-5d44735ed34a', '85f469a3-65fe-417a-aea5-a3fd3b9200a8', 'allowed-protocol-mapper-types', 'oidc-usermodel-property-mapper');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('60e040b9-ec70-43a6-aa83-322622e160cf', '85f469a3-65fe-417a-aea5-a3fd3b9200a8', 'allowed-protocol-mapper-types', 'oidc-sha256-pairwise-sub-mapper');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('77e97a24-309f-43ae-8069-a3a7ba98738f', '85f469a3-65fe-417a-aea5-a3fd3b9200a8', 'allowed-protocol-mapper-types', 'saml-user-property-mapper');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('e753c1a4-37c2-47d1-97cd-66231fe58a65', '85f469a3-65fe-417a-aea5-a3fd3b9200a8', 'allowed-protocol-mapper-types', 'saml-user-attribute-mapper');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('008a2d66-795b-412e-8b6e-8ac1bcd7eeb8', '85f469a3-65fe-417a-aea5-a3fd3b9200a8', 'allowed-protocol-mapper-types', 'oidc-full-name-mapper');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('21f5bf4e-4fa2-44f6-8203-d1c1ab081eb8', '85f469a3-65fe-417a-aea5-a3fd3b9200a8', 'allowed-protocol-mapper-types', 'oidc-usermodel-attribute-mapper');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('ffc42734-06df-4f36-bf38-2da3032d4eca', '85f469a3-65fe-417a-aea5-a3fd3b9200a8', 'allowed-protocol-mapper-types', 'oidc-address-mapper');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('8778b400-ca39-46c7-96a6-be17bf10c707', '5486006d-640f-4256-8f8c-e87810fc3248', 'allow-default-scopes', 'true');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('7f60fe1f-0aef-46a7-8325-24fcbf0a4b02', '94f4b010-fa7e-4fa7-803d-fc2af053ffa0', 'max-clients', '200');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('5a49c70b-9f4f-4442-97c7-ba8a201ffbbf', '093492b8-d02e-4db2-88c4-0bb423dcacea', 'allowed-protocol-mapper-types', 'saml-user-property-mapper');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('20801161-df4f-4af6-8c3b-c27ba79d301e', '093492b8-d02e-4db2-88c4-0bb423dcacea', 'allowed-protocol-mapper-types', 'saml-user-attribute-mapper');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('64fdf064-8d26-4ebc-ab14-b40c0a286212', '093492b8-d02e-4db2-88c4-0bb423dcacea', 'allowed-protocol-mapper-types', 'oidc-full-name-mapper');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('ff2d8ce0-cae2-4ee2-931d-bc0affa3e483', '093492b8-d02e-4db2-88c4-0bb423dcacea', 'allowed-protocol-mapper-types', 'oidc-usermodel-property-mapper');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('405ffe08-daca-40a8-a105-892a495a2dd3', '093492b8-d02e-4db2-88c4-0bb423dcacea', 'allowed-protocol-mapper-types', 'oidc-sha256-pairwise-sub-mapper');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('b10485be-12bf-4e9c-b277-1ff9d88f56b4', '093492b8-d02e-4db2-88c4-0bb423dcacea', 'allowed-protocol-mapper-types', 'saml-role-list-mapper');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('40221e6e-28cc-4c78-bd23-5a81b4be01a1', '093492b8-d02e-4db2-88c4-0bb423dcacea', 'allowed-protocol-mapper-types', 'oidc-address-mapper');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('4012f4a4-0fd3-465a-8619-5dcf26e2cce3', '093492b8-d02e-4db2-88c4-0bb423dcacea', 'allowed-protocol-mapper-types', 'oidc-usermodel-attribute-mapper');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('c4ad9c99-f8d2-465b-a463-56abd3588f50', '36907b15-31b4-42de-93af-4ed9181b998a', 'priority', '-100');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('3a333ca3-0187-44d4-8867-d9fa055d320a', '36907b15-31b4-42de-93af-4ed9181b998a', 'secret', 'o1OnrTj-ECnGhAo9Cs1JqOLvxHi2gutVbqYW2pZXlIV-EvEPkUSIF4Z2q_Wru1CL37JaWRvbWbygyHhKCf-T3g');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('4a1b5e68-e8b7-4e51-8f00-42d8c71547ac', '36907b15-31b4-42de-93af-4ed9181b998a', 'algorithm', 'HS256');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('55fb7499-938b-4ef7-a8a6-a51c1cb34961', '36907b15-31b4-42de-93af-4ed9181b998a', 'kid', 'd6d08fa6-6fa9-44d1-a1ae-ab10603b2bed');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('6cf8a24e-b0a6-4416-b8e6-72bc76f71b68', '46cd88cc-29f9-44b2-bdcf-718ab434411a', 'priority', '-100');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('5eb5c96f-42a1-4eaf-97dd-ee1017f96086', '46cd88cc-29f9-44b2-bdcf-718ab434411a', 'privateKey', 'MIIEowIBAAKCAQEAl4t8moQXk6J2+Cin2rCkZOkJMeF65OT/Xuo1+nPMnZh4JKSBMICjy2q0L8+nKv27WAb4BbqI/Hd9gAKwiOJosue+hX9K/B3gARekQuQj+GSzirdoY3Oz5YmdDLoWi72eMljpQwPlZ/f7EJyTHCPkx5WGFKG/ZI/vSxOmkjDIQ7eq5SEI+QlH3oEmQSdBg5sHcTbi1YQ9YjC4/mUQwS2vPhohPejmfT2zcNTOHkZbzVFEDzBTSPxpgDq9QUumHw08aWVQLLh5tiASVekQLwSSMemUOeu8WUgsMpqfxFHEd8qLAdQZkdf+4o1wU1UZw1Vys0QNCyv3W1sWaikGoEf88QIDAQABAoIBAGesEwgZyY9EG6NVHM+s/CnUimfHWy1vw4wJKfg2dAp0HezjZUXrGyKz0qTKqA/vGNT1n4M7wy8EB6UlMePTD9EkXOAy3vdu8KmOpN7l9/2b1n/VTOKMastiwz/LplTe2XSUAq/H4I6pxOXuV21u2Ln4/orqxGZlWUzBGrj0CmzYEIg3SNQgFR1WpKeXS32HVijbBwo/o/LN8Rgk0Cf0VePiZ/sDdxbOX4Iz0aigtVZ//MSuaKBF0e3GsQznmzejP2tZktukRIj49L/kz35DB47HEyYYZiWUtneSidVN9d7XbDneFicjzI5AAR0xCNIQSljtKJJzEQYyFTGdb1zBfeECgYEA2aozDCpE2Asx/5tIEbKHG4HtvGxd9Hq9KPA7gsM7yTsIgBlvDtcv8WR/bo+xpWql2USt//UL1J/4dLoNBssih6daZkaUQKnJgDvTU5Bo8JzJPfVj5EcXPAJ8y6G70RZIb3njb/CgORfmugnUarB2a1SKLT1SCeMSRDCK43PvoX0CgYEAsjwnEdXJDgdW82fOD+qNCA+TD202Dfaj+OamZTUFMvJWRnjE+S0KQv+aqJuHa3yeldoIjxtxZZyARvo9Q0DgjyYZIVjcA4cGbWqTLTDcEyG5fV/K449Bzh7pkxaVqJNwqcr2M37JgPar+AZRit3I/1inTAKLdua1Z7adzPaZI4UCgYEAj/TQ7irGfVxqJPM+JvY8BSVZZlUFjrvef0TjFwiocd5pMM+hc98+BhjBbw36H7z5E0kpCy+2M1nZqNmj4+pVXAKC90GWq22fpv/qNEo+HWSUdDXnawLZiwbaIpNE9HQYVCH5Gf+6+AemwUPfCPDMYQ/4kxMLPx6+5fp04Rm8UsECgYAv5zbg9kJ5QMO/27BoWrPY7MarqMCUdCuR4/voy51AGh3SBvd5uP8/Do+0rUhyPSYqRFV0kP2jP7LCYNNCVheEocqzSbyoPgweMDyqMq2TfsbpyWswSfp3uZsxayqCCk6HdANDx9nEjYeeu6QC3KT+7AbayPxO0qcC3vP+eHCkOQKBgBpEADkvLLU1ltLPg2bO4jp/AQDnuupwIQBRv55D7ex//D0N7icbTieUmoJoW+dDc81YyN3FBOQoEEHUpzW2Q+YnA7CC7AT4rqB8iRB4lPcJtakYfWlcAboCUUzOmLQAvYA2Tf78+8CWKsjff4k5tbcFMbvDQpK6ntNnmz6h7SYm');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('dc6ae762-1cf4-42aa-9c23-899afe4d4797', '46cd88cc-29f9-44b2-bdcf-718ab434411a', 'algorithm', 'RS256');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('1794d522-852d-442e-8262-446ebf79c0e7', '46cd88cc-29f9-44b2-bdcf-718ab434411a', 'certificate', 'MIICmzCCAYMCBgF08NiguTANBgkqhkiG9w0BAQsFADARMQ8wDQYDVQQDDAZtYXN0ZXIwHhcNMjAxMDAzMjM0MTAyWhcNMzAxMDAzMjM0MjQyWjARMQ8wDQYDVQQDDAZtYXN0ZXIwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCXi3yahBeTonb4KKfasKRk6Qkx4Xrk5P9e6jX6c8ydmHgkpIEwgKPLarQvz6cq/btYBvgFuoj8d32AArCI4miy576Ff0r8HeABF6RC5CP4ZLOKt2hjc7PliZ0MuhaLvZ4yWOlDA+Vn9/sQnJMcI+THlYYUob9kj+9LE6aSMMhDt6rlIQj5CUfegSZBJ0GDmwdxNuLVhD1iMLj+ZRDBLa8+GiE96OZ9PbNw1M4eRlvNUUQPMFNI/GmAOr1BS6YfDTxpZVAsuHm2IBJV6RAvBJIx6ZQ567xZSCwymp/EUcR3yosB1BmR1/7ijXBTVRnDVXKzRA0LK/dbWxZqKQagR/zxAgMBAAEwDQYJKoZIhvcNAQELBQADggEBAEBVGRtJW+LitlvYvo4nmr2LErPqJJ1WsVTS0n11MSXWGYERF98pmK8PhCv2++hsdSk+2psH16O9vkbd1L0bj8n1j6GygdJsaYo0m3q5nz5Hih+HW5dI1UMft10REMdSNUbzo4nBzMv2j71m6kAUMxXlDA+IvgVadbccyjCSUqVIfUmLF21K2wZvTAxUFSDZpyXksF03FsyQRr//y70buY1JzCDVdMkrFdvFypQ0Od1tOOfZeSMqZVQmV0k76u2Wh1cj028IeJBUdE06JOQQGtH5JnVxxAbd4lDzjfYmjFnx2B8ZDcfXs2KOtnOKFqR7pZPGEnu0m6BcVxuKNUdti7c=');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('e0833b38-bf98-4234-b0da-9497e1663ae5', 'b5506abc-eb9f-408e-b9e6-4070d64d5903', 'kid', '08a50556-427b-4472-adc2-a147789d65e1');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('44c96cf6-1f36-4944-a067-fa352b8b9761', 'b5506abc-eb9f-408e-b9e6-4070d64d5903', 'priority', '100');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('36e030e7-1c5e-4f06-b678-19a284fc6fab', 'b5506abc-eb9f-408e-b9e6-4070d64d5903', 'secret', 'l646h3ScAtwRP5SteisBH8KdIdNkvMDXMBVyCcB7c7Ob3kQSmGet89HcRznqqimnGgQLrGz4A41PhhnvvwUSDA');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('b559be84-9a10-4e83-96f0-7724ab4f5552', 'b5506abc-eb9f-408e-b9e6-4070d64d5903', 'algorithm', 'HS256');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('2217bc90-4ae5-4fb1-9da3-254552401164', 'f45384cf-21bd-4a64-a1da-c9a86eab4dd6', 'kid', '1571c3f9-ef38-405f-a3da-d828d4221314');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('f13ce88d-1410-421d-bf6d-42676c40e076', 'f45384cf-21bd-4a64-a1da-c9a86eab4dd6', 'priority', '100');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('976d5d7a-ecf9-4689-93c8-1a86e2cf5358', 'f45384cf-21bd-4a64-a1da-c9a86eab4dd6', 'secret', 'ILR81vMVdfwJh1K7jacGGQ');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('f42c48ff-e850-47ae-93d3-968f8be200c3', '88d15524-5ef0-4418-9cca-ae869befcc91', 'certificate', 'MIICsTCCAZkCBgF08NjpfDANBgkqhkiG9w0BAQsFADAcMRowGAYDVQQDDBFQb0MtU29raS1SZWFsbS0wMTAeFw0yMDEwMDMyMzQxMjFaFw0zMDEwMDMyMzQzMDFaMBwxGjAYBgNVBAMMEVBvQy1Tb2tpLVJlYWxtLTAxMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhhE0F0GgohF05H7SozxtLy/m8E3TNEJRtXmPddBO2PhAgBbPCe51p1Zay+oCmnA7nQ1aOSfEH8Lr/nv5ccGMNTMYNMnP4S6N3aKF0pujNtiyrrzlITU6pFEtuMLOFBjbeOMdbjLehPLismlTfC0nNdfChMxO6OZXh8+5YD3NlehQI6Kb+dM+kz9NhKnQ+rQppz9VSwQxg2Wukv8/RJdLaxymYUAlXalqmMy4MFXhb3x5aF0741AfUexzo/BFXY021ghdr28+/vxcJIlM6LOG3Fs5O7HkJlUmeOvFlMlArAgjSRFF04FqYo4AzxmAQ29j1ReZMBZOj6kHoXWU28biOwIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQBbMCuiS7ZUqutU2agZFEtphAs/xl9DhcBa3qumdwuFso/nBYaOeCtupKokb0UgZBbpIVelLooIlfPpZbvGrfq2ULp3hs0hvz+2KM0hlPLV8g1aKZ8+1gaBmdfNAyZOKyb4+/18xrDQssZP4kQ3dBcgiMznfRFrhPXJKkHVzydWkBA1TJiNN4nmnmfw73Vk6lttkKZgQ7Ga1ayWmeyoT/6PKiQPD8e0LfQPXCmpHzjrY5XepYhS3284t9u3b12OGpjweqifLzWg3H9GJLGzDuHsEg/90su0ENl1JYQBNUv1glI+MxdXMXnZ7njsWUwGywdLOkNNhsD9nZI596oabxQL');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('183a8610-ee28-4ffa-be7c-044159b29ff2', '88d15524-5ef0-4418-9cca-ae869befcc91', 'priority', '100');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('b620c620-dc94-4af9-974f-247a697ba029', '88d15524-5ef0-4418-9cca-ae869befcc91', 'privateKey', 'MIIEogIBAAKCAQEAhhE0F0GgohF05H7SozxtLy/m8E3TNEJRtXmPddBO2PhAgBbPCe51p1Zay+oCmnA7nQ1aOSfEH8Lr/nv5ccGMNTMYNMnP4S6N3aKF0pujNtiyrrzlITU6pFEtuMLOFBjbeOMdbjLehPLismlTfC0nNdfChMxO6OZXh8+5YD3NlehQI6Kb+dM+kz9NhKnQ+rQppz9VSwQxg2Wukv8/RJdLaxymYUAlXalqmMy4MFXhb3x5aF0741AfUexzo/BFXY021ghdr28+/vxcJIlM6LOG3Fs5O7HkJlUmeOvFlMlArAgjSRFF04FqYo4AzxmAQ29j1ReZMBZOj6kHoXWU28biOwIDAQABAoIBABaOOmdXQUFDEpmGxMV12yC/PGldjpUSO1D+3KYDn+BdE+z46WhQWDcJDkmUW0/EZiMsJevLxvFZB/9OuE7tMzuYFxB6i6DlBjUtrLocOT93AcjoOtx1aiJPDhQxoh47eGFERKVPpaRUgNNnaQZRSnGClVVmUjhY2I0e459PhpEbvie2nXFWXA14X6Oj8to9sdC9II/0/9rcCowWip1gVwSkpd9IjVKLBXAX9UL8lI9odqdHDYaYxl2d9eOrp2JZIE7zIwDa2Unsh6t/MnJR30q5NowNqEZgq8Q7XsU8ngWwfwzKjewEQ9cclS3VI+u2GIBpc4USKtX5WpYpBUYcuLECgYEA8V5QJhqLEgP5/25SLy1PjPmCb1ekDy6Hq/RRtmBfpEKA8aqrBkVV60dmrpuHVsl7pCen6pPITiuVikMRbD36jD9vFXRpHdZERZ0/WE0dNqp+yFLwOP31pC+grzj+yOPiYV847Z7Q0RH4V+67UHexZrO59W0xv6Ip32aiWqTY+VUCgYEAjjG7SRAXJvHj51Mi3qDw/F9hBKp7TajHaOooM5dMNv5cB9WvQC2h1bV7RgTEVhVg9BeStFHYaDIsS41R8BABTrC1YHhecmdRkUHk0eKUdwBNb6BEAYb8sL9aV2af51AxKdpkJVhw5HZTttgMa06BMxOrGJTV+stok43Ql/0GLU8CgYA6uXCUpLabTn5fqC60rbiCGx6iClevHeoCazIKRk5ev5NxuM1dfDcYREn2R37ZHbJIUSGokAYXBsGeXwz5Iec4giJ7vNPqX3xC16xWxoRKDZdFE/DAXQGLzc6xcxOCOveUKz/FiHNTuqSKeFn4jPaLf0TKMqP89O5tHSJ5HUxw9QKBgC8n4vpZ8bOiqHgApCG8se6gGuaXOwkIHgl3Dhn95PKf7BlVDid0eqUK6HTSA+KgeGS6pJZURjZX3US4+yFnzWcxRxVVFc1O4kgP2Diasa29VfDc73CqOYbMDsPJbuIhQAynNmsEJ3w8mYqbn5K+mC4+KZGfWk8vweCdOT4OVUwVAoGAYs27NlZxjQ6sBhulyyyUACRrLRvU78YfpzKe3iBndWvG3f3FrEFogZIIEHAjvUAlXgMz37+KHEIl+Akek3G27YPh6ddBY9saJqHBtrBAp3eH55T9p8gOHZcQbyXKXqhvlqgzk3G0ZBFBaGMIOH8OtRnJCWaBEt0C+6DbhJ9x9Uc=');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('d8fbb107-fc47-4440-b502-f38de547dcdb', '2c1a96ba-fc4d-4273-83d2-120de2603009', 'allow-default-scopes', 'true');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('ad54d27f-4339-4e78-b926-ba12de976de0', '2bb6f943-1886-4d24-8254-e9c3c80642e1', 'host-sending-registration-request-must-match', 'true');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('1214b857-676d-42c3-beed-1ead6ef31930', '2bb6f943-1886-4d24-8254-e9c3c80642e1', 'client-uris-must-match', 'true');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('4f6f2f0e-3e27-4d79-bb18-c792030f0732', '0a10a28b-ac15-4e04-a846-6dcfa3a34bdd', 'allowed-protocol-mapper-types', 'oidc-usermodel-attribute-mapper');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('60913eb4-a664-44ed-84be-00edba90b288', '0a10a28b-ac15-4e04-a846-6dcfa3a34bdd', 'allowed-protocol-mapper-types', 'saml-user-property-mapper');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('88e55b73-b1f3-48d0-84f7-901086133d83', '0a10a28b-ac15-4e04-a846-6dcfa3a34bdd', 'allowed-protocol-mapper-types', 'oidc-sha256-pairwise-sub-mapper');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('fbd13770-18db-434c-aad4-ca8fa332a277', '0a10a28b-ac15-4e04-a846-6dcfa3a34bdd', 'allowed-protocol-mapper-types', 'oidc-address-mapper');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('bd0abf09-764c-4106-a4b6-2816c03d572e', '0a10a28b-ac15-4e04-a846-6dcfa3a34bdd', 'allowed-protocol-mapper-types', 'oidc-usermodel-property-mapper');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('d3e0b72c-3b9e-4219-acf2-756809c28c1b', '0a10a28b-ac15-4e04-a846-6dcfa3a34bdd', 'allowed-protocol-mapper-types', 'saml-role-list-mapper');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('4c4c8347-a441-4617-9910-fd1433c8e71b', '0a10a28b-ac15-4e04-a846-6dcfa3a34bdd', 'allowed-protocol-mapper-types', 'oidc-full-name-mapper');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('7978bb26-86bb-44d4-90d2-1239bc215df1', '0a10a28b-ac15-4e04-a846-6dcfa3a34bdd', 'allowed-protocol-mapper-types', 'saml-user-attribute-mapper');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('5f0451b6-61ea-483e-bab2-f094963b4481', '8444f2a0-5a25-450c-af9b-19b867c19c32', 'max-clients', '200');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('3a305aa8-f48d-484e-86b1-4973ce21d7e7', 'bd27e2d8-ddb4-41a0-8c0e-90013c678d34', 'allow-default-scopes', 'true');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('193242d4-5917-4b83-bccc-983f177c10ea', 'c13de266-ba61-426c-b751-b72e04262fa4', 'allowed-protocol-mapper-types', 'saml-role-list-mapper');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('1b2fd06e-e0f7-4b94-836d-3ae35d47230b', 'c13de266-ba61-426c-b751-b72e04262fa4', 'allowed-protocol-mapper-types', 'saml-user-attribute-mapper');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('fcf466e3-f242-433f-98ff-8ae7d5320ade', 'c13de266-ba61-426c-b751-b72e04262fa4', 'allowed-protocol-mapper-types', 'oidc-full-name-mapper');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('1ab4cbd7-0cb8-4368-a14f-43089155d89e', 'c13de266-ba61-426c-b751-b72e04262fa4', 'allowed-protocol-mapper-types', 'oidc-usermodel-property-mapper');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('c71202b5-0f9f-4e84-b87d-11bfcdc61389', 'c13de266-ba61-426c-b751-b72e04262fa4', 'allowed-protocol-mapper-types', 'oidc-usermodel-attribute-mapper');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('637e132e-1c5d-427b-b355-10fe0e9e16e7', 'c13de266-ba61-426c-b751-b72e04262fa4', 'allowed-protocol-mapper-types', 'saml-user-property-mapper');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('f56638f7-2f74-4bee-bfa9-8298c83bd299', 'c13de266-ba61-426c-b751-b72e04262fa4', 'allowed-protocol-mapper-types', 'oidc-address-mapper');
+INSERT INTO public.component_config (id, component_id, name, value) VALUES ('f3b536d7-b7c9-451d-bd47-6815c122a2b4', 'c13de266-ba61-426c-b751-b72e04262fa4', 'allowed-protocol-mapper-types', 'oidc-sha256-pairwise-sub-mapper');
+
+
+--
+-- Data for Name: composite_role; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', '82750e00-1327-4050-a430-ab51d6246e6f');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', '2f8bb661-6490-4633-a2b6-558277ee883d');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', 'e90efad5-9f53-4472-822a-4c00c5e2a8ae');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', 'aeaf47f7-2fba-4dac-9947-5fa265bfd7f5');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', '4160623d-d96e-4d8d-9641-aa4252d35d97');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', '80be1784-0916-4fa0-bedb-095e79dd4fe1');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', '97210bf7-daae-4b3a-ac03-b7189f39a4b6');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', 'b4d03208-c3c9-4b76-92fc-b8c9abd11dc8');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', '44aa1d29-912a-4638-8637-a147f3963528');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', '415925aa-8ff8-438a-ad96-81c7e168f016');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', 'e82ae716-1e2a-4978-9e21-3ba4fde2cb35');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', 'a370f872-2775-4b01-99ef-19dc76d83057');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', 'cb33d84a-13d2-4976-a540-e8b6b7120806');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', '0af925d1-fce7-4faf-99e8-258e713420aa');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', '02ab4701-ece5-4bbe-95d6-1f7b4538ca6e');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', '1e916e72-37d3-4844-9d96-491e10fd7d6a');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', '454688b8-8c35-49ce-8589-f975c8bb8ba0');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', 'b53b2f69-fe61-4084-9db5-f266012a03f3');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('4160623d-d96e-4d8d-9641-aa4252d35d97', '1e916e72-37d3-4844-9d96-491e10fd7d6a');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('aeaf47f7-2fba-4dac-9947-5fa265bfd7f5', 'b53b2f69-fe61-4084-9db5-f266012a03f3');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('aeaf47f7-2fba-4dac-9947-5fa265bfd7f5', '02ab4701-ece5-4bbe-95d6-1f7b4538ca6e');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('c441ff20-25c7-4c70-88e6-431925120e72', 'acd2cceb-eb4e-47c2-bb40-1ec6207f2a51');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('c333132e-7e30-430d-85e0-eea5c2d65e0a', '479134d2-4599-4e5c-95b9-2c49bec32a3a');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', 'e044bb86-b772-45de-b616-f3a080192576');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', '5a4d683e-82dd-4a80-9f47-57f304c1c911');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', 'a45c6f62-aeb9-42e0-80d2-b8550bfb3621');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', 'af074e82-bcbd-4e44-942b-38e61fa16e83');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', '00e22abd-bfbb-4fc1-bd44-e289985fcbac');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', 'c2328365-b558-49bc-8268-6729abb052ec');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', '38433445-c31c-47c8-b4ef-bde1de437bd5');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', '94a3aa07-afd7-476b-86c8-b8794f91959f');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', 'e7d9fcbc-9320-4fbe-b23e-f7afe6eaf32a');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', '6300ca88-fa49-472f-9c2f-287028da10e2');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', 'b866d083-c416-4104-8da4-44f7abb4218d');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', '5ef3f7f1-7273-49a8-aed7-7fedf30175f1');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', '099d9a68-7e4c-4abb-bdb8-71ee4248ed8e');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', 'caeb73e9-3679-448d-9c86-4096810b00b8');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', '058c6d77-fa94-443a-828a-1ddba0c6dbb6');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', 'df77041b-f527-4620-90d1-ded1ce4af334');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', '82f58e9c-52ad-4d1f-9815-ce2f6adac93f');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', 'ceb8738c-31c7-4920-bc9b-b55d99872a7c');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('00e22abd-bfbb-4fc1-bd44-e289985fcbac', 'df77041b-f527-4620-90d1-ded1ce4af334');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('af074e82-bcbd-4e44-942b-38e61fa16e83', '058c6d77-fa94-443a-828a-1ddba0c6dbb6');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('af074e82-bcbd-4e44-942b-38e61fa16e83', 'ceb8738c-31c7-4920-bc9b-b55d99872a7c');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('a6c8e12e-675b-443e-a680-a9a047314ec2', '72cc3190-715b-4aee-a6c8-bf7a917bb29c');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('a6c8e12e-675b-443e-a680-a9a047314ec2', '239d6035-d1cb-44b4-84f8-1f9d9878b87c');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('a6c8e12e-675b-443e-a680-a9a047314ec2', 'dc1dc56b-b0bb-4e22-90e4-56cb0c97ff68');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('a6c8e12e-675b-443e-a680-a9a047314ec2', '2f5e7c31-7316-4c26-82ae-d6409a6d6543');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('a6c8e12e-675b-443e-a680-a9a047314ec2', 'b013310d-c6e7-4e44-963e-b10144f53d06');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('a6c8e12e-675b-443e-a680-a9a047314ec2', '0c92b834-e0b2-4028-8bd8-267c4696b776');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('a6c8e12e-675b-443e-a680-a9a047314ec2', 'ba8b2f14-c3a7-4418-a16c-163a5a4e6903');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('a6c8e12e-675b-443e-a680-a9a047314ec2', 'dc7cb254-39f7-4c60-bcc8-3dde7d5a54ca');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('a6c8e12e-675b-443e-a680-a9a047314ec2', '00fa5ba1-1ac8-4e6c-b1cc-4c83ed249aa1');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('a6c8e12e-675b-443e-a680-a9a047314ec2', '94328934-5c8e-4eed-915d-964d12d0c20d');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('a6c8e12e-675b-443e-a680-a9a047314ec2', '9e5b40ae-3032-4b51-843f-284242618a01');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('a6c8e12e-675b-443e-a680-a9a047314ec2', '2d78ddff-cac2-4250-b6a1-82de6856d888');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('a6c8e12e-675b-443e-a680-a9a047314ec2', '6ccc9899-bb03-4ada-a7f6-500cf2c2d6de');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('a6c8e12e-675b-443e-a680-a9a047314ec2', 'a32fb490-c4b8-40b7-b93f-0c4ecd0de617');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('a6c8e12e-675b-443e-a680-a9a047314ec2', '41b41d7b-de07-4dd1-b18c-a7130203e61b');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('a6c8e12e-675b-443e-a680-a9a047314ec2', '43a56efb-3dca-4f9e-8901-80ca4418a8c2');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('a6c8e12e-675b-443e-a680-a9a047314ec2', 'e2c521e6-7194-4820-a152-4cd6cfdbf40a');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('2f5e7c31-7316-4c26-82ae-d6409a6d6543', '41b41d7b-de07-4dd1-b18c-a7130203e61b');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('dc1dc56b-b0bb-4e22-90e4-56cb0c97ff68', 'e2c521e6-7194-4820-a152-4cd6cfdbf40a');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('dc1dc56b-b0bb-4e22-90e4-56cb0c97ff68', 'a32fb490-c4b8-40b7-b93f-0c4ecd0de617');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('cd6ee10f-e970-4684-bfb5-4852ab788461', 'e27ff9d1-025e-4ba2-b294-81ed4b5ca2b1');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('15237af2-823b-4642-9040-fa8983632762', '223905fd-8cbe-4b9d-bd1e-ce3dd513be9e');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', '38f6297f-314d-4acf-9bc1-e175fa4491a1');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('a6c8e12e-675b-443e-a680-a9a047314ec2', '771d8081-20e4-4565-a2f9-963931603e77');
+
+
+--
+-- Data for Name: credential; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.credential (id, salt, type, user_id, created_date, user_label, secret_data, credential_data, priority) VALUES ('044f83e5-2098-494d-aae6-3fe03862b32c', NULL, 'password', '15b7da9a-5ddb-4f57-bd7e-bc21a314c05b', 1601768981675, NULL, '{"value":"BDJ7taOlygz3Vv7Oq2Mj33fM5hpC1e+C43dPCtOEu75WH0sZypwHVsNaN5M6snbVRnFCvxRG3mUYIADLJDWRMg==","salt":"kndg6Krn6D3uB9VuAjj2qA=="}', '{"hashIterations":27500,"algorithm":"pbkdf2-sha256"}', 10);
+INSERT INTO public.credential (id, salt, type, user_id, created_date, user_label, secret_data, credential_data, priority) VALUES ('9fc574b6-b8b4-45a3-ad85-11066f106a77', NULL, 'password', 'fb674332-03e0-4959-9fc7-2e8826a0de8a', 1601808459823, NULL, '{"value":"p/dPLCcgJm2wC00qlaHlPDcCZCW/R+3R345qMH4EhYQ1ubKXbwGG9oVPtl8bnSKcuSRI9VsQLLstDM2cgZyc7g==","salt":"0CIf/iB9dWAo5y4qahNovA=="}', '{"hashIterations":27500,"algorithm":"pbkdf2-sha256"}', 10);
+INSERT INTO public.credential (id, salt, type, user_id, created_date, user_label, secret_data, credential_data, priority) VALUES ('ad22fa55-f1dc-413b-9d1f-13a43532db3e', NULL, 'password', '1db85a5b-c7b8-4350-973d-c9fc90513819', 1601808710594, NULL, '{"value":"S9snE2vjLDV98WCO5Mig2pqWROPLLd7fVaOeppe6E/eLcCAvihJ48a9mkAQHqtE0jSK+SQtvO7jmdDvoFpAu9Q==","salt":"ObthJR3VJjBqmDW/EBorVQ=="}', '{"hashIterations":27500,"algorithm":"pbkdf2-sha256"}', 10);
+
+
+--
+-- Data for Name: databasechangelog; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('1.0.0.Final-KEYCLOAK-5461', 'sthorger@redhat.com', 'META-INF/jpa-changelog-1.0.0.Final.xml', '2020-10-03 23:40:43.315879', 1, 'EXECUTED', '7:4e70412f24a3f382c82183742ec79317', 'createTable tableName=APPLICATION_DEFAULT_ROLES; createTable tableName=CLIENT; createTable tableName=CLIENT_SESSION; createTable tableName=CLIENT_SESSION_ROLE; createTable tableName=COMPOSITE_ROLE; createTable tableName=CREDENTIAL; createTable tab...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('1.0.0.Final-KEYCLOAK-5461', 'sthorger@redhat.com', 'META-INF/db2-jpa-changelog-1.0.0.Final.xml', '2020-10-03 23:40:43.339854', 2, 'MARK_RAN', '7:cb16724583e9675711801c6875114f28', 'createTable tableName=APPLICATION_DEFAULT_ROLES; createTable tableName=CLIENT; createTable tableName=CLIENT_SESSION; createTable tableName=CLIENT_SESSION_ROLE; createTable tableName=COMPOSITE_ROLE; createTable tableName=CREDENTIAL; createTable tab...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('1.1.0.Beta1', 'sthorger@redhat.com', 'META-INF/jpa-changelog-1.1.0.Beta1.xml', '2020-10-03 23:40:43.451424', 3, 'EXECUTED', '7:0310eb8ba07cec616460794d42ade0fa', 'delete tableName=CLIENT_SESSION_ROLE; delete tableName=CLIENT_SESSION; delete tableName=USER_SESSION; createTable tableName=CLIENT_ATTRIBUTES; createTable tableName=CLIENT_SESSION_NOTE; createTable tableName=APP_NODE_REGISTRATIONS; addColumn table...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('1.1.0.Final', 'sthorger@redhat.com', 'META-INF/jpa-changelog-1.1.0.Final.xml', '2020-10-03 23:40:43.46237', 4, 'EXECUTED', '7:5d25857e708c3233ef4439df1f93f012', 'renameColumn newColumnName=EVENT_TIME, oldColumnName=TIME, tableName=EVENT_ENTITY', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('1.2.0.Beta1', 'psilva@redhat.com', 'META-INF/jpa-changelog-1.2.0.Beta1.xml', '2020-10-03 23:40:43.671617', 5, 'EXECUTED', '7:c7a54a1041d58eb3817a4a883b4d4e84', 'delete tableName=CLIENT_SESSION_ROLE; delete tableName=CLIENT_SESSION_NOTE; delete tableName=CLIENT_SESSION; delete tableName=USER_SESSION; createTable tableName=PROTOCOL_MAPPER; createTable tableName=PROTOCOL_MAPPER_CONFIG; createTable tableName=...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('1.2.0.Beta1', 'psilva@redhat.com', 'META-INF/db2-jpa-changelog-1.2.0.Beta1.xml', '2020-10-03 23:40:43.679951', 6, 'MARK_RAN', '7:2e01012df20974c1c2a605ef8afe25b7', 'delete tableName=CLIENT_SESSION_ROLE; delete tableName=CLIENT_SESSION_NOTE; delete tableName=CLIENT_SESSION; delete tableName=USER_SESSION; createTable tableName=PROTOCOL_MAPPER; createTable tableName=PROTOCOL_MAPPER_CONFIG; createTable tableName=...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('1.2.0.RC1', 'bburke@redhat.com', 'META-INF/jpa-changelog-1.2.0.CR1.xml', '2020-10-03 23:40:43.847558', 7, 'EXECUTED', '7:0f08df48468428e0f30ee59a8ec01a41', 'delete tableName=CLIENT_SESSION_ROLE; delete tableName=CLIENT_SESSION_NOTE; delete tableName=CLIENT_SESSION; delete tableName=USER_SESSION_NOTE; delete tableName=USER_SESSION; createTable tableName=MIGRATION_MODEL; createTable tableName=IDENTITY_P...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('1.2.0.RC1', 'bburke@redhat.com', 'META-INF/db2-jpa-changelog-1.2.0.CR1.xml', '2020-10-03 23:40:43.854531', 8, 'MARK_RAN', '7:a77ea2ad226b345e7d689d366f185c8c', 'delete tableName=CLIENT_SESSION_ROLE; delete tableName=CLIENT_SESSION_NOTE; delete tableName=CLIENT_SESSION; delete tableName=USER_SESSION_NOTE; delete tableName=USER_SESSION; createTable tableName=MIGRATION_MODEL; createTable tableName=IDENTITY_P...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('1.2.0.Final', 'keycloak', 'META-INF/jpa-changelog-1.2.0.Final.xml', '2020-10-03 23:40:43.865544', 9, 'EXECUTED', '7:a3377a2059aefbf3b90ebb4c4cc8e2ab', 'update tableName=CLIENT; update tableName=CLIENT; update tableName=CLIENT', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('1.3.0', 'bburke@redhat.com', 'META-INF/jpa-changelog-1.3.0.xml', '2020-10-03 23:40:44.052054', 10, 'EXECUTED', '7:04c1dbedc2aa3e9756d1a1668e003451', 'delete tableName=CLIENT_SESSION_ROLE; delete tableName=CLIENT_SESSION_PROT_MAPPER; delete tableName=CLIENT_SESSION_NOTE; delete tableName=CLIENT_SESSION; delete tableName=USER_SESSION_NOTE; delete tableName=USER_SESSION; createTable tableName=ADMI...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('1.4.0', 'bburke@redhat.com', 'META-INF/jpa-changelog-1.4.0.xml', '2020-10-03 23:40:44.149319', 11, 'EXECUTED', '7:36ef39ed560ad07062d956db861042ba', 'delete tableName=CLIENT_SESSION_AUTH_STATUS; delete tableName=CLIENT_SESSION_ROLE; delete tableName=CLIENT_SESSION_PROT_MAPPER; delete tableName=CLIENT_SESSION_NOTE; delete tableName=CLIENT_SESSION; delete tableName=USER_SESSION_NOTE; delete table...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('1.4.0', 'bburke@redhat.com', 'META-INF/db2-jpa-changelog-1.4.0.xml', '2020-10-03 23:40:44.158516', 12, 'MARK_RAN', '7:d909180b2530479a716d3f9c9eaea3d7', 'delete tableName=CLIENT_SESSION_AUTH_STATUS; delete tableName=CLIENT_SESSION_ROLE; delete tableName=CLIENT_SESSION_PROT_MAPPER; delete tableName=CLIENT_SESSION_NOTE; delete tableName=CLIENT_SESSION; delete tableName=USER_SESSION_NOTE; delete table...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('1.5.0', 'bburke@redhat.com', 'META-INF/jpa-changelog-1.5.0.xml', '2020-10-03 23:40:44.183287', 13, 'EXECUTED', '7:cf12b04b79bea5152f165eb41f3955f6', 'delete tableName=CLIENT_SESSION_AUTH_STATUS; delete tableName=CLIENT_SESSION_ROLE; delete tableName=CLIENT_SESSION_PROT_MAPPER; delete tableName=CLIENT_SESSION_NOTE; delete tableName=CLIENT_SESSION; delete tableName=USER_SESSION_NOTE; delete table...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('1.6.1_from15', 'mposolda@redhat.com', 'META-INF/jpa-changelog-1.6.1.xml', '2020-10-03 23:40:44.228681', 14, 'EXECUTED', '7:7e32c8f05c755e8675764e7d5f514509', 'addColumn tableName=REALM; addColumn tableName=KEYCLOAK_ROLE; addColumn tableName=CLIENT; createTable tableName=OFFLINE_USER_SESSION; createTable tableName=OFFLINE_CLIENT_SESSION; addPrimaryKey constraintName=CONSTRAINT_OFFL_US_SES_PK2, tableName=...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('1.6.1_from16-pre', 'mposolda@redhat.com', 'META-INF/jpa-changelog-1.6.1.xml', '2020-10-03 23:40:44.233209', 15, 'MARK_RAN', '7:980ba23cc0ec39cab731ce903dd01291', 'delete tableName=OFFLINE_CLIENT_SESSION; delete tableName=OFFLINE_USER_SESSION', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('1.6.1_from16', 'mposolda@redhat.com', 'META-INF/jpa-changelog-1.6.1.xml', '2020-10-03 23:40:44.238117', 16, 'MARK_RAN', '7:2fa220758991285312eb84f3b4ff5336', 'dropPrimaryKey constraintName=CONSTRAINT_OFFLINE_US_SES_PK, tableName=OFFLINE_USER_SESSION; dropPrimaryKey constraintName=CONSTRAINT_OFFLINE_CL_SES_PK, tableName=OFFLINE_CLIENT_SESSION; addColumn tableName=OFFLINE_USER_SESSION; update tableName=OF...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('1.6.1', 'mposolda@redhat.com', 'META-INF/jpa-changelog-1.6.1.xml', '2020-10-03 23:40:44.243842', 17, 'EXECUTED', '7:d41d8cd98f00b204e9800998ecf8427e', 'empty', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('1.7.0', 'bburke@redhat.com', 'META-INF/jpa-changelog-1.7.0.xml', '2020-10-03 23:40:44.329042', 18, 'EXECUTED', '7:91ace540896df890cc00a0490ee52bbc', 'createTable tableName=KEYCLOAK_GROUP; createTable tableName=GROUP_ROLE_MAPPING; createTable tableName=GROUP_ATTRIBUTE; createTable tableName=USER_GROUP_MEMBERSHIP; createTable tableName=REALM_DEFAULT_GROUPS; addColumn tableName=IDENTITY_PROVIDER; ...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('1.8.0', 'mposolda@redhat.com', 'META-INF/jpa-changelog-1.8.0.xml', '2020-10-03 23:40:44.437244', 19, 'EXECUTED', '7:c31d1646dfa2618a9335c00e07f89f24', 'addColumn tableName=IDENTITY_PROVIDER; createTable tableName=CLIENT_TEMPLATE; createTable tableName=CLIENT_TEMPLATE_ATTRIBUTES; createTable tableName=TEMPLATE_SCOPE_MAPPING; dropNotNullConstraint columnName=CLIENT_ID, tableName=PROTOCOL_MAPPER; ad...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('1.8.0-2', 'keycloak', 'META-INF/jpa-changelog-1.8.0.xml', '2020-10-03 23:40:44.454448', 20, 'EXECUTED', '7:df8bc21027a4f7cbbb01f6344e89ce07', 'dropDefaultValue columnName=ALGORITHM, tableName=CREDENTIAL; update tableName=CREDENTIAL', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('authz-3.4.0.CR1-resource-server-pk-change-part1', 'glavoie@gmail.com', 'META-INF/jpa-changelog-authz-3.4.0.CR1.xml', '2020-10-03 23:40:45.636171', 45, 'EXECUTED', '7:6a48ce645a3525488a90fbf76adf3bb3', 'addColumn tableName=RESOURCE_SERVER_POLICY; addColumn tableName=RESOURCE_SERVER_RESOURCE; addColumn tableName=RESOURCE_SERVER_SCOPE', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('1.8.0', 'mposolda@redhat.com', 'META-INF/db2-jpa-changelog-1.8.0.xml', '2020-10-03 23:40:44.459535', 21, 'MARK_RAN', '7:f987971fe6b37d963bc95fee2b27f8df', 'addColumn tableName=IDENTITY_PROVIDER; createTable tableName=CLIENT_TEMPLATE; createTable tableName=CLIENT_TEMPLATE_ATTRIBUTES; createTable tableName=TEMPLATE_SCOPE_MAPPING; dropNotNullConstraint columnName=CLIENT_ID, tableName=PROTOCOL_MAPPER; ad...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('1.8.0-2', 'keycloak', 'META-INF/db2-jpa-changelog-1.8.0.xml', '2020-10-03 23:40:44.46477', 22, 'MARK_RAN', '7:df8bc21027a4f7cbbb01f6344e89ce07', 'dropDefaultValue columnName=ALGORITHM, tableName=CREDENTIAL; update tableName=CREDENTIAL', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('1.9.0', 'mposolda@redhat.com', 'META-INF/jpa-changelog-1.9.0.xml', '2020-10-03 23:40:44.50304', 23, 'EXECUTED', '7:ed2dc7f799d19ac452cbcda56c929e47', 'update tableName=REALM; update tableName=REALM; update tableName=REALM; update tableName=REALM; update tableName=CREDENTIAL; update tableName=CREDENTIAL; update tableName=CREDENTIAL; update tableName=REALM; update tableName=REALM; customChange; dr...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('1.9.1', 'keycloak', 'META-INF/jpa-changelog-1.9.1.xml', '2020-10-03 23:40:44.513068', 24, 'EXECUTED', '7:80b5db88a5dda36ece5f235be8757615', 'modifyDataType columnName=PRIVATE_KEY, tableName=REALM; modifyDataType columnName=PUBLIC_KEY, tableName=REALM; modifyDataType columnName=CERTIFICATE, tableName=REALM', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('1.9.1', 'keycloak', 'META-INF/db2-jpa-changelog-1.9.1.xml', '2020-10-03 23:40:44.517546', 25, 'MARK_RAN', '7:1437310ed1305a9b93f8848f301726ce', 'modifyDataType columnName=PRIVATE_KEY, tableName=REALM; modifyDataType columnName=CERTIFICATE, tableName=REALM', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('1.9.2', 'keycloak', 'META-INF/jpa-changelog-1.9.2.xml', '2020-10-03 23:40:44.609827', 26, 'EXECUTED', '7:b82ffb34850fa0836be16deefc6a87c4', 'createIndex indexName=IDX_USER_EMAIL, tableName=USER_ENTITY; createIndex indexName=IDX_USER_ROLE_MAPPING, tableName=USER_ROLE_MAPPING; createIndex indexName=IDX_USER_GROUP_MAPPING, tableName=USER_GROUP_MEMBERSHIP; createIndex indexName=IDX_USER_CO...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('authz-2.0.0', 'psilva@redhat.com', 'META-INF/jpa-changelog-authz-2.0.0.xml', '2020-10-03 23:40:44.796189', 27, 'EXECUTED', '7:9cc98082921330d8d9266decdd4bd658', 'createTable tableName=RESOURCE_SERVER; addPrimaryKey constraintName=CONSTRAINT_FARS, tableName=RESOURCE_SERVER; addUniqueConstraint constraintName=UK_AU8TT6T700S9V50BU18WS5HA6, tableName=RESOURCE_SERVER; createTable tableName=RESOURCE_SERVER_RESOU...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('authz-2.5.1', 'psilva@redhat.com', 'META-INF/jpa-changelog-authz-2.5.1.xml', '2020-10-03 23:40:44.805406', 28, 'EXECUTED', '7:03d64aeed9cb52b969bd30a7ac0db57e', 'update tableName=RESOURCE_SERVER_POLICY', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('2.1.0-KEYCLOAK-5461', 'bburke@redhat.com', 'META-INF/jpa-changelog-2.1.0.xml', '2020-10-03 23:40:44.977076', 29, 'EXECUTED', '7:f1f9fd8710399d725b780f463c6b21cd', 'createTable tableName=BROKER_LINK; createTable tableName=FED_USER_ATTRIBUTE; createTable tableName=FED_USER_CONSENT; createTable tableName=FED_USER_CONSENT_ROLE; createTable tableName=FED_USER_CONSENT_PROT_MAPPER; createTable tableName=FED_USER_CR...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('2.2.0', 'bburke@redhat.com', 'META-INF/jpa-changelog-2.2.0.xml', '2020-10-03 23:40:45.012432', 30, 'EXECUTED', '7:53188c3eb1107546e6f765835705b6c1', 'addColumn tableName=ADMIN_EVENT_ENTITY; createTable tableName=CREDENTIAL_ATTRIBUTE; createTable tableName=FED_CREDENTIAL_ATTRIBUTE; modifyDataType columnName=VALUE, tableName=CREDENTIAL; addForeignKeyConstraint baseTableName=FED_CREDENTIAL_ATTRIBU...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('2.3.0', 'bburke@redhat.com', 'META-INF/jpa-changelog-2.3.0.xml', '2020-10-03 23:40:45.055197', 31, 'EXECUTED', '7:d6e6f3bc57a0c5586737d1351725d4d4', 'createTable tableName=FEDERATED_USER; addPrimaryKey constraintName=CONSTR_FEDERATED_USER, tableName=FEDERATED_USER; dropDefaultValue columnName=TOTP, tableName=USER_ENTITY; dropColumn columnName=TOTP, tableName=USER_ENTITY; addColumn tableName=IDE...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('2.4.0', 'bburke@redhat.com', 'META-INF/jpa-changelog-2.4.0.xml', '2020-10-03 23:40:45.070944', 32, 'EXECUTED', '7:454d604fbd755d9df3fd9c6329043aa5', 'customChange', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('2.5.0', 'bburke@redhat.com', 'META-INF/jpa-changelog-2.5.0.xml', '2020-10-03 23:40:45.08415', 33, 'EXECUTED', '7:57e98a3077e29caf562f7dbf80c72600', 'customChange; modifyDataType columnName=USER_ID, tableName=OFFLINE_USER_SESSION', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('2.5.0-unicode-oracle', 'hmlnarik@redhat.com', 'META-INF/jpa-changelog-2.5.0.xml', '2020-10-03 23:40:45.091888', 34, 'MARK_RAN', '7:e4c7e8f2256210aee71ddc42f538b57a', 'modifyDataType columnName=DESCRIPTION, tableName=AUTHENTICATION_FLOW; modifyDataType columnName=DESCRIPTION, tableName=CLIENT_TEMPLATE; modifyDataType columnName=DESCRIPTION, tableName=RESOURCE_SERVER_POLICY; modifyDataType columnName=DESCRIPTION,...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('2.5.0-unicode-other-dbs', 'hmlnarik@redhat.com', 'META-INF/jpa-changelog-2.5.0.xml', '2020-10-03 23:40:45.157722', 35, 'EXECUTED', '7:09a43c97e49bc626460480aa1379b522', 'modifyDataType columnName=DESCRIPTION, tableName=AUTHENTICATION_FLOW; modifyDataType columnName=DESCRIPTION, tableName=CLIENT_TEMPLATE; modifyDataType columnName=DESCRIPTION, tableName=RESOURCE_SERVER_POLICY; modifyDataType columnName=DESCRIPTION,...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('2.5.0-duplicate-email-support', 'slawomir@dabek.name', 'META-INF/jpa-changelog-2.5.0.xml', '2020-10-03 23:40:45.169921', 36, 'EXECUTED', '7:26bfc7c74fefa9126f2ce702fb775553', 'addColumn tableName=REALM', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('2.5.0-unique-group-names', 'hmlnarik@redhat.com', 'META-INF/jpa-changelog-2.5.0.xml', '2020-10-03 23:40:45.186749', 37, 'EXECUTED', '7:a161e2ae671a9020fff61e996a207377', 'addUniqueConstraint constraintName=SIBLING_NAMES, tableName=KEYCLOAK_GROUP', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('2.5.1', 'bburke@redhat.com', 'META-INF/jpa-changelog-2.5.1.xml', '2020-10-03 23:40:45.195744', 38, 'EXECUTED', '7:37fc1781855ac5388c494f1442b3f717', 'addColumn tableName=FED_USER_CONSENT', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('3.0.0', 'bburke@redhat.com', 'META-INF/jpa-changelog-3.0.0.xml', '2020-10-03 23:40:45.205364', 39, 'EXECUTED', '7:13a27db0dae6049541136adad7261d27', 'addColumn tableName=IDENTITY_PROVIDER', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('3.2.0-fix', 'keycloak', 'META-INF/jpa-changelog-3.2.0.xml', '2020-10-03 23:40:45.210945', 40, 'MARK_RAN', '7:550300617e3b59e8af3a6294df8248a3', 'addNotNullConstraint columnName=REALM_ID, tableName=CLIENT_INITIAL_ACCESS', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('3.2.0-fix-with-keycloak-5416', 'keycloak', 'META-INF/jpa-changelog-3.2.0.xml', '2020-10-03 23:40:45.215989', 41, 'MARK_RAN', '7:e3a9482b8931481dc2772a5c07c44f17', 'dropIndex indexName=IDX_CLIENT_INIT_ACC_REALM, tableName=CLIENT_INITIAL_ACCESS; addNotNullConstraint columnName=REALM_ID, tableName=CLIENT_INITIAL_ACCESS; createIndex indexName=IDX_CLIENT_INIT_ACC_REALM, tableName=CLIENT_INITIAL_ACCESS', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('3.2.0-fix-offline-sessions', 'hmlnarik', 'META-INF/jpa-changelog-3.2.0.xml', '2020-10-03 23:40:45.227163', 42, 'EXECUTED', '7:72b07d85a2677cb257edb02b408f332d', 'customChange', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('3.2.0-fixed', 'keycloak', 'META-INF/jpa-changelog-3.2.0.xml', '2020-10-03 23:40:45.614216', 43, 'EXECUTED', '7:a72a7858967bd414835d19e04d880312', 'addColumn tableName=REALM; dropPrimaryKey constraintName=CONSTRAINT_OFFL_CL_SES_PK2, tableName=OFFLINE_CLIENT_SESSION; dropColumn columnName=CLIENT_SESSION_ID, tableName=OFFLINE_CLIENT_SESSION; addPrimaryKey constraintName=CONSTRAINT_OFFL_CL_SES_P...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('3.3.0', 'keycloak', 'META-INF/jpa-changelog-3.3.0.xml', '2020-10-03 23:40:45.626538', 44, 'EXECUTED', '7:94edff7cf9ce179e7e85f0cd78a3cf2c', 'addColumn tableName=USER_ENTITY', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('authz-3.4.0.CR1-resource-server-pk-change-part2-KEYCLOAK-6095', 'hmlnarik@redhat.com', 'META-INF/jpa-changelog-authz-3.4.0.CR1.xml', '2020-10-03 23:40:45.644343', 46, 'EXECUTED', '7:e64b5dcea7db06077c6e57d3b9e5ca14', 'customChange', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('authz-3.4.0.CR1-resource-server-pk-change-part3-fixed', 'glavoie@gmail.com', 'META-INF/jpa-changelog-authz-3.4.0.CR1.xml', '2020-10-03 23:40:45.649599', 47, 'MARK_RAN', '7:fd8cf02498f8b1e72496a20afc75178c', 'dropIndex indexName=IDX_RES_SERV_POL_RES_SERV, tableName=RESOURCE_SERVER_POLICY; dropIndex indexName=IDX_RES_SRV_RES_RES_SRV, tableName=RESOURCE_SERVER_RESOURCE; dropIndex indexName=IDX_RES_SRV_SCOPE_RES_SRV, tableName=RESOURCE_SERVER_SCOPE', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('authz-3.4.0.CR1-resource-server-pk-change-part3-fixed-nodropindex', 'glavoie@gmail.com', 'META-INF/jpa-changelog-authz-3.4.0.CR1.xml', '2020-10-03 23:40:45.723563', 48, 'EXECUTED', '7:542794f25aa2b1fbabb7e577d6646319', 'addNotNullConstraint columnName=RESOURCE_SERVER_CLIENT_ID, tableName=RESOURCE_SERVER_POLICY; addNotNullConstraint columnName=RESOURCE_SERVER_CLIENT_ID, tableName=RESOURCE_SERVER_RESOURCE; addNotNullConstraint columnName=RESOURCE_SERVER_CLIENT_ID, ...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('authn-3.4.0.CR1-refresh-token-max-reuse', 'glavoie@gmail.com', 'META-INF/jpa-changelog-authz-3.4.0.CR1.xml', '2020-10-03 23:40:45.733668', 49, 'EXECUTED', '7:edad604c882df12f74941dac3cc6d650', 'addColumn tableName=REALM', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('3.4.0', 'keycloak', 'META-INF/jpa-changelog-3.4.0.xml', '2020-10-03 23:40:45.807112', 50, 'EXECUTED', '7:0f88b78b7b46480eb92690cbf5e44900', 'addPrimaryKey constraintName=CONSTRAINT_REALM_DEFAULT_ROLES, tableName=REALM_DEFAULT_ROLES; addPrimaryKey constraintName=CONSTRAINT_COMPOSITE_ROLE, tableName=COMPOSITE_ROLE; addPrimaryKey constraintName=CONSTR_REALM_DEFAULT_GROUPS, tableName=REALM...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('3.4.0-KEYCLOAK-5230', 'hmlnarik@redhat.com', 'META-INF/jpa-changelog-3.4.0.xml', '2020-10-03 23:40:45.851123', 51, 'EXECUTED', '7:d560e43982611d936457c327f872dd59', 'createIndex indexName=IDX_FU_ATTRIBUTE, tableName=FED_USER_ATTRIBUTE; createIndex indexName=IDX_FU_CONSENT, tableName=FED_USER_CONSENT; createIndex indexName=IDX_FU_CONSENT_RU, tableName=FED_USER_CONSENT; createIndex indexName=IDX_FU_CREDENTIAL, t...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('3.4.1', 'psilva@redhat.com', 'META-INF/jpa-changelog-3.4.1.xml', '2020-10-03 23:40:45.858543', 52, 'EXECUTED', '7:c155566c42b4d14ef07059ec3b3bbd8e', 'modifyDataType columnName=VALUE, tableName=CLIENT_ATTRIBUTES', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('3.4.2', 'keycloak', 'META-INF/jpa-changelog-3.4.2.xml', '2020-10-03 23:40:45.863806', 53, 'EXECUTED', '7:b40376581f12d70f3c89ba8ddf5b7dea', 'update tableName=REALM', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('3.4.2-KEYCLOAK-5172', 'mkanis@redhat.com', 'META-INF/jpa-changelog-3.4.2.xml', '2020-10-03 23:40:45.86954', 54, 'EXECUTED', '7:a1132cc395f7b95b3646146c2e38f168', 'update tableName=CLIENT', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('4.0.0-KEYCLOAK-6335', 'bburke@redhat.com', 'META-INF/jpa-changelog-4.0.0.xml', '2020-10-03 23:40:45.883683', 55, 'EXECUTED', '7:d8dc5d89c789105cfa7ca0e82cba60af', 'createTable tableName=CLIENT_AUTH_FLOW_BINDINGS; addPrimaryKey constraintName=C_CLI_FLOW_BIND, tableName=CLIENT_AUTH_FLOW_BINDINGS', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('4.0.0-CLEANUP-UNUSED-TABLE', 'bburke@redhat.com', 'META-INF/jpa-changelog-4.0.0.xml', '2020-10-03 23:40:45.891759', 56, 'EXECUTED', '7:7822e0165097182e8f653c35517656a3', 'dropTable tableName=CLIENT_IDENTITY_PROV_MAPPING', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('4.0.0-KEYCLOAK-6228', 'bburke@redhat.com', 'META-INF/jpa-changelog-4.0.0.xml', '2020-10-03 23:40:45.927533', 57, 'EXECUTED', '7:c6538c29b9c9a08f9e9ea2de5c2b6375', 'dropUniqueConstraint constraintName=UK_JKUWUVD56ONTGSUHOGM8UEWRT, tableName=USER_CONSENT; dropNotNullConstraint columnName=CLIENT_ID, tableName=USER_CONSENT; addColumn tableName=USER_CONSENT; addUniqueConstraint constraintName=UK_JKUWUVD56ONTGSUHO...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('4.0.0-KEYCLOAK-5579-fixed', 'mposolda@redhat.com', 'META-INF/jpa-changelog-4.0.0.xml', '2020-10-03 23:40:46.171978', 58, 'EXECUTED', '7:6d4893e36de22369cf73bcb051ded875', 'dropForeignKeyConstraint baseTableName=CLIENT_TEMPLATE_ATTRIBUTES, constraintName=FK_CL_TEMPL_ATTR_TEMPL; renameTable newTableName=CLIENT_SCOPE_ATTRIBUTES, oldTableName=CLIENT_TEMPLATE_ATTRIBUTES; renameColumn newColumnName=SCOPE_ID, oldColumnName...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('authz-4.0.0.CR1', 'psilva@redhat.com', 'META-INF/jpa-changelog-authz-4.0.0.CR1.xml', '2020-10-03 23:40:46.239351', 59, 'EXECUTED', '7:57960fc0b0f0dd0563ea6f8b2e4a1707', 'createTable tableName=RESOURCE_SERVER_PERM_TICKET; addPrimaryKey constraintName=CONSTRAINT_FAPMT, tableName=RESOURCE_SERVER_PERM_TICKET; addForeignKeyConstraint baseTableName=RESOURCE_SERVER_PERM_TICKET, constraintName=FK_FRSRHO213XCX4WNKOG82SSPMT...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('authz-4.0.0.Beta3', 'psilva@redhat.com', 'META-INF/jpa-changelog-authz-4.0.0.Beta3.xml', '2020-10-03 23:40:46.252946', 60, 'EXECUTED', '7:2b4b8bff39944c7097977cc18dbceb3b', 'addColumn tableName=RESOURCE_SERVER_POLICY; addColumn tableName=RESOURCE_SERVER_PERM_TICKET; addForeignKeyConstraint baseTableName=RESOURCE_SERVER_PERM_TICKET, constraintName=FK_FRSRPO2128CX4WNKOG82SSRFY, referencedTableName=RESOURCE_SERVER_POLICY', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('authz-4.2.0.Final', 'mhajas@redhat.com', 'META-INF/jpa-changelog-authz-4.2.0.Final.xml', '2020-10-03 23:40:46.274036', 61, 'EXECUTED', '7:2aa42a964c59cd5b8ca9822340ba33a8', 'createTable tableName=RESOURCE_URIS; addForeignKeyConstraint baseTableName=RESOURCE_URIS, constraintName=FK_RESOURCE_SERVER_URIS, referencedTableName=RESOURCE_SERVER_RESOURCE; customChange; dropColumn columnName=URI, tableName=RESOURCE_SERVER_RESO...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('authz-4.2.0.Final-KEYCLOAK-9944', 'hmlnarik@redhat.com', 'META-INF/jpa-changelog-authz-4.2.0.Final.xml', '2020-10-03 23:40:46.290621', 62, 'EXECUTED', '7:9ac9e58545479929ba23f4a3087a0346', 'addPrimaryKey constraintName=CONSTRAINT_RESOUR_URIS_PK, tableName=RESOURCE_URIS', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('4.2.0-KEYCLOAK-6313', 'wadahiro@gmail.com', 'META-INF/jpa-changelog-4.2.0.xml', '2020-10-03 23:40:46.300412', 63, 'EXECUTED', '7:14d407c35bc4fe1976867756bcea0c36', 'addColumn tableName=REQUIRED_ACTION_PROVIDER', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('4.3.0-KEYCLOAK-7984', 'wadahiro@gmail.com', 'META-INF/jpa-changelog-4.3.0.xml', '2020-10-03 23:40:46.307174', 64, 'EXECUTED', '7:241a8030c748c8548e346adee548fa93', 'update tableName=REQUIRED_ACTION_PROVIDER', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('4.6.0-KEYCLOAK-7950', 'psilva@redhat.com', 'META-INF/jpa-changelog-4.6.0.xml', '2020-10-03 23:40:46.313336', 65, 'EXECUTED', '7:7d3182f65a34fcc61e8d23def037dc3f', 'update tableName=RESOURCE_SERVER_RESOURCE', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('4.6.0-KEYCLOAK-8377', 'keycloak', 'META-INF/jpa-changelog-4.6.0.xml', '2020-10-03 23:40:46.347996', 66, 'EXECUTED', '7:b30039e00a0b9715d430d1b0636728fa', 'createTable tableName=ROLE_ATTRIBUTE; addPrimaryKey constraintName=CONSTRAINT_ROLE_ATTRIBUTE_PK, tableName=ROLE_ATTRIBUTE; addForeignKeyConstraint baseTableName=ROLE_ATTRIBUTE, constraintName=FK_ROLE_ATTRIBUTE_ID, referencedTableName=KEYCLOAK_ROLE...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('4.6.0-KEYCLOAK-8555', 'gideonray@gmail.com', 'META-INF/jpa-changelog-4.6.0.xml', '2020-10-03 23:40:46.372783', 67, 'EXECUTED', '7:3797315ca61d531780f8e6f82f258159', 'createIndex indexName=IDX_COMPONENT_PROVIDER_TYPE, tableName=COMPONENT', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('4.7.0-KEYCLOAK-1267', 'sguilhen@redhat.com', 'META-INF/jpa-changelog-4.7.0.xml', '2020-10-03 23:40:46.388361', 68, 'EXECUTED', '7:c7aa4c8d9573500c2d347c1941ff0301', 'addColumn tableName=REALM', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('4.7.0-KEYCLOAK-7275', 'keycloak', 'META-INF/jpa-changelog-4.7.0.xml', '2020-10-03 23:40:46.418702', 69, 'EXECUTED', '7:b207faee394fc074a442ecd42185a5dd', 'renameColumn newColumnName=CREATED_ON, oldColumnName=LAST_SESSION_REFRESH, tableName=OFFLINE_USER_SESSION; addNotNullConstraint columnName=CREATED_ON, tableName=OFFLINE_USER_SESSION; addColumn tableName=OFFLINE_USER_SESSION; customChange; createIn...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('4.8.0-KEYCLOAK-8835', 'sguilhen@redhat.com', 'META-INF/jpa-changelog-4.8.0.xml', '2020-10-03 23:40:46.43626', 70, 'EXECUTED', '7:ab9a9762faaba4ddfa35514b212c4922', 'addNotNullConstraint columnName=SSO_MAX_LIFESPAN_REMEMBER_ME, tableName=REALM; addNotNullConstraint columnName=SSO_IDLE_TIMEOUT_REMEMBER_ME, tableName=REALM', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('authz-7.0.0-KEYCLOAK-10443', 'psilva@redhat.com', 'META-INF/jpa-changelog-authz-7.0.0.xml', '2020-10-03 23:40:46.447707', 71, 'EXECUTED', '7:b9710f74515a6ccb51b72dc0d19df8c4', 'addColumn tableName=RESOURCE_SERVER', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('8.0.0-adding-credential-columns', 'keycloak', 'META-INF/jpa-changelog-8.0.0.xml', '2020-10-03 23:40:46.462171', 72, 'EXECUTED', '7:ec9707ae4d4f0b7452fee20128083879', 'addColumn tableName=CREDENTIAL; addColumn tableName=FED_USER_CREDENTIAL', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('8.0.0-updating-credential-data-not-oracle', 'keycloak', 'META-INF/jpa-changelog-8.0.0.xml', '2020-10-03 23:40:46.48218', 73, 'EXECUTED', '7:03b3f4b264c3c68ba082250a80b74216', 'update tableName=CREDENTIAL; update tableName=CREDENTIAL; update tableName=CREDENTIAL; update tableName=FED_USER_CREDENTIAL; update tableName=FED_USER_CREDENTIAL; update tableName=FED_USER_CREDENTIAL', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('8.0.0-updating-credential-data-oracle', 'keycloak', 'META-INF/jpa-changelog-8.0.0.xml', '2020-10-03 23:40:46.487648', 74, 'MARK_RAN', '7:64c5728f5ca1f5aa4392217701c4fe23', 'update tableName=CREDENTIAL; update tableName=CREDENTIAL; update tableName=CREDENTIAL; update tableName=FED_USER_CREDENTIAL; update tableName=FED_USER_CREDENTIAL; update tableName=FED_USER_CREDENTIAL', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('8.0.0-credential-cleanup-fixed', 'keycloak', 'META-INF/jpa-changelog-8.0.0.xml', '2020-10-03 23:40:46.519661', 75, 'EXECUTED', '7:b48da8c11a3d83ddd6b7d0c8c2219345', 'dropDefaultValue columnName=COUNTER, tableName=CREDENTIAL; dropDefaultValue columnName=DIGITS, tableName=CREDENTIAL; dropDefaultValue columnName=PERIOD, tableName=CREDENTIAL; dropDefaultValue columnName=ALGORITHM, tableName=CREDENTIAL; dropColumn ...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('8.0.0-resource-tag-support', 'keycloak', 'META-INF/jpa-changelog-8.0.0.xml', '2020-10-03 23:40:46.538552', 76, 'EXECUTED', '7:a73379915c23bfad3e8f5c6d5c0aa4bd', 'addColumn tableName=MIGRATION_MODEL; createIndex indexName=IDX_UPDATE_TIME, tableName=MIGRATION_MODEL', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('9.0.0-always-display-client', 'keycloak', 'META-INF/jpa-changelog-9.0.0.xml', '2020-10-03 23:40:46.550434', 77, 'EXECUTED', '7:39e0073779aba192646291aa2332493d', 'addColumn tableName=CLIENT', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('9.0.0-drop-constraints-for-column-increase', 'keycloak', 'META-INF/jpa-changelog-9.0.0.xml', '2020-10-03 23:40:46.559847', 78, 'MARK_RAN', '7:81f87368f00450799b4bf42ea0b3ec34', 'dropUniqueConstraint constraintName=UK_FRSR6T700S9V50BU18WS5PMT, tableName=RESOURCE_SERVER_PERM_TICKET; dropUniqueConstraint constraintName=UK_FRSR6T700S9V50BU18WS5HA6, tableName=RESOURCE_SERVER_RESOURCE; dropPrimaryKey constraintName=CONSTRAINT_O...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('9.0.0-increase-column-size-federated-fk', 'keycloak', 'META-INF/jpa-changelog-9.0.0.xml', '2020-10-03 23:40:46.604884', 79, 'EXECUTED', '7:20b37422abb9fb6571c618148f013a15', 'modifyDataType columnName=CLIENT_ID, tableName=FED_USER_CONSENT; modifyDataType columnName=CLIENT_REALM_CONSTRAINT, tableName=KEYCLOAK_ROLE; modifyDataType columnName=OWNER, tableName=RESOURCE_SERVER_POLICY; modifyDataType columnName=CLIENT_ID, ta...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('9.0.0-recreate-constraints-after-column-increase', 'keycloak', 'META-INF/jpa-changelog-9.0.0.xml', '2020-10-03 23:40:46.642189', 80, 'MARK_RAN', '7:1970bb6cfb5ee800736b95ad3fb3c78a', 'addNotNullConstraint columnName=CLIENT_ID, tableName=OFFLINE_CLIENT_SESSION; addNotNullConstraint columnName=OWNER, tableName=RESOURCE_SERVER_PERM_TICKET; addNotNullConstraint columnName=REQUESTER, tableName=RESOURCE_SERVER_PERM_TICKET; addNotNull...', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('9.0.1-add-index-to-client.client_id', 'keycloak', 'META-INF/jpa-changelog-9.0.1.xml', '2020-10-03 23:40:46.660636', 81, 'EXECUTED', '7:45d9b25fc3b455d522d8dcc10a0f4c80', 'createIndex indexName=IDX_CLIENT_ID, tableName=CLIENT', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('9.0.1-KEYCLOAK-12579-drop-constraints', 'keycloak', 'META-INF/jpa-changelog-9.0.1.xml', '2020-10-03 23:40:46.669828', 82, 'MARK_RAN', '7:890ae73712bc187a66c2813a724d037f', 'dropUniqueConstraint constraintName=SIBLING_NAMES, tableName=KEYCLOAK_GROUP', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('9.0.1-KEYCLOAK-12579-add-not-null-constraint', 'keycloak', 'META-INF/jpa-changelog-9.0.1.xml', '2020-10-03 23:40:46.679594', 83, 'EXECUTED', '7:0a211980d27fafe3ff50d19a3a29b538', 'addNotNullConstraint columnName=PARENT_GROUP, tableName=KEYCLOAK_GROUP', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('9.0.1-KEYCLOAK-12579-recreate-constraints', 'keycloak', 'META-INF/jpa-changelog-9.0.1.xml', '2020-10-03 23:40:46.68458', 84, 'MARK_RAN', '7:a161e2ae671a9020fff61e996a207377', 'addUniqueConstraint constraintName=SIBLING_NAMES, tableName=KEYCLOAK_GROUP', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('9.0.1-add-index-to-events', 'keycloak', 'META-INF/jpa-changelog-9.0.1.xml', '2020-10-03 23:40:46.702383', 85, 'EXECUTED', '7:01c49302201bdf815b0a18d1f98a55dc', 'createIndex indexName=IDX_EVENT_TIME, tableName=EVENT_ENTITY', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+INSERT INTO public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) VALUES ('map-remove-ri', 'keycloak', 'META-INF/jpa-changelog-11.0.0.xml', '2020-10-03 23:40:46.714476', 86, 'EXECUTED', '7:3dace6b144c11f53f1ad2c0361279b86', 'dropForeignKeyConstraint baseTableName=REALM, constraintName=FK_TRAF444KK6QRKMS7N56AIWQ5Y; dropForeignKeyConstraint baseTableName=KEYCLOAK_ROLE, constraintName=FK_KJHO5LE2C0RAL09FL8CM9WFW9', '', NULL, '3.5.4', NULL, NULL, '1768442681');
+
+
+--
+-- Data for Name: databasechangeloglock; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.databasechangeloglock (id, locked, lockgranted, lockedby) VALUES (1, false, NULL, NULL);
+INSERT INTO public.databasechangeloglock (id, locked, lockgranted, lockedby) VALUES (1000, false, NULL, NULL);
+INSERT INTO public.databasechangeloglock (id, locked, lockgranted, lockedby) VALUES (1001, false, NULL, NULL);
+
+
+--
+-- Data for Name: default_client_scope; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.default_client_scope (realm_id, scope_id, default_scope) VALUES ('master', '700b4f56-7e63-40a5-bf6f-0a978279b2f0', false);
+INSERT INTO public.default_client_scope (realm_id, scope_id, default_scope) VALUES ('master', '1a290f56-e5e4-4a99-b5d8-70fc0bb80f97', true);
+INSERT INTO public.default_client_scope (realm_id, scope_id, default_scope) VALUES ('master', 'b8cf8179-455c-4dce-a32f-335744d3b704', true);
+INSERT INTO public.default_client_scope (realm_id, scope_id, default_scope) VALUES ('master', '0c84ea01-a6b6-42f3-a8ba-aec260c86634', true);
+INSERT INTO public.default_client_scope (realm_id, scope_id, default_scope) VALUES ('master', 'e6d4c1e6-036f-4018-9609-a0e205a4a507', false);
+INSERT INTO public.default_client_scope (realm_id, scope_id, default_scope) VALUES ('master', '941518b6-63f2-4912-8cc5-7b45a0b90d40', false);
+INSERT INTO public.default_client_scope (realm_id, scope_id, default_scope) VALUES ('master', 'b786157b-6a00-4d21-8394-68404975701f', true);
+INSERT INTO public.default_client_scope (realm_id, scope_id, default_scope) VALUES ('master', 'e5e89fa9-ac8b-421e-a6fd-a0e9c0f098cd', true);
+INSERT INTO public.default_client_scope (realm_id, scope_id, default_scope) VALUES ('master', '17d991f7-11aa-41d6-87e8-8a5ad30923a8', false);
+INSERT INTO public.default_client_scope (realm_id, scope_id, default_scope) VALUES ('PoC-Soki-Realm-01', 'be6e0330-f101-456c-9dc8-bb2770104a01', false);
+INSERT INTO public.default_client_scope (realm_id, scope_id, default_scope) VALUES ('PoC-Soki-Realm-01', '2ea32f36-8a2d-4565-8000-267954d1b466', true);
+INSERT INTO public.default_client_scope (realm_id, scope_id, default_scope) VALUES ('PoC-Soki-Realm-01', '8358ec8f-e794-451a-b3e9-e1a99664992f', true);
+INSERT INTO public.default_client_scope (realm_id, scope_id, default_scope) VALUES ('PoC-Soki-Realm-01', '3171e3d6-69ba-4732-8815-bf279b192da5', true);
+INSERT INTO public.default_client_scope (realm_id, scope_id, default_scope) VALUES ('PoC-Soki-Realm-01', '644b2967-63ed-4559-a91c-dc65b8b1de55', false);
+INSERT INTO public.default_client_scope (realm_id, scope_id, default_scope) VALUES ('PoC-Soki-Realm-01', '92f27ece-595a-497d-a8a4-d7d5d94a44d9', false);
+INSERT INTO public.default_client_scope (realm_id, scope_id, default_scope) VALUES ('PoC-Soki-Realm-01', '1af671a3-3e34-4044-bcce-932600fbe78b', true);
+INSERT INTO public.default_client_scope (realm_id, scope_id, default_scope) VALUES ('PoC-Soki-Realm-01', 'd59ffc54-01fb-4cd2-8668-885d7846c3fe', true);
+INSERT INTO public.default_client_scope (realm_id, scope_id, default_scope) VALUES ('PoC-Soki-Realm-01', 'abbf3a3a-e7e3-4095-8143-361e788921e4', false);
+
+
+--
+-- Data for Name: event_entity; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: fed_user_attribute; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: fed_user_consent; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: fed_user_consent_cl_scope; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: fed_user_credential; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: fed_user_group_membership; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: fed_user_required_action; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: fed_user_role_mapping; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: federated_identity; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: federated_user; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: group_attribute; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: group_role_mapping; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: identity_provider; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: identity_provider_config; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: identity_provider_mapper; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: idp_mapper_config; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: keycloak_group; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.keycloak_group (id, name, parent_group, realm_id) VALUES ('c2c30d34-ae5d-409e-a444-0a59ac7ccfe4', 'REGION01_GROUP', ' ', 'PoC-Soki-Realm-01');
+INSERT INTO public.keycloak_group (id, name, parent_group, realm_id) VALUES ('9e7488ea-1729-42d9-a561-304bdd2c17b5', 'REGION02_GROUP', ' ', 'PoC-Soki-Realm-01');
+INSERT INTO public.keycloak_group (id, name, parent_group, realm_id) VALUES ('9a2babf8-82a0-4031-b0e5-18276d5c69c6', 'REGION03_GROUP', ' ', 'PoC-Soki-Realm-01');
+
+
+--
+-- Data for Name: keycloak_role; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', 'master', false, '${role_admin}', 'admin', 'master', NULL, 'master');
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('82750e00-1327-4050-a430-ab51d6246e6f', 'master', false, '${role_create-realm}', 'create-realm', 'master', NULL, 'master');
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('2f8bb661-6490-4633-a2b6-558277ee883d', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', true, '${role_create-client}', 'create-client', 'master', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('e90efad5-9f53-4472-822a-4c00c5e2a8ae', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', true, '${role_view-realm}', 'view-realm', 'master', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('aeaf47f7-2fba-4dac-9947-5fa265bfd7f5', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', true, '${role_view-users}', 'view-users', 'master', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('4160623d-d96e-4d8d-9641-aa4252d35d97', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', true, '${role_view-clients}', 'view-clients', 'master', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('80be1784-0916-4fa0-bedb-095e79dd4fe1', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', true, '${role_view-events}', 'view-events', 'master', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('97210bf7-daae-4b3a-ac03-b7189f39a4b6', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', true, '${role_view-identity-providers}', 'view-identity-providers', 'master', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('b4d03208-c3c9-4b76-92fc-b8c9abd11dc8', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', true, '${role_view-authorization}', 'view-authorization', 'master', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('44aa1d29-912a-4638-8637-a147f3963528', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', true, '${role_manage-realm}', 'manage-realm', 'master', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('415925aa-8ff8-438a-ad96-81c7e168f016', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', true, '${role_manage-users}', 'manage-users', 'master', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('e82ae716-1e2a-4978-9e21-3ba4fde2cb35', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', true, '${role_manage-clients}', 'manage-clients', 'master', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('a370f872-2775-4b01-99ef-19dc76d83057', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', true, '${role_manage-events}', 'manage-events', 'master', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('cb33d84a-13d2-4976-a540-e8b6b7120806', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', true, '${role_manage-identity-providers}', 'manage-identity-providers', 'master', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('0af925d1-fce7-4faf-99e8-258e713420aa', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', true, '${role_manage-authorization}', 'manage-authorization', 'master', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('02ab4701-ece5-4bbe-95d6-1f7b4538ca6e', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', true, '${role_query-users}', 'query-users', 'master', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('1e916e72-37d3-4844-9d96-491e10fd7d6a', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', true, '${role_query-clients}', 'query-clients', 'master', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('454688b8-8c35-49ce-8589-f975c8bb8ba0', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', true, '${role_query-realms}', 'query-realms', 'master', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('b53b2f69-fe61-4084-9db5-f266012a03f3', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', true, '${role_query-groups}', 'query-groups', 'master', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('5325dae2-4ad5-4519-bf07-f43721c3896c', '7794d3b1-3f3b-4baa-991a-aa74b0cd6cea', true, '${role_view-profile}', 'view-profile', 'master', '7794d3b1-3f3b-4baa-991a-aa74b0cd6cea', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('c441ff20-25c7-4c70-88e6-431925120e72', '7794d3b1-3f3b-4baa-991a-aa74b0cd6cea', true, '${role_manage-account}', 'manage-account', 'master', '7794d3b1-3f3b-4baa-991a-aa74b0cd6cea', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('acd2cceb-eb4e-47c2-bb40-1ec6207f2a51', '7794d3b1-3f3b-4baa-991a-aa74b0cd6cea', true, '${role_manage-account-links}', 'manage-account-links', 'master', '7794d3b1-3f3b-4baa-991a-aa74b0cd6cea', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('1401a1d6-21f7-4473-bdb7-a3b1374ce434', '7794d3b1-3f3b-4baa-991a-aa74b0cd6cea', true, '${role_view-applications}', 'view-applications', 'master', '7794d3b1-3f3b-4baa-991a-aa74b0cd6cea', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('479134d2-4599-4e5c-95b9-2c49bec32a3a', '7794d3b1-3f3b-4baa-991a-aa74b0cd6cea', true, '${role_view-consent}', 'view-consent', 'master', '7794d3b1-3f3b-4baa-991a-aa74b0cd6cea', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('c333132e-7e30-430d-85e0-eea5c2d65e0a', '7794d3b1-3f3b-4baa-991a-aa74b0cd6cea', true, '${role_manage-consent}', 'manage-consent', 'master', '7794d3b1-3f3b-4baa-991a-aa74b0cd6cea', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('53d4350c-4770-40ff-9acc-0d1194c2484c', 'ecdd0f72-2c87-46bc-b2f1-65039807e553', true, '${role_read-token}', 'read-token', 'master', 'ecdd0f72-2c87-46bc-b2f1-65039807e553', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('e044bb86-b772-45de-b616-f3a080192576', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', true, '${role_impersonation}', 'impersonation', 'master', '72ae90e4-4635-4bd9-9605-a1d8898d6a96', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('8f628a3e-3a1d-41b6-8a4c-ef418e2f01b6', 'master', false, '${role_offline-access}', 'offline_access', 'master', NULL, 'master');
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('1555f57b-d48a-4ac2-8064-16f203efc559', 'master', false, '${role_uma_authorization}', 'uma_authorization', 'master', NULL, 'master');
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('5a4d683e-82dd-4a80-9f47-57f304c1c911', '1b7a1f93-5791-449b-b19a-7c8892118d6e', true, '${role_create-client}', 'create-client', 'master', '1b7a1f93-5791-449b-b19a-7c8892118d6e', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('a45c6f62-aeb9-42e0-80d2-b8550bfb3621', '1b7a1f93-5791-449b-b19a-7c8892118d6e', true, '${role_view-realm}', 'view-realm', 'master', '1b7a1f93-5791-449b-b19a-7c8892118d6e', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('af074e82-bcbd-4e44-942b-38e61fa16e83', '1b7a1f93-5791-449b-b19a-7c8892118d6e', true, '${role_view-users}', 'view-users', 'master', '1b7a1f93-5791-449b-b19a-7c8892118d6e', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('00e22abd-bfbb-4fc1-bd44-e289985fcbac', '1b7a1f93-5791-449b-b19a-7c8892118d6e', true, '${role_view-clients}', 'view-clients', 'master', '1b7a1f93-5791-449b-b19a-7c8892118d6e', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('c2328365-b558-49bc-8268-6729abb052ec', '1b7a1f93-5791-449b-b19a-7c8892118d6e', true, '${role_view-events}', 'view-events', 'master', '1b7a1f93-5791-449b-b19a-7c8892118d6e', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('38433445-c31c-47c8-b4ef-bde1de437bd5', '1b7a1f93-5791-449b-b19a-7c8892118d6e', true, '${role_view-identity-providers}', 'view-identity-providers', 'master', '1b7a1f93-5791-449b-b19a-7c8892118d6e', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('94a3aa07-afd7-476b-86c8-b8794f91959f', '1b7a1f93-5791-449b-b19a-7c8892118d6e', true, '${role_view-authorization}', 'view-authorization', 'master', '1b7a1f93-5791-449b-b19a-7c8892118d6e', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('e7d9fcbc-9320-4fbe-b23e-f7afe6eaf32a', '1b7a1f93-5791-449b-b19a-7c8892118d6e', true, '${role_manage-realm}', 'manage-realm', 'master', '1b7a1f93-5791-449b-b19a-7c8892118d6e', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('6300ca88-fa49-472f-9c2f-287028da10e2', '1b7a1f93-5791-449b-b19a-7c8892118d6e', true, '${role_manage-users}', 'manage-users', 'master', '1b7a1f93-5791-449b-b19a-7c8892118d6e', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('b866d083-c416-4104-8da4-44f7abb4218d', '1b7a1f93-5791-449b-b19a-7c8892118d6e', true, '${role_manage-clients}', 'manage-clients', 'master', '1b7a1f93-5791-449b-b19a-7c8892118d6e', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('5ef3f7f1-7273-49a8-aed7-7fedf30175f1', '1b7a1f93-5791-449b-b19a-7c8892118d6e', true, '${role_manage-events}', 'manage-events', 'master', '1b7a1f93-5791-449b-b19a-7c8892118d6e', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('099d9a68-7e4c-4abb-bdb8-71ee4248ed8e', '1b7a1f93-5791-449b-b19a-7c8892118d6e', true, '${role_manage-identity-providers}', 'manage-identity-providers', 'master', '1b7a1f93-5791-449b-b19a-7c8892118d6e', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('caeb73e9-3679-448d-9c86-4096810b00b8', '1b7a1f93-5791-449b-b19a-7c8892118d6e', true, '${role_manage-authorization}', 'manage-authorization', 'master', '1b7a1f93-5791-449b-b19a-7c8892118d6e', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('058c6d77-fa94-443a-828a-1ddba0c6dbb6', '1b7a1f93-5791-449b-b19a-7c8892118d6e', true, '${role_query-users}', 'query-users', 'master', '1b7a1f93-5791-449b-b19a-7c8892118d6e', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('df77041b-f527-4620-90d1-ded1ce4af334', '1b7a1f93-5791-449b-b19a-7c8892118d6e', true, '${role_query-clients}', 'query-clients', 'master', '1b7a1f93-5791-449b-b19a-7c8892118d6e', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('82f58e9c-52ad-4d1f-9815-ce2f6adac93f', '1b7a1f93-5791-449b-b19a-7c8892118d6e', true, '${role_query-realms}', 'query-realms', 'master', '1b7a1f93-5791-449b-b19a-7c8892118d6e', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('ceb8738c-31c7-4920-bc9b-b55d99872a7c', '1b7a1f93-5791-449b-b19a-7c8892118d6e', true, '${role_query-groups}', 'query-groups', 'master', '1b7a1f93-5791-449b-b19a-7c8892118d6e', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('a6c8e12e-675b-443e-a680-a9a047314ec2', '21320440-b1b3-435c-9932-b05251af5396', true, '${role_realm-admin}', 'realm-admin', 'PoC-Soki-Realm-01', '21320440-b1b3-435c-9932-b05251af5396', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('72cc3190-715b-4aee-a6c8-bf7a917bb29c', '21320440-b1b3-435c-9932-b05251af5396', true, '${role_create-client}', 'create-client', 'PoC-Soki-Realm-01', '21320440-b1b3-435c-9932-b05251af5396', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('239d6035-d1cb-44b4-84f8-1f9d9878b87c', '21320440-b1b3-435c-9932-b05251af5396', true, '${role_view-realm}', 'view-realm', 'PoC-Soki-Realm-01', '21320440-b1b3-435c-9932-b05251af5396', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('dc1dc56b-b0bb-4e22-90e4-56cb0c97ff68', '21320440-b1b3-435c-9932-b05251af5396', true, '${role_view-users}', 'view-users', 'PoC-Soki-Realm-01', '21320440-b1b3-435c-9932-b05251af5396', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('2f5e7c31-7316-4c26-82ae-d6409a6d6543', '21320440-b1b3-435c-9932-b05251af5396', true, '${role_view-clients}', 'view-clients', 'PoC-Soki-Realm-01', '21320440-b1b3-435c-9932-b05251af5396', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('b013310d-c6e7-4e44-963e-b10144f53d06', '21320440-b1b3-435c-9932-b05251af5396', true, '${role_view-events}', 'view-events', 'PoC-Soki-Realm-01', '21320440-b1b3-435c-9932-b05251af5396', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('0c92b834-e0b2-4028-8bd8-267c4696b776', '21320440-b1b3-435c-9932-b05251af5396', true, '${role_view-identity-providers}', 'view-identity-providers', 'PoC-Soki-Realm-01', '21320440-b1b3-435c-9932-b05251af5396', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('ba8b2f14-c3a7-4418-a16c-163a5a4e6903', '21320440-b1b3-435c-9932-b05251af5396', true, '${role_view-authorization}', 'view-authorization', 'PoC-Soki-Realm-01', '21320440-b1b3-435c-9932-b05251af5396', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('dc7cb254-39f7-4c60-bcc8-3dde7d5a54ca', '21320440-b1b3-435c-9932-b05251af5396', true, '${role_manage-realm}', 'manage-realm', 'PoC-Soki-Realm-01', '21320440-b1b3-435c-9932-b05251af5396', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('00fa5ba1-1ac8-4e6c-b1cc-4c83ed249aa1', '21320440-b1b3-435c-9932-b05251af5396', true, '${role_manage-users}', 'manage-users', 'PoC-Soki-Realm-01', '21320440-b1b3-435c-9932-b05251af5396', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('94328934-5c8e-4eed-915d-964d12d0c20d', '21320440-b1b3-435c-9932-b05251af5396', true, '${role_manage-clients}', 'manage-clients', 'PoC-Soki-Realm-01', '21320440-b1b3-435c-9932-b05251af5396', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('9e5b40ae-3032-4b51-843f-284242618a01', '21320440-b1b3-435c-9932-b05251af5396', true, '${role_manage-events}', 'manage-events', 'PoC-Soki-Realm-01', '21320440-b1b3-435c-9932-b05251af5396', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('2d78ddff-cac2-4250-b6a1-82de6856d888', '21320440-b1b3-435c-9932-b05251af5396', true, '${role_manage-identity-providers}', 'manage-identity-providers', 'PoC-Soki-Realm-01', '21320440-b1b3-435c-9932-b05251af5396', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('6ccc9899-bb03-4ada-a7f6-500cf2c2d6de', '21320440-b1b3-435c-9932-b05251af5396', true, '${role_manage-authorization}', 'manage-authorization', 'PoC-Soki-Realm-01', '21320440-b1b3-435c-9932-b05251af5396', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('a32fb490-c4b8-40b7-b93f-0c4ecd0de617', '21320440-b1b3-435c-9932-b05251af5396', true, '${role_query-users}', 'query-users', 'PoC-Soki-Realm-01', '21320440-b1b3-435c-9932-b05251af5396', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('41b41d7b-de07-4dd1-b18c-a7130203e61b', '21320440-b1b3-435c-9932-b05251af5396', true, '${role_query-clients}', 'query-clients', 'PoC-Soki-Realm-01', '21320440-b1b3-435c-9932-b05251af5396', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('43a56efb-3dca-4f9e-8901-80ca4418a8c2', '21320440-b1b3-435c-9932-b05251af5396', true, '${role_query-realms}', 'query-realms', 'PoC-Soki-Realm-01', '21320440-b1b3-435c-9932-b05251af5396', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('e2c521e6-7194-4820-a152-4cd6cfdbf40a', '21320440-b1b3-435c-9932-b05251af5396', true, '${role_query-groups}', 'query-groups', 'PoC-Soki-Realm-01', '21320440-b1b3-435c-9932-b05251af5396', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('b284cb80-aba0-4511-bc09-415b47ea7280', 'd14028a0-d831-42db-ab01-6cf86a9d9f51', true, '${role_view-profile}', 'view-profile', 'PoC-Soki-Realm-01', 'd14028a0-d831-42db-ab01-6cf86a9d9f51', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('cd6ee10f-e970-4684-bfb5-4852ab788461', 'd14028a0-d831-42db-ab01-6cf86a9d9f51', true, '${role_manage-account}', 'manage-account', 'PoC-Soki-Realm-01', 'd14028a0-d831-42db-ab01-6cf86a9d9f51', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('e27ff9d1-025e-4ba2-b294-81ed4b5ca2b1', 'd14028a0-d831-42db-ab01-6cf86a9d9f51', true, '${role_manage-account-links}', 'manage-account-links', 'PoC-Soki-Realm-01', 'd14028a0-d831-42db-ab01-6cf86a9d9f51', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('be217af0-8dab-4607-9213-2ec355eaf088', 'd14028a0-d831-42db-ab01-6cf86a9d9f51', true, '${role_view-applications}', 'view-applications', 'PoC-Soki-Realm-01', 'd14028a0-d831-42db-ab01-6cf86a9d9f51', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('223905fd-8cbe-4b9d-bd1e-ce3dd513be9e', 'd14028a0-d831-42db-ab01-6cf86a9d9f51', true, '${role_view-consent}', 'view-consent', 'PoC-Soki-Realm-01', 'd14028a0-d831-42db-ab01-6cf86a9d9f51', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('15237af2-823b-4642-9040-fa8983632762', 'd14028a0-d831-42db-ab01-6cf86a9d9f51', true, '${role_manage-consent}', 'manage-consent', 'PoC-Soki-Realm-01', 'd14028a0-d831-42db-ab01-6cf86a9d9f51', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('38f6297f-314d-4acf-9bc1-e175fa4491a1', '1b7a1f93-5791-449b-b19a-7c8892118d6e', true, '${role_impersonation}', 'impersonation', 'master', '1b7a1f93-5791-449b-b19a-7c8892118d6e', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('771d8081-20e4-4565-a2f9-963931603e77', '21320440-b1b3-435c-9932-b05251af5396', true, '${role_impersonation}', 'impersonation', 'PoC-Soki-Realm-01', '21320440-b1b3-435c-9932-b05251af5396', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('ba29d7fe-dfd1-4c2f-b58e-a359ca103ac0', '3ce0da36-54ad-4911-b510-6b871451ed63', true, '${role_read-token}', 'read-token', 'PoC-Soki-Realm-01', '3ce0da36-54ad-4911-b510-6b871451ed63', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('68465770-630c-4aa4-98a4-63a810c7aa91', 'PoC-Soki-Realm-01', false, '${role_offline-access}', 'offline_access', 'PoC-Soki-Realm-01', NULL, 'PoC-Soki-Realm-01');
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('94f68f32-df10-4d4c-aa0c-f06fea1327d8', 'PoC-Soki-Realm-01', false, '${role_uma_authorization}', 'uma_authorization', 'PoC-Soki-Realm-01', NULL, 'PoC-Soki-Realm-01');
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('51adae9a-0f42-4e19-b43d-69aee2bc199b', '5067ce51-37f0-46a5-bfa2-984543e80361', true, NULL, 'uma_protection', 'PoC-Soki-Realm-01', '5067ce51-37f0-46a5-bfa2-984543e80361', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('8fb0e3e3-fe73-48b1-8ed3-b52455c0406b', '5067ce51-37f0-46a5-bfa2-984543e80361', true, NULL, 'BASIC_REGISTERED_CLIENT_ROLE', 'PoC-Soki-Realm-01', '5067ce51-37f0-46a5-bfa2-984543e80361', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('c17d0171-469d-4d1b-8cb3-bca5ac389f92', 'PoC-Soki-Realm-01', false, NULL, 'BASIC_REGISTERED_REALM_ROLE', 'PoC-Soki-Realm-01', NULL, 'PoC-Soki-Realm-01');
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('13340cb1-3c75-4490-9ab8-ddbb80b8735d', 'PoC-Soki-Realm-01', false, NULL, 'OPERATOR_REALM_ROLE', 'PoC-Soki-Realm-01', NULL, 'PoC-Soki-Realm-01');
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('ce444fac-89c9-429f-a904-acdbd94b9883', 'PoC-Soki-Realm-01', false, NULL, 'ADMIN_REALM_ROLE', 'PoC-Soki-Realm-01', NULL, 'PoC-Soki-Realm-01');
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('e93a1a43-7a5c-4187-8f0b-77d8a275b9cd', '5067ce51-37f0-46a5-bfa2-984543e80361', true, NULL, 'OPERATOR_CLIENT_ROLE', 'PoC-Soki-Realm-01', '5067ce51-37f0-46a5-bfa2-984543e80361', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('98465380-81bb-4389-9f63-0da7896642bd', '5067ce51-37f0-46a5-bfa2-984543e80361', true, NULL, 'ADMIN_CLIENT_ROLE', 'PoC-Soki-Realm-01', '5067ce51-37f0-46a5-bfa2-984543e80361', NULL);
+
+
+--
+-- Data for Name: migration_model; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.migration_model (id, version, update_time) VALUES ('mrze0', '11.0.2', 1601768451);
+
+
+--
+-- Data for Name: offline_client_session; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: offline_user_session; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: policy_config; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.policy_config (policy_id, name, value) VALUES ('474663d9-fd0b-472f-be43-174cec89167b', 'code', '// by default, grants any permission associated with this policy
+$evaluation.grant();
+');
+INSERT INTO public.policy_config (policy_id, name, value) VALUES ('f8f18532-afdb-42bb-9b0f-62a9ae0e560c', 'defaultResourceType', 'urn:PoC-Soki-App-Client-01:resources:default');
+
+
+--
+-- Data for Name: protocol_mapper; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('1ded491e-1993-417c-a6a5-67f76f5662dd', 'audience resolve', 'openid-connect', 'oidc-audience-resolve-mapper', '7b8f81bd-32fa-4952-bf35-9b7ab46ca70f', NULL);
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('e9032bde-be71-4b07-989e-2a888d4f65c2', 'locale', 'openid-connect', 'oidc-usermodel-attribute-mapper', '0acb1dc9-e951-4a48-8581-9436e7da12cc', NULL);
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('8cc03dd3-fd8f-46c4-baac-d6139474ebd9', 'role list', 'saml', 'saml-role-list-mapper', NULL, '1a290f56-e5e4-4a99-b5d8-70fc0bb80f97');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('0f0b18b4-f130-4be3-bd9f-c2224f20f624', 'full name', 'openid-connect', 'oidc-full-name-mapper', NULL, 'b8cf8179-455c-4dce-a32f-335744d3b704');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('a94f9d7b-5d64-4876-8fe0-d9d344231dba', 'family name', 'openid-connect', 'oidc-usermodel-property-mapper', NULL, 'b8cf8179-455c-4dce-a32f-335744d3b704');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('fbd083cf-b9d3-460c-97e2-4fcdc8af34e9', 'given name', 'openid-connect', 'oidc-usermodel-property-mapper', NULL, 'b8cf8179-455c-4dce-a32f-335744d3b704');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('fd74327e-c067-43c4-9be8-86987830aecd', 'middle name', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, 'b8cf8179-455c-4dce-a32f-335744d3b704');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('aa0134ea-0864-442e-9c87-9a99e6a21c82', 'nickname', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, 'b8cf8179-455c-4dce-a32f-335744d3b704');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('eb2fa6b6-c786-4602-98f8-7620a4fb6083', 'username', 'openid-connect', 'oidc-usermodel-property-mapper', NULL, 'b8cf8179-455c-4dce-a32f-335744d3b704');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('28e01b60-e774-4550-afeb-05039ab2dc3c', 'profile', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, 'b8cf8179-455c-4dce-a32f-335744d3b704');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('850f0039-202d-4b03-abab-78c238db6929', 'picture', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, 'b8cf8179-455c-4dce-a32f-335744d3b704');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('fe114d94-90b5-4222-a0d9-291f89f2ddc1', 'website', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, 'b8cf8179-455c-4dce-a32f-335744d3b704');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('5345954d-0623-4432-b0d6-e27f785a9732', 'gender', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, 'b8cf8179-455c-4dce-a32f-335744d3b704');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('b8238408-1d16-4299-bd8f-c840e3b56ed8', 'birthdate', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, 'b8cf8179-455c-4dce-a32f-335744d3b704');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('ee0018ac-c3aa-434e-a5ad-e45af799f5f2', 'zoneinfo', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, 'b8cf8179-455c-4dce-a32f-335744d3b704');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('cd2d74bf-2d64-472b-a146-2733de5409d0', 'locale', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, 'b8cf8179-455c-4dce-a32f-335744d3b704');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('75ca7f6a-208f-443c-945e-fe1d9ccc23a7', 'updated at', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, 'b8cf8179-455c-4dce-a32f-335744d3b704');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('1d2794aa-32ec-4265-8a88-3d057d005ad4', 'email', 'openid-connect', 'oidc-usermodel-property-mapper', NULL, '0c84ea01-a6b6-42f3-a8ba-aec260c86634');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('bdef6b6d-8cd5-4cde-bd7b-1dbe0d8b44c1', 'email verified', 'openid-connect', 'oidc-usermodel-property-mapper', NULL, '0c84ea01-a6b6-42f3-a8ba-aec260c86634');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('0089ba07-2b33-4643-8189-4903d366ad0b', 'address', 'openid-connect', 'oidc-address-mapper', NULL, 'e6d4c1e6-036f-4018-9609-a0e205a4a507');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('902d32ce-5815-4f56-8357-71a3cb9b9c3d', 'phone number', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, '941518b6-63f2-4912-8cc5-7b45a0b90d40');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('2a32ffcf-bf22-4b33-bc91-e94e6223c445', 'phone number verified', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, '941518b6-63f2-4912-8cc5-7b45a0b90d40');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('c06c974b-0706-4324-95f7-04a73cab9729', 'realm roles', 'openid-connect', 'oidc-usermodel-realm-role-mapper', NULL, 'b786157b-6a00-4d21-8394-68404975701f');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('7e4e99cd-3931-45c8-a305-e3af4363efd5', 'client roles', 'openid-connect', 'oidc-usermodel-client-role-mapper', NULL, 'b786157b-6a00-4d21-8394-68404975701f');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('6a376bbb-84a1-4ec8-969b-7bc2fb1f802a', 'audience resolve', 'openid-connect', 'oidc-audience-resolve-mapper', NULL, 'b786157b-6a00-4d21-8394-68404975701f');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('2c835171-311e-45d4-b08a-0114d2821d2a', 'allowed web origins', 'openid-connect', 'oidc-allowed-origins-mapper', NULL, 'e5e89fa9-ac8b-421e-a6fd-a0e9c0f098cd');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('9027200a-3c6c-47da-947e-18450756b4f2', 'upn', 'openid-connect', 'oidc-usermodel-property-mapper', NULL, '17d991f7-11aa-41d6-87e8-8a5ad30923a8');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('2fefbff1-eb5c-4e89-ae3f-a9c73bf2796e', 'groups', 'openid-connect', 'oidc-usermodel-realm-role-mapper', NULL, '17d991f7-11aa-41d6-87e8-8a5ad30923a8');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('9eb055b2-1a84-4c40-8a88-e222f4f279d4', 'audience resolve', 'openid-connect', 'oidc-audience-resolve-mapper', '95a91113-a1ca-48e9-a0e7-5320c3f6422a', NULL);
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('745f98b5-0d12-4e5f-8113-f75035871219', 'role list', 'saml', 'saml-role-list-mapper', NULL, '2ea32f36-8a2d-4565-8000-267954d1b466');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('e06d8adb-eb87-4146-a6e0-4de30bb74df4', 'full name', 'openid-connect', 'oidc-full-name-mapper', NULL, '8358ec8f-e794-451a-b3e9-e1a99664992f');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('937a83d4-56bd-46ef-b68f-09291a89715d', 'family name', 'openid-connect', 'oidc-usermodel-property-mapper', NULL, '8358ec8f-e794-451a-b3e9-e1a99664992f');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('910be649-fd43-40c7-8dee-746ba219c82d', 'given name', 'openid-connect', 'oidc-usermodel-property-mapper', NULL, '8358ec8f-e794-451a-b3e9-e1a99664992f');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('1a1c52d8-1311-4772-9994-125b157be35c', 'middle name', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, '8358ec8f-e794-451a-b3e9-e1a99664992f');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('9a55e044-9247-4a40-a9d6-d55bae0d9031', 'nickname', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, '8358ec8f-e794-451a-b3e9-e1a99664992f');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('3d7932f6-2881-4f5a-ba9c-aa5868899172', 'username', 'openid-connect', 'oidc-usermodel-property-mapper', NULL, '8358ec8f-e794-451a-b3e9-e1a99664992f');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('be8038c0-570d-47d2-af1b-17c80f45eeb3', 'profile', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, '8358ec8f-e794-451a-b3e9-e1a99664992f');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('3904c811-6552-4dd6-b12d-db6b5822b488', 'picture', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, '8358ec8f-e794-451a-b3e9-e1a99664992f');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('291e0b75-18e7-4578-92d1-826a0d61d8cd', 'website', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, '8358ec8f-e794-451a-b3e9-e1a99664992f');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('503f9f4f-a309-4c79-9171-ac2a8169e374', 'gender', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, '8358ec8f-e794-451a-b3e9-e1a99664992f');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('4449abe4-0fcc-4f99-8463-a14b56edc43a', 'birthdate', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, '8358ec8f-e794-451a-b3e9-e1a99664992f');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('666abaae-f6f0-44e2-bad9-e840b0503f70', 'zoneinfo', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, '8358ec8f-e794-451a-b3e9-e1a99664992f');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('b3b3d43d-eb5c-43ab-811b-b44307d908e8', 'locale', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, '8358ec8f-e794-451a-b3e9-e1a99664992f');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('be077cfe-925a-4c05-ab46-96b02e55e1a7', 'updated at', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, '8358ec8f-e794-451a-b3e9-e1a99664992f');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('cb6d7049-6607-470a-b682-e6479501edce', 'email', 'openid-connect', 'oidc-usermodel-property-mapper', NULL, '3171e3d6-69ba-4732-8815-bf279b192da5');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('b01b6c00-4901-44b1-a5b5-aab15c165cd2', 'email verified', 'openid-connect', 'oidc-usermodel-property-mapper', NULL, '3171e3d6-69ba-4732-8815-bf279b192da5');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('4c013504-9678-41da-b831-f27031a9f12b', 'address', 'openid-connect', 'oidc-address-mapper', NULL, '644b2967-63ed-4559-a91c-dc65b8b1de55');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('80965ceb-a59b-4522-8d81-8e1161d0b80c', 'phone number', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, '92f27ece-595a-497d-a8a4-d7d5d94a44d9');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('c5e09de1-4841-457f-889c-81f5808c23bb', 'phone number verified', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, '92f27ece-595a-497d-a8a4-d7d5d94a44d9');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('d3ce9a75-369a-4200-a75c-43fec05f44df', 'realm roles', 'openid-connect', 'oidc-usermodel-realm-role-mapper', NULL, '1af671a3-3e34-4044-bcce-932600fbe78b');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('ae379c21-5724-4a54-afe7-fb9ae3ed2fa5', 'client roles', 'openid-connect', 'oidc-usermodel-client-role-mapper', NULL, '1af671a3-3e34-4044-bcce-932600fbe78b');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('f1f26827-69af-416e-9415-e771184955e7', 'audience resolve', 'openid-connect', 'oidc-audience-resolve-mapper', NULL, '1af671a3-3e34-4044-bcce-932600fbe78b');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('00878791-b8d1-4780-8c5b-117fb1e2ecbc', 'allowed web origins', 'openid-connect', 'oidc-allowed-origins-mapper', NULL, 'd59ffc54-01fb-4cd2-8668-885d7846c3fe');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('596e9326-a8c6-4f44-965a-06a48302c01b', 'upn', 'openid-connect', 'oidc-usermodel-property-mapper', NULL, 'abbf3a3a-e7e3-4095-8143-361e788921e4');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('8486c788-55c2-4d09-ab32-92801f79666e', 'groups', 'openid-connect', 'oidc-usermodel-realm-role-mapper', NULL, 'abbf3a3a-e7e3-4095-8143-361e788921e4');
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('8090168e-e96f-4581-ac76-1ae5ff4f4e00', 'locale', 'openid-connect', 'oidc-usermodel-attribute-mapper', 'bcb37c06-40e2-4f8d-9b11-9eb94138e598', NULL);
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('d0b5b8e8-fdac-4c87-9efb-a20b4acd726d', 'Client ID', 'openid-connect', 'oidc-usersessionmodel-note-mapper', '5067ce51-37f0-46a5-bfa2-984543e80361', NULL);
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('802b1293-7380-4bdc-b1a0-eff16e1a854b', 'Client Host', 'openid-connect', 'oidc-usersessionmodel-note-mapper', '5067ce51-37f0-46a5-bfa2-984543e80361', NULL);
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('c573f67c-4f65-43dc-888a-3b2bff449bb8', 'Client IP Address', 'openid-connect', 'oidc-usersessionmodel-note-mapper', '5067ce51-37f0-46a5-bfa2-984543e80361', NULL);
+INSERT INTO public.protocol_mapper (id, name, protocol, protocol_mapper_name, client_id, client_scope_id) VALUES ('a9e3bfad-0640-4b9a-b479-168845ab1ccd', 'Username4SpringOAuth2', 'openid-connect', 'oidc-usermodel-property-mapper', '5067ce51-37f0-46a5-bfa2-984543e80361', NULL);
+
+
+--
+-- Data for Name: protocol_mapper_config; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('e9032bde-be71-4b07-989e-2a888d4f65c2', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('e9032bde-be71-4b07-989e-2a888d4f65c2', 'locale', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('e9032bde-be71-4b07-989e-2a888d4f65c2', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('e9032bde-be71-4b07-989e-2a888d4f65c2', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('e9032bde-be71-4b07-989e-2a888d4f65c2', 'locale', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('e9032bde-be71-4b07-989e-2a888d4f65c2', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('8cc03dd3-fd8f-46c4-baac-d6139474ebd9', 'false', 'single');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('8cc03dd3-fd8f-46c4-baac-d6139474ebd9', 'Basic', 'attribute.nameformat');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('8cc03dd3-fd8f-46c4-baac-d6139474ebd9', 'Role', 'attribute.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('0f0b18b4-f130-4be3-bd9f-c2224f20f624', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('0f0b18b4-f130-4be3-bd9f-c2224f20f624', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('0f0b18b4-f130-4be3-bd9f-c2224f20f624', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('a94f9d7b-5d64-4876-8fe0-d9d344231dba', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('a94f9d7b-5d64-4876-8fe0-d9d344231dba', 'lastName', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('a94f9d7b-5d64-4876-8fe0-d9d344231dba', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('a94f9d7b-5d64-4876-8fe0-d9d344231dba', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('a94f9d7b-5d64-4876-8fe0-d9d344231dba', 'family_name', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('a94f9d7b-5d64-4876-8fe0-d9d344231dba', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('fbd083cf-b9d3-460c-97e2-4fcdc8af34e9', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('fbd083cf-b9d3-460c-97e2-4fcdc8af34e9', 'firstName', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('fbd083cf-b9d3-460c-97e2-4fcdc8af34e9', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('fbd083cf-b9d3-460c-97e2-4fcdc8af34e9', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('fbd083cf-b9d3-460c-97e2-4fcdc8af34e9', 'given_name', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('fbd083cf-b9d3-460c-97e2-4fcdc8af34e9', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('fd74327e-c067-43c4-9be8-86987830aecd', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('fd74327e-c067-43c4-9be8-86987830aecd', 'middleName', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('fd74327e-c067-43c4-9be8-86987830aecd', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('fd74327e-c067-43c4-9be8-86987830aecd', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('fd74327e-c067-43c4-9be8-86987830aecd', 'middle_name', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('fd74327e-c067-43c4-9be8-86987830aecd', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('aa0134ea-0864-442e-9c87-9a99e6a21c82', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('aa0134ea-0864-442e-9c87-9a99e6a21c82', 'nickname', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('aa0134ea-0864-442e-9c87-9a99e6a21c82', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('aa0134ea-0864-442e-9c87-9a99e6a21c82', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('aa0134ea-0864-442e-9c87-9a99e6a21c82', 'nickname', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('aa0134ea-0864-442e-9c87-9a99e6a21c82', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('eb2fa6b6-c786-4602-98f8-7620a4fb6083', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('eb2fa6b6-c786-4602-98f8-7620a4fb6083', 'username', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('eb2fa6b6-c786-4602-98f8-7620a4fb6083', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('eb2fa6b6-c786-4602-98f8-7620a4fb6083', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('eb2fa6b6-c786-4602-98f8-7620a4fb6083', 'preferred_username', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('eb2fa6b6-c786-4602-98f8-7620a4fb6083', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('28e01b60-e774-4550-afeb-05039ab2dc3c', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('28e01b60-e774-4550-afeb-05039ab2dc3c', 'profile', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('28e01b60-e774-4550-afeb-05039ab2dc3c', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('28e01b60-e774-4550-afeb-05039ab2dc3c', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('28e01b60-e774-4550-afeb-05039ab2dc3c', 'profile', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('28e01b60-e774-4550-afeb-05039ab2dc3c', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('850f0039-202d-4b03-abab-78c238db6929', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('850f0039-202d-4b03-abab-78c238db6929', 'picture', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('850f0039-202d-4b03-abab-78c238db6929', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('850f0039-202d-4b03-abab-78c238db6929', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('850f0039-202d-4b03-abab-78c238db6929', 'picture', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('850f0039-202d-4b03-abab-78c238db6929', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('fe114d94-90b5-4222-a0d9-291f89f2ddc1', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('fe114d94-90b5-4222-a0d9-291f89f2ddc1', 'website', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('fe114d94-90b5-4222-a0d9-291f89f2ddc1', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('fe114d94-90b5-4222-a0d9-291f89f2ddc1', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('fe114d94-90b5-4222-a0d9-291f89f2ddc1', 'website', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('fe114d94-90b5-4222-a0d9-291f89f2ddc1', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('5345954d-0623-4432-b0d6-e27f785a9732', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('5345954d-0623-4432-b0d6-e27f785a9732', 'gender', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('5345954d-0623-4432-b0d6-e27f785a9732', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('5345954d-0623-4432-b0d6-e27f785a9732', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('5345954d-0623-4432-b0d6-e27f785a9732', 'gender', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('5345954d-0623-4432-b0d6-e27f785a9732', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('b8238408-1d16-4299-bd8f-c840e3b56ed8', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('b8238408-1d16-4299-bd8f-c840e3b56ed8', 'birthdate', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('b8238408-1d16-4299-bd8f-c840e3b56ed8', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('b8238408-1d16-4299-bd8f-c840e3b56ed8', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('b8238408-1d16-4299-bd8f-c840e3b56ed8', 'birthdate', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('b8238408-1d16-4299-bd8f-c840e3b56ed8', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('ee0018ac-c3aa-434e-a5ad-e45af799f5f2', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('ee0018ac-c3aa-434e-a5ad-e45af799f5f2', 'zoneinfo', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('ee0018ac-c3aa-434e-a5ad-e45af799f5f2', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('ee0018ac-c3aa-434e-a5ad-e45af799f5f2', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('ee0018ac-c3aa-434e-a5ad-e45af799f5f2', 'zoneinfo', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('ee0018ac-c3aa-434e-a5ad-e45af799f5f2', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('cd2d74bf-2d64-472b-a146-2733de5409d0', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('cd2d74bf-2d64-472b-a146-2733de5409d0', 'locale', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('cd2d74bf-2d64-472b-a146-2733de5409d0', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('cd2d74bf-2d64-472b-a146-2733de5409d0', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('cd2d74bf-2d64-472b-a146-2733de5409d0', 'locale', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('cd2d74bf-2d64-472b-a146-2733de5409d0', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('75ca7f6a-208f-443c-945e-fe1d9ccc23a7', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('75ca7f6a-208f-443c-945e-fe1d9ccc23a7', 'updatedAt', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('75ca7f6a-208f-443c-945e-fe1d9ccc23a7', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('75ca7f6a-208f-443c-945e-fe1d9ccc23a7', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('75ca7f6a-208f-443c-945e-fe1d9ccc23a7', 'updated_at', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('75ca7f6a-208f-443c-945e-fe1d9ccc23a7', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('1d2794aa-32ec-4265-8a88-3d057d005ad4', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('1d2794aa-32ec-4265-8a88-3d057d005ad4', 'email', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('1d2794aa-32ec-4265-8a88-3d057d005ad4', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('1d2794aa-32ec-4265-8a88-3d057d005ad4', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('1d2794aa-32ec-4265-8a88-3d057d005ad4', 'email', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('1d2794aa-32ec-4265-8a88-3d057d005ad4', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('bdef6b6d-8cd5-4cde-bd7b-1dbe0d8b44c1', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('bdef6b6d-8cd5-4cde-bd7b-1dbe0d8b44c1', 'emailVerified', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('bdef6b6d-8cd5-4cde-bd7b-1dbe0d8b44c1', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('bdef6b6d-8cd5-4cde-bd7b-1dbe0d8b44c1', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('bdef6b6d-8cd5-4cde-bd7b-1dbe0d8b44c1', 'email_verified', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('bdef6b6d-8cd5-4cde-bd7b-1dbe0d8b44c1', 'boolean', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('0089ba07-2b33-4643-8189-4903d366ad0b', 'formatted', 'user.attribute.formatted');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('0089ba07-2b33-4643-8189-4903d366ad0b', 'country', 'user.attribute.country');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('0089ba07-2b33-4643-8189-4903d366ad0b', 'postal_code', 'user.attribute.postal_code');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('0089ba07-2b33-4643-8189-4903d366ad0b', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('0089ba07-2b33-4643-8189-4903d366ad0b', 'street', 'user.attribute.street');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('0089ba07-2b33-4643-8189-4903d366ad0b', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('0089ba07-2b33-4643-8189-4903d366ad0b', 'region', 'user.attribute.region');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('0089ba07-2b33-4643-8189-4903d366ad0b', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('0089ba07-2b33-4643-8189-4903d366ad0b', 'locality', 'user.attribute.locality');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('902d32ce-5815-4f56-8357-71a3cb9b9c3d', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('902d32ce-5815-4f56-8357-71a3cb9b9c3d', 'phoneNumber', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('902d32ce-5815-4f56-8357-71a3cb9b9c3d', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('902d32ce-5815-4f56-8357-71a3cb9b9c3d', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('902d32ce-5815-4f56-8357-71a3cb9b9c3d', 'phone_number', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('902d32ce-5815-4f56-8357-71a3cb9b9c3d', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('2a32ffcf-bf22-4b33-bc91-e94e6223c445', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('2a32ffcf-bf22-4b33-bc91-e94e6223c445', 'phoneNumberVerified', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('2a32ffcf-bf22-4b33-bc91-e94e6223c445', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('2a32ffcf-bf22-4b33-bc91-e94e6223c445', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('2a32ffcf-bf22-4b33-bc91-e94e6223c445', 'phone_number_verified', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('2a32ffcf-bf22-4b33-bc91-e94e6223c445', 'boolean', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('c06c974b-0706-4324-95f7-04a73cab9729', 'true', 'multivalued');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('c06c974b-0706-4324-95f7-04a73cab9729', 'foo', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('c06c974b-0706-4324-95f7-04a73cab9729', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('c06c974b-0706-4324-95f7-04a73cab9729', 'realm_access.roles', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('c06c974b-0706-4324-95f7-04a73cab9729', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('7e4e99cd-3931-45c8-a305-e3af4363efd5', 'true', 'multivalued');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('7e4e99cd-3931-45c8-a305-e3af4363efd5', 'foo', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('7e4e99cd-3931-45c8-a305-e3af4363efd5', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('7e4e99cd-3931-45c8-a305-e3af4363efd5', 'resource_access.${client_id}.roles', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('7e4e99cd-3931-45c8-a305-e3af4363efd5', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('9027200a-3c6c-47da-947e-18450756b4f2', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('9027200a-3c6c-47da-947e-18450756b4f2', 'username', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('9027200a-3c6c-47da-947e-18450756b4f2', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('9027200a-3c6c-47da-947e-18450756b4f2', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('9027200a-3c6c-47da-947e-18450756b4f2', 'upn', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('9027200a-3c6c-47da-947e-18450756b4f2', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('2fefbff1-eb5c-4e89-ae3f-a9c73bf2796e', 'true', 'multivalued');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('2fefbff1-eb5c-4e89-ae3f-a9c73bf2796e', 'foo', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('2fefbff1-eb5c-4e89-ae3f-a9c73bf2796e', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('2fefbff1-eb5c-4e89-ae3f-a9c73bf2796e', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('2fefbff1-eb5c-4e89-ae3f-a9c73bf2796e', 'groups', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('2fefbff1-eb5c-4e89-ae3f-a9c73bf2796e', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('745f98b5-0d12-4e5f-8113-f75035871219', 'false', 'single');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('745f98b5-0d12-4e5f-8113-f75035871219', 'Basic', 'attribute.nameformat');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('745f98b5-0d12-4e5f-8113-f75035871219', 'Role', 'attribute.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('e06d8adb-eb87-4146-a6e0-4de30bb74df4', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('e06d8adb-eb87-4146-a6e0-4de30bb74df4', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('e06d8adb-eb87-4146-a6e0-4de30bb74df4', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('937a83d4-56bd-46ef-b68f-09291a89715d', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('937a83d4-56bd-46ef-b68f-09291a89715d', 'lastName', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('937a83d4-56bd-46ef-b68f-09291a89715d', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('937a83d4-56bd-46ef-b68f-09291a89715d', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('937a83d4-56bd-46ef-b68f-09291a89715d', 'family_name', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('937a83d4-56bd-46ef-b68f-09291a89715d', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('910be649-fd43-40c7-8dee-746ba219c82d', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('910be649-fd43-40c7-8dee-746ba219c82d', 'firstName', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('910be649-fd43-40c7-8dee-746ba219c82d', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('910be649-fd43-40c7-8dee-746ba219c82d', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('910be649-fd43-40c7-8dee-746ba219c82d', 'given_name', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('910be649-fd43-40c7-8dee-746ba219c82d', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('1a1c52d8-1311-4772-9994-125b157be35c', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('1a1c52d8-1311-4772-9994-125b157be35c', 'middleName', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('1a1c52d8-1311-4772-9994-125b157be35c', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('1a1c52d8-1311-4772-9994-125b157be35c', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('1a1c52d8-1311-4772-9994-125b157be35c', 'middle_name', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('1a1c52d8-1311-4772-9994-125b157be35c', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('9a55e044-9247-4a40-a9d6-d55bae0d9031', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('9a55e044-9247-4a40-a9d6-d55bae0d9031', 'nickname', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('9a55e044-9247-4a40-a9d6-d55bae0d9031', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('9a55e044-9247-4a40-a9d6-d55bae0d9031', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('9a55e044-9247-4a40-a9d6-d55bae0d9031', 'nickname', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('9a55e044-9247-4a40-a9d6-d55bae0d9031', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('3d7932f6-2881-4f5a-ba9c-aa5868899172', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('3d7932f6-2881-4f5a-ba9c-aa5868899172', 'username', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('3d7932f6-2881-4f5a-ba9c-aa5868899172', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('3d7932f6-2881-4f5a-ba9c-aa5868899172', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('3d7932f6-2881-4f5a-ba9c-aa5868899172', 'preferred_username', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('3d7932f6-2881-4f5a-ba9c-aa5868899172', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('be8038c0-570d-47d2-af1b-17c80f45eeb3', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('be8038c0-570d-47d2-af1b-17c80f45eeb3', 'profile', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('be8038c0-570d-47d2-af1b-17c80f45eeb3', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('be8038c0-570d-47d2-af1b-17c80f45eeb3', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('be8038c0-570d-47d2-af1b-17c80f45eeb3', 'profile', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('be8038c0-570d-47d2-af1b-17c80f45eeb3', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('3904c811-6552-4dd6-b12d-db6b5822b488', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('3904c811-6552-4dd6-b12d-db6b5822b488', 'picture', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('3904c811-6552-4dd6-b12d-db6b5822b488', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('3904c811-6552-4dd6-b12d-db6b5822b488', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('3904c811-6552-4dd6-b12d-db6b5822b488', 'picture', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('3904c811-6552-4dd6-b12d-db6b5822b488', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('291e0b75-18e7-4578-92d1-826a0d61d8cd', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('291e0b75-18e7-4578-92d1-826a0d61d8cd', 'website', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('291e0b75-18e7-4578-92d1-826a0d61d8cd', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('291e0b75-18e7-4578-92d1-826a0d61d8cd', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('291e0b75-18e7-4578-92d1-826a0d61d8cd', 'website', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('291e0b75-18e7-4578-92d1-826a0d61d8cd', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('503f9f4f-a309-4c79-9171-ac2a8169e374', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('503f9f4f-a309-4c79-9171-ac2a8169e374', 'gender', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('503f9f4f-a309-4c79-9171-ac2a8169e374', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('503f9f4f-a309-4c79-9171-ac2a8169e374', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('503f9f4f-a309-4c79-9171-ac2a8169e374', 'gender', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('503f9f4f-a309-4c79-9171-ac2a8169e374', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('4449abe4-0fcc-4f99-8463-a14b56edc43a', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('4449abe4-0fcc-4f99-8463-a14b56edc43a', 'birthdate', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('4449abe4-0fcc-4f99-8463-a14b56edc43a', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('4449abe4-0fcc-4f99-8463-a14b56edc43a', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('4449abe4-0fcc-4f99-8463-a14b56edc43a', 'birthdate', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('4449abe4-0fcc-4f99-8463-a14b56edc43a', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('666abaae-f6f0-44e2-bad9-e840b0503f70', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('666abaae-f6f0-44e2-bad9-e840b0503f70', 'zoneinfo', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('666abaae-f6f0-44e2-bad9-e840b0503f70', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('666abaae-f6f0-44e2-bad9-e840b0503f70', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('666abaae-f6f0-44e2-bad9-e840b0503f70', 'zoneinfo', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('666abaae-f6f0-44e2-bad9-e840b0503f70', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('b3b3d43d-eb5c-43ab-811b-b44307d908e8', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('b3b3d43d-eb5c-43ab-811b-b44307d908e8', 'locale', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('b3b3d43d-eb5c-43ab-811b-b44307d908e8', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('b3b3d43d-eb5c-43ab-811b-b44307d908e8', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('b3b3d43d-eb5c-43ab-811b-b44307d908e8', 'locale', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('b3b3d43d-eb5c-43ab-811b-b44307d908e8', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('be077cfe-925a-4c05-ab46-96b02e55e1a7', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('be077cfe-925a-4c05-ab46-96b02e55e1a7', 'updatedAt', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('be077cfe-925a-4c05-ab46-96b02e55e1a7', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('be077cfe-925a-4c05-ab46-96b02e55e1a7', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('be077cfe-925a-4c05-ab46-96b02e55e1a7', 'updated_at', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('be077cfe-925a-4c05-ab46-96b02e55e1a7', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('cb6d7049-6607-470a-b682-e6479501edce', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('cb6d7049-6607-470a-b682-e6479501edce', 'email', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('cb6d7049-6607-470a-b682-e6479501edce', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('cb6d7049-6607-470a-b682-e6479501edce', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('cb6d7049-6607-470a-b682-e6479501edce', 'email', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('cb6d7049-6607-470a-b682-e6479501edce', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('b01b6c00-4901-44b1-a5b5-aab15c165cd2', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('b01b6c00-4901-44b1-a5b5-aab15c165cd2', 'emailVerified', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('b01b6c00-4901-44b1-a5b5-aab15c165cd2', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('b01b6c00-4901-44b1-a5b5-aab15c165cd2', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('b01b6c00-4901-44b1-a5b5-aab15c165cd2', 'email_verified', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('b01b6c00-4901-44b1-a5b5-aab15c165cd2', 'boolean', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('4c013504-9678-41da-b831-f27031a9f12b', 'formatted', 'user.attribute.formatted');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('4c013504-9678-41da-b831-f27031a9f12b', 'country', 'user.attribute.country');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('4c013504-9678-41da-b831-f27031a9f12b', 'postal_code', 'user.attribute.postal_code');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('4c013504-9678-41da-b831-f27031a9f12b', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('4c013504-9678-41da-b831-f27031a9f12b', 'street', 'user.attribute.street');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('4c013504-9678-41da-b831-f27031a9f12b', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('4c013504-9678-41da-b831-f27031a9f12b', 'region', 'user.attribute.region');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('4c013504-9678-41da-b831-f27031a9f12b', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('4c013504-9678-41da-b831-f27031a9f12b', 'locality', 'user.attribute.locality');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('80965ceb-a59b-4522-8d81-8e1161d0b80c', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('80965ceb-a59b-4522-8d81-8e1161d0b80c', 'phoneNumber', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('80965ceb-a59b-4522-8d81-8e1161d0b80c', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('80965ceb-a59b-4522-8d81-8e1161d0b80c', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('80965ceb-a59b-4522-8d81-8e1161d0b80c', 'phone_number', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('80965ceb-a59b-4522-8d81-8e1161d0b80c', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('c5e09de1-4841-457f-889c-81f5808c23bb', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('c5e09de1-4841-457f-889c-81f5808c23bb', 'phoneNumberVerified', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('c5e09de1-4841-457f-889c-81f5808c23bb', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('c5e09de1-4841-457f-889c-81f5808c23bb', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('c5e09de1-4841-457f-889c-81f5808c23bb', 'phone_number_verified', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('c5e09de1-4841-457f-889c-81f5808c23bb', 'boolean', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('d3ce9a75-369a-4200-a75c-43fec05f44df', 'true', 'multivalued');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('d3ce9a75-369a-4200-a75c-43fec05f44df', 'foo', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('d3ce9a75-369a-4200-a75c-43fec05f44df', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('d3ce9a75-369a-4200-a75c-43fec05f44df', 'realm_access.roles', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('d3ce9a75-369a-4200-a75c-43fec05f44df', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('ae379c21-5724-4a54-afe7-fb9ae3ed2fa5', 'true', 'multivalued');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('ae379c21-5724-4a54-afe7-fb9ae3ed2fa5', 'foo', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('ae379c21-5724-4a54-afe7-fb9ae3ed2fa5', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('ae379c21-5724-4a54-afe7-fb9ae3ed2fa5', 'resource_access.${client_id}.roles', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('ae379c21-5724-4a54-afe7-fb9ae3ed2fa5', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('596e9326-a8c6-4f44-965a-06a48302c01b', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('596e9326-a8c6-4f44-965a-06a48302c01b', 'username', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('596e9326-a8c6-4f44-965a-06a48302c01b', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('596e9326-a8c6-4f44-965a-06a48302c01b', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('596e9326-a8c6-4f44-965a-06a48302c01b', 'upn', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('596e9326-a8c6-4f44-965a-06a48302c01b', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('8486c788-55c2-4d09-ab32-92801f79666e', 'true', 'multivalued');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('8486c788-55c2-4d09-ab32-92801f79666e', 'foo', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('8486c788-55c2-4d09-ab32-92801f79666e', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('8486c788-55c2-4d09-ab32-92801f79666e', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('8486c788-55c2-4d09-ab32-92801f79666e', 'groups', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('8486c788-55c2-4d09-ab32-92801f79666e', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('8090168e-e96f-4581-ac76-1ae5ff4f4e00', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('8090168e-e96f-4581-ac76-1ae5ff4f4e00', 'locale', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('8090168e-e96f-4581-ac76-1ae5ff4f4e00', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('8090168e-e96f-4581-ac76-1ae5ff4f4e00', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('8090168e-e96f-4581-ac76-1ae5ff4f4e00', 'locale', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('8090168e-e96f-4581-ac76-1ae5ff4f4e00', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('d0b5b8e8-fdac-4c87-9efb-a20b4acd726d', 'clientId', 'user.session.note');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('d0b5b8e8-fdac-4c87-9efb-a20b4acd726d', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('d0b5b8e8-fdac-4c87-9efb-a20b4acd726d', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('d0b5b8e8-fdac-4c87-9efb-a20b4acd726d', 'clientId', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('d0b5b8e8-fdac-4c87-9efb-a20b4acd726d', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('802b1293-7380-4bdc-b1a0-eff16e1a854b', 'clientHost', 'user.session.note');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('802b1293-7380-4bdc-b1a0-eff16e1a854b', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('802b1293-7380-4bdc-b1a0-eff16e1a854b', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('802b1293-7380-4bdc-b1a0-eff16e1a854b', 'clientHost', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('802b1293-7380-4bdc-b1a0-eff16e1a854b', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('c573f67c-4f65-43dc-888a-3b2bff449bb8', 'clientAddress', 'user.session.note');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('c573f67c-4f65-43dc-888a-3b2bff449bb8', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('c573f67c-4f65-43dc-888a-3b2bff449bb8', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('c573f67c-4f65-43dc-888a-3b2bff449bb8', 'clientAddress', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('c573f67c-4f65-43dc-888a-3b2bff449bb8', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('a9e3bfad-0640-4b9a-b479-168845ab1ccd', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('a9e3bfad-0640-4b9a-b479-168845ab1ccd', 'username', 'user.attribute');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('a9e3bfad-0640-4b9a-b479-168845ab1ccd', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('a9e3bfad-0640-4b9a-b479-168845ab1ccd', 'true', 'access.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('a9e3bfad-0640-4b9a-b479-168845ab1ccd', 'user_name', 'claim.name');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('a9e3bfad-0640-4b9a-b479-168845ab1ccd', 'String', 'jsonType.label');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('d3ce9a75-369a-4200-a75c-43fec05f44df', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('d3ce9a75-369a-4200-a75c-43fec05f44df', 'true', 'id.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('ae379c21-5724-4a54-afe7-fb9ae3ed2fa5', 'true', 'userinfo.token.claim');
+INSERT INTO public.protocol_mapper_config (protocol_mapper_id, value, name) VALUES ('ae379c21-5724-4a54-afe7-fb9ae3ed2fa5', 'true', 'id.token.claim');
+
+
+--
+-- Data for Name: realm; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.realm (id, access_code_lifespan, user_action_lifespan, access_token_lifespan, account_theme, admin_theme, email_theme, enabled, events_enabled, events_expiration, login_theme, name, not_before, password_policy, registration_allowed, remember_me, reset_password_allowed, social, ssl_required, sso_idle_timeout, sso_max_lifespan, update_profile_on_soc_login, verify_email, master_admin_client, login_lifespan, internationalization_enabled, default_locale, reg_email_as_username, admin_events_enabled, admin_events_details_enabled, edit_username_allowed, otp_policy_counter, otp_policy_window, otp_policy_period, otp_policy_digits, otp_policy_alg, otp_policy_type, browser_flow, registration_flow, direct_grant_flow, reset_credentials_flow, client_auth_flow, offline_session_idle_timeout, revoke_refresh_token, access_token_life_implicit, login_with_email_allowed, duplicate_emails_allowed, docker_auth_flow, refresh_token_max_reuse, allow_user_managed_access, sso_max_lifespan_remember_me, sso_idle_timeout_remember_me) VALUES ('master', 60, 300, 60, NULL, NULL, NULL, true, false, 0, NULL, 'master', 0, NULL, false, false, false, false, 'EXTERNAL', 1800, 36000, false, false, '72ae90e4-4635-4bd9-9605-a1d8898d6a96', 1800, false, NULL, false, false, false, false, 0, 1, 30, 6, 'HmacSHA1', 'totp', 'e2421ed3-640f-428c-a36d-b0b69aac8397', 'e0aa35a8-63c1-44ec-8dc5-8a46775bd416', '8792a834-dc93-49c2-80c1-0c231b6b3417', '22ff9a1b-e8a2-4c5f-9d9c-829b85bb8291', '9c2d37f2-0034-46ff-a79b-c9bea9106063', 2592000, false, 900, true, false, '6d46a9c3-db40-4126-a1c0-e80d8ca3ef21', 0, false, 0, 0);
+INSERT INTO public.realm (id, access_code_lifespan, user_action_lifespan, access_token_lifespan, account_theme, admin_theme, email_theme, enabled, events_enabled, events_expiration, login_theme, name, not_before, password_policy, registration_allowed, remember_me, reset_password_allowed, social, ssl_required, sso_idle_timeout, sso_max_lifespan, update_profile_on_soc_login, verify_email, master_admin_client, login_lifespan, internationalization_enabled, default_locale, reg_email_as_username, admin_events_enabled, admin_events_details_enabled, edit_username_allowed, otp_policy_counter, otp_policy_window, otp_policy_period, otp_policy_digits, otp_policy_alg, otp_policy_type, browser_flow, registration_flow, direct_grant_flow, reset_credentials_flow, client_auth_flow, offline_session_idle_timeout, revoke_refresh_token, access_token_life_implicit, login_with_email_allowed, duplicate_emails_allowed, docker_auth_flow, refresh_token_max_reuse, allow_user_managed_access, sso_max_lifespan_remember_me, sso_idle_timeout_remember_me) VALUES ('PoC-Soki-Realm-01', 300, 300, 300, NULL, NULL, NULL, true, false, 0, NULL, 'PoC-Soki-Realm-01', 0, NULL, true, true, true, false, 'EXTERNAL', 1800, 36000, false, false, '1b7a1f93-5791-449b-b19a-7c8892118d6e', 1800, false, NULL, false, false, false, true, 0, 1, 30, 6, 'HmacSHA1', 'totp', '2c0c1961-ff54-475f-8c2f-b8eee5057963', '544a14d2-b811-4bfc-b356-fb6f885673a2', '8466abf3-f22d-4ee2-a74a-4dc84be73796', '213bf824-1e46-4b02-a8f5-4b7d336b1c9e', '70a0a3d3-6218-4326-88bf-9e2465a11af9', 2592000, false, 900, false, false, '90f9fa6c-bd54-46a1-b979-82e853b15a4e', 0, false, 0, 0);
+
+
+--
+-- Data for Name: realm_attribute; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('offlineSessionMaxLifespanEnabled', 'false', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('offlineSessionMaxLifespan', '5184000', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyRpEntityName', 'keycloak', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicySignatureAlgorithms', 'ES256', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyRpId', '', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyAttestationConveyancePreference', 'not specified', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyAuthenticatorAttachment', 'not specified', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyRequireResidentKey', 'not specified', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyUserVerificationRequirement', 'not specified', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyCreateTimeout', '0', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyAvoidSameAuthenticatorRegister', 'false', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyRpEntityNamePasswordless', 'keycloak', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicySignatureAlgorithmsPasswordless', 'ES256', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyRpIdPasswordless', '', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyAttestationConveyancePreferencePasswordless', 'not specified', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyAuthenticatorAttachmentPasswordless', 'not specified', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyRequireResidentKeyPasswordless', 'not specified', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyUserVerificationRequirementPasswordless', 'not specified', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyCreateTimeoutPasswordless', '0', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyAvoidSameAuthenticatorRegisterPasswordless', 'false', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('_browser_header.contentSecurityPolicyReportOnly', '', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('_browser_header.xContentTypeOptions', 'nosniff', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('_browser_header.xRobotsTag', 'none', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('_browser_header.xFrameOptions', 'SAMEORIGIN', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('_browser_header.contentSecurityPolicy', 'frame-src ''self''; frame-ancestors ''self''; object-src ''none'';', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('_browser_header.xXSSProtection', '1; mode=block', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('_browser_header.strictTransportSecurity', 'max-age=31536000; includeSubDomains', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('clientSessionIdleTimeout', '0', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('clientSessionMaxLifespan', '0', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('clientOfflineSessionIdleTimeout', '0', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('clientOfflineSessionMaxLifespan', '0', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('clientSessionIdleTimeout', '0', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('clientSessionMaxLifespan', '0', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('clientOfflineSessionIdleTimeout', '0', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('clientOfflineSessionMaxLifespan', '0', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('displayName', 'Keycloak', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('displayNameHtml', '<div class="kc-logo-text"><span>Keycloak</span></div>', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('bruteForceProtected', 'false', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('permanentLockout', 'false', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('maxFailureWaitSeconds', '900', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('minimumQuickLoginWaitSeconds', '60', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('waitIncrementSeconds', '60', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('quickLoginCheckMilliSeconds', '1000', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('maxDeltaTimeSeconds', '43200', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('failureFactor', '30', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('actionTokenGeneratedByAdminLifespan', '43200', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('actionTokenGeneratedByUserLifespan', '300', 'master');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('displayName', 'Realm for WebSSO of Spring-OAuth2-KeyCloak PoC :: Joao Pedro :: UpWork', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('displayNameHtml', 'Realm for WebSSO of Spring-OAuth2-KeyCloak PoC :: Joao Pedro :: UpWork', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('bruteForceProtected', 'false', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('permanentLockout', 'false', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('maxFailureWaitSeconds', '900', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('minimumQuickLoginWaitSeconds', '60', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('waitIncrementSeconds', '60', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('quickLoginCheckMilliSeconds', '1000', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('maxDeltaTimeSeconds', '43200', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('failureFactor', '30', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('actionTokenGeneratedByAdminLifespan', '43200', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('actionTokenGeneratedByUserLifespan', '300', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('offlineSessionMaxLifespanEnabled', 'false', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('offlineSessionMaxLifespan', '5184000', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyRpEntityName', 'keycloak', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicySignatureAlgorithms', 'ES256', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyRpId', '', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyAttestationConveyancePreference', 'not specified', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyAuthenticatorAttachment', 'not specified', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyRequireResidentKey', 'not specified', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyUserVerificationRequirement', 'not specified', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyCreateTimeout', '0', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyAvoidSameAuthenticatorRegister', 'false', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyRpEntityNamePasswordless', 'keycloak', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicySignatureAlgorithmsPasswordless', 'ES256', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyRpIdPasswordless', '', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyAttestationConveyancePreferencePasswordless', 'not specified', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyAuthenticatorAttachmentPasswordless', 'not specified', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyRequireResidentKeyPasswordless', 'not specified', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyUserVerificationRequirementPasswordless', 'not specified', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyCreateTimeoutPasswordless', '0', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('webAuthnPolicyAvoidSameAuthenticatorRegisterPasswordless', 'false', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('_browser_header.contentSecurityPolicyReportOnly', '', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('_browser_header.xContentTypeOptions', 'nosniff', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('_browser_header.xRobotsTag', 'none', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('_browser_header.xFrameOptions', 'SAMEORIGIN', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('_browser_header.contentSecurityPolicy', 'frame-src ''self''; frame-ancestors ''self''; object-src ''none'';', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('_browser_header.xXSSProtection', '1; mode=block', 'PoC-Soki-Realm-01');
+INSERT INTO public.realm_attribute (name, value, realm_id) VALUES ('_browser_header.strictTransportSecurity', 'max-age=31536000; includeSubDomains', 'PoC-Soki-Realm-01');
+
+
+--
+-- Data for Name: realm_default_groups; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: realm_default_roles; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.realm_default_roles (realm_id, role_id) VALUES ('master', '8f628a3e-3a1d-41b6-8a4c-ef418e2f01b6');
+INSERT INTO public.realm_default_roles (realm_id, role_id) VALUES ('master', '1555f57b-d48a-4ac2-8064-16f203efc559');
+INSERT INTO public.realm_default_roles (realm_id, role_id) VALUES ('PoC-Soki-Realm-01', '68465770-630c-4aa4-98a4-63a810c7aa91');
+INSERT INTO public.realm_default_roles (realm_id, role_id) VALUES ('PoC-Soki-Realm-01', '94f68f32-df10-4d4c-aa0c-f06fea1327d8');
+
+
+--
+-- Data for Name: realm_enabled_event_types; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: realm_events_listeners; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.realm_events_listeners (realm_id, value) VALUES ('master', 'jboss-logging');
+INSERT INTO public.realm_events_listeners (realm_id, value) VALUES ('PoC-Soki-Realm-01', 'jboss-logging');
+
+
+--
+-- Data for Name: realm_required_credential; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.realm_required_credential (type, form_label, input, secret, realm_id) VALUES ('password', 'password', true, true, 'master');
+INSERT INTO public.realm_required_credential (type, form_label, input, secret, realm_id) VALUES ('password', 'password', true, true, 'PoC-Soki-Realm-01');
+
+
+--
+-- Data for Name: realm_smtp_config; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: realm_supported_locales; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: redirect_uris; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.redirect_uris (client_id, value) VALUES ('7794d3b1-3f3b-4baa-991a-aa74b0cd6cea', '/realms/master/account/*');
+INSERT INTO public.redirect_uris (client_id, value) VALUES ('7b8f81bd-32fa-4952-bf35-9b7ab46ca70f', '/realms/master/account/*');
+INSERT INTO public.redirect_uris (client_id, value) VALUES ('0acb1dc9-e951-4a48-8581-9436e7da12cc', '/admin/master/console/*');
+INSERT INTO public.redirect_uris (client_id, value) VALUES ('d14028a0-d831-42db-ab01-6cf86a9d9f51', '/realms/PoC-Soki-Realm-01/account/*');
+INSERT INTO public.redirect_uris (client_id, value) VALUES ('95a91113-a1ca-48e9-a0e7-5320c3f6422a', '/realms/PoC-Soki-Realm-01/account/*');
+INSERT INTO public.redirect_uris (client_id, value) VALUES ('bcb37c06-40e2-4f8d-9b11-9eb94138e598', '/admin/PoC-Soki-Realm-01/console/*');
+INSERT INTO public.redirect_uris (client_id, value) VALUES ('5067ce51-37f0-46a5-bfa2-984543e80361', 'http://localhost:8085/*');
+
+
+--
+-- Data for Name: required_action_config; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: required_action_provider; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.required_action_provider (id, alias, name, realm_id, enabled, default_action, provider_id, priority) VALUES ('437fc11e-691e-4483-a79f-1b56d1675602', 'VERIFY_EMAIL', 'Verify Email', 'master', true, false, 'VERIFY_EMAIL', 50);
+INSERT INTO public.required_action_provider (id, alias, name, realm_id, enabled, default_action, provider_id, priority) VALUES ('8596df47-ff5b-4268-8f91-98b741e824c5', 'UPDATE_PROFILE', 'Update Profile', 'master', true, false, 'UPDATE_PROFILE', 40);
+INSERT INTO public.required_action_provider (id, alias, name, realm_id, enabled, default_action, provider_id, priority) VALUES ('553e0d4c-fdae-40da-b8f3-50ac4a27e968', 'CONFIGURE_TOTP', 'Configure OTP', 'master', true, false, 'CONFIGURE_TOTP', 10);
+INSERT INTO public.required_action_provider (id, alias, name, realm_id, enabled, default_action, provider_id, priority) VALUES ('3d1b50f3-d4f5-4443-9560-95d09788df5f', 'UPDATE_PASSWORD', 'Update Password', 'master', true, false, 'UPDATE_PASSWORD', 30);
+INSERT INTO public.required_action_provider (id, alias, name, realm_id, enabled, default_action, provider_id, priority) VALUES ('1b5e238f-e092-45dc-8dc5-ebe0873eac6e', 'terms_and_conditions', 'Terms and Conditions', 'master', false, false, 'terms_and_conditions', 20);
+INSERT INTO public.required_action_provider (id, alias, name, realm_id, enabled, default_action, provider_id, priority) VALUES ('24aa1e8c-e252-40ad-991b-027cfa62405d', 'update_user_locale', 'Update User Locale', 'master', true, false, 'update_user_locale', 1000);
+INSERT INTO public.required_action_provider (id, alias, name, realm_id, enabled, default_action, provider_id, priority) VALUES ('c039855c-10be-4bca-925e-22bce59b242c', 'VERIFY_EMAIL', 'Verify Email', 'PoC-Soki-Realm-01', true, false, 'VERIFY_EMAIL', 50);
+INSERT INTO public.required_action_provider (id, alias, name, realm_id, enabled, default_action, provider_id, priority) VALUES ('7fa85185-8cd1-49bf-8d24-a5aa599e1e2c', 'UPDATE_PROFILE', 'Update Profile', 'PoC-Soki-Realm-01', true, false, 'UPDATE_PROFILE', 40);
+INSERT INTO public.required_action_provider (id, alias, name, realm_id, enabled, default_action, provider_id, priority) VALUES ('7ce756f7-4061-4788-be51-5eb6bd2c1460', 'CONFIGURE_TOTP', 'Configure OTP', 'PoC-Soki-Realm-01', true, false, 'CONFIGURE_TOTP', 10);
+INSERT INTO public.required_action_provider (id, alias, name, realm_id, enabled, default_action, provider_id, priority) VALUES ('64c7fed7-f71a-4971-af96-23b88fcf8230', 'UPDATE_PASSWORD', 'Update Password', 'PoC-Soki-Realm-01', true, false, 'UPDATE_PASSWORD', 30);
+INSERT INTO public.required_action_provider (id, alias, name, realm_id, enabled, default_action, provider_id, priority) VALUES ('eb57f9c8-a83c-48a1-bf89-04e8bfa0a640', 'terms_and_conditions', 'Terms and Conditions', 'PoC-Soki-Realm-01', false, false, 'terms_and_conditions', 20);
+INSERT INTO public.required_action_provider (id, alias, name, realm_id, enabled, default_action, provider_id, priority) VALUES ('7e2dcf2a-8e29-4885-9029-11c77ab6090d', 'update_user_locale', 'Update User Locale', 'PoC-Soki-Realm-01', true, false, 'update_user_locale', 1000);
+
+
+--
+-- Data for Name: resource_attribute; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: resource_policy; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: resource_scope; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: resource_server; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.resource_server (id, allow_rs_remote_mgmt, policy_enforce_mode, decision_strategy) VALUES ('5067ce51-37f0-46a5-bfa2-984543e80361', true, '0', 1);
+
+
+--
+-- Data for Name: resource_server_perm_ticket; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: resource_server_policy; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.resource_server_policy (id, name, description, type, decision_strategy, logic, resource_server_id, owner) VALUES ('474663d9-fd0b-472f-be43-174cec89167b', 'Default Policy', 'A policy that grants access only for users within this realm', 'js', '0', '0', '5067ce51-37f0-46a5-bfa2-984543e80361', NULL);
+INSERT INTO public.resource_server_policy (id, name, description, type, decision_strategy, logic, resource_server_id, owner) VALUES ('f8f18532-afdb-42bb-9b0f-62a9ae0e560c', 'Default Permission', 'A permission that applies to the default resource type', 'resource', '1', '0', '5067ce51-37f0-46a5-bfa2-984543e80361', NULL);
+
+
+--
+-- Data for Name: resource_server_resource; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.resource_server_resource (id, name, type, icon_uri, owner, resource_server_id, owner_managed_access, display_name) VALUES ('9c255e49-9189-46e5-949e-f97637a9e9c8', 'Default Resource', 'urn:PoC-Soki-App-Client-01:resources:default', NULL, '5067ce51-37f0-46a5-bfa2-984543e80361', '5067ce51-37f0-46a5-bfa2-984543e80361', false, NULL);
+
+
+--
+-- Data for Name: resource_server_scope; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: resource_uris; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.resource_uris (resource_id, value) VALUES ('9c255e49-9189-46e5-949e-f97637a9e9c8', '/*');
+
+
+--
+-- Data for Name: role_attribute; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: scope_mapping; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.scope_mapping (client_id, role_id) VALUES ('7b8f81bd-32fa-4952-bf35-9b7ab46ca70f', 'c441ff20-25c7-4c70-88e6-431925120e72');
+INSERT INTO public.scope_mapping (client_id, role_id) VALUES ('95a91113-a1ca-48e9-a0e7-5320c3f6422a', 'cd6ee10f-e970-4684-bfb5-4852ab788461');
+
+
+--
+-- Data for Name: scope_policy; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: user_attribute; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: user_consent; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: user_consent_client_scope; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: user_entity; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.user_entity (id, email, email_constraint, email_verified, enabled, federation_link, first_name, last_name, realm_id, username, created_timestamp, service_account_client_link, not_before) VALUES ('fb674332-03e0-4959-9fc7-2e8826a0de8a', NULL, '79e24626-47ff-4322-a806-638d8d0ce780', false, true, NULL, NULL, NULL, 'master', 'admin', 1601768453009, NULL, 0);
+INSERT INTO public.user_entity (id, email, email_constraint, email_verified, enabled, federation_link, first_name, last_name, realm_id, username, created_timestamp, service_account_client_link, not_before) VALUES ('6877c510-010f-4344-8355-40743732e9bd', NULL, 'fda85175-4e47-47f0-9d6c-ba129819bcf2', false, true, NULL, NULL, NULL, 'PoC-Soki-Realm-01', 'service-account-poc-soki-app-client-01', 1601768624231, '5067ce51-37f0-46a5-bfa2-984543e80361', 0);
+INSERT INTO public.user_entity (id, email, email_constraint, email_verified, enabled, federation_link, first_name, last_name, realm_id, username, created_timestamp, service_account_client_link, not_before) VALUES ('15b7da9a-5ddb-4f57-bd7e-bc21a314c05b', NULL, '8f40fba5-f2b5-4d1c-85c4-f9ab1f2ab52b', false, true, NULL, 'User Simple', '01', 'PoC-Soki-Realm-01', 'user.simple01', 1601768970875, NULL, 0);
+INSERT INTO public.user_entity (id, email, email_constraint, email_verified, enabled, federation_link, first_name, last_name, realm_id, username, created_timestamp, service_account_client_link, not_before) VALUES ('1db85a5b-c7b8-4350-973d-c9fc90513819', 'manager01.from.app.proxy@poc-soki.com', 'manager01.from.app.proxy@poc-soki.com', false, true, NULL, 'Manager 01', 'From App Proxy', 'master', 'manager01.from.app.proxy', 1601808694878, NULL, 1601937166);
+
+
+--
+-- Data for Name: user_federation_config; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: user_federation_mapper; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: user_federation_mapper_config; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: user_federation_provider; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: user_group_membership; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: user_required_action; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: user_role_mapping; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.user_role_mapping (role_id, user_id) VALUES ('8f628a3e-3a1d-41b6-8a4c-ef418e2f01b6', 'fb674332-03e0-4959-9fc7-2e8826a0de8a');
+INSERT INTO public.user_role_mapping (role_id, user_id) VALUES ('5325dae2-4ad5-4519-bf07-f43721c3896c', 'fb674332-03e0-4959-9fc7-2e8826a0de8a');
+INSERT INTO public.user_role_mapping (role_id, user_id) VALUES ('c441ff20-25c7-4c70-88e6-431925120e72', 'fb674332-03e0-4959-9fc7-2e8826a0de8a');
+INSERT INTO public.user_role_mapping (role_id, user_id) VALUES ('1555f57b-d48a-4ac2-8064-16f203efc559', 'fb674332-03e0-4959-9fc7-2e8826a0de8a');
+INSERT INTO public.user_role_mapping (role_id, user_id) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', 'fb674332-03e0-4959-9fc7-2e8826a0de8a');
+INSERT INTO public.user_role_mapping (role_id, user_id) VALUES ('cd6ee10f-e970-4684-bfb5-4852ab788461', '6877c510-010f-4344-8355-40743732e9bd');
+INSERT INTO public.user_role_mapping (role_id, user_id) VALUES ('68465770-630c-4aa4-98a4-63a810c7aa91', '6877c510-010f-4344-8355-40743732e9bd');
+INSERT INTO public.user_role_mapping (role_id, user_id) VALUES ('94f68f32-df10-4d4c-aa0c-f06fea1327d8', '6877c510-010f-4344-8355-40743732e9bd');
+INSERT INTO public.user_role_mapping (role_id, user_id) VALUES ('b284cb80-aba0-4511-bc09-415b47ea7280', '6877c510-010f-4344-8355-40743732e9bd');
+INSERT INTO public.user_role_mapping (role_id, user_id) VALUES ('51adae9a-0f42-4e19-b43d-69aee2bc199b', '6877c510-010f-4344-8355-40743732e9bd');
+INSERT INTO public.user_role_mapping (role_id, user_id) VALUES ('cd6ee10f-e970-4684-bfb5-4852ab788461', '15b7da9a-5ddb-4f57-bd7e-bc21a314c05b');
+INSERT INTO public.user_role_mapping (role_id, user_id) VALUES ('68465770-630c-4aa4-98a4-63a810c7aa91', '15b7da9a-5ddb-4f57-bd7e-bc21a314c05b');
+INSERT INTO public.user_role_mapping (role_id, user_id) VALUES ('94f68f32-df10-4d4c-aa0c-f06fea1327d8', '15b7da9a-5ddb-4f57-bd7e-bc21a314c05b');
+INSERT INTO public.user_role_mapping (role_id, user_id) VALUES ('b284cb80-aba0-4511-bc09-415b47ea7280', '15b7da9a-5ddb-4f57-bd7e-bc21a314c05b');
+INSERT INTO public.user_role_mapping (role_id, user_id) VALUES ('8f628a3e-3a1d-41b6-8a4c-ef418e2f01b6', '1db85a5b-c7b8-4350-973d-c9fc90513819');
+INSERT INTO public.user_role_mapping (role_id, user_id) VALUES ('5325dae2-4ad5-4519-bf07-f43721c3896c', '1db85a5b-c7b8-4350-973d-c9fc90513819');
+INSERT INTO public.user_role_mapping (role_id, user_id) VALUES ('c441ff20-25c7-4c70-88e6-431925120e72', '1db85a5b-c7b8-4350-973d-c9fc90513819');
+INSERT INTO public.user_role_mapping (role_id, user_id) VALUES ('1555f57b-d48a-4ac2-8064-16f203efc559', '1db85a5b-c7b8-4350-973d-c9fc90513819');
+INSERT INTO public.user_role_mapping (role_id, user_id) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', '1db85a5b-c7b8-4350-973d-c9fc90513819');
+
+
+--
+-- Data for Name: user_session; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: user_session_note; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: username_login_failure; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+
+
+--
+-- Data for Name: web_origins; Type: TABLE DATA; Schema: public; Owner: dbamaster01
+--
+
+INSERT INTO public.web_origins (client_id, value) VALUES ('0acb1dc9-e951-4a48-8581-9436e7da12cc', '+');
+INSERT INTO public.web_origins (client_id, value) VALUES ('bcb37c06-40e2-4f8d-9b11-9eb94138e598', '+');
+INSERT INTO public.web_origins (client_id, value) VALUES ('5067ce51-37f0-46a5-bfa2-984543e80361', 'http://localhost:8085');
+
+
+--
+-- Name: username_login_failure CONSTRAINT_17-2; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.username_login_failure
+    ADD CONSTRAINT "CONSTRAINT_17-2" PRIMARY KEY (realm_id, username);
+
+
+--
+-- Name: keycloak_role UK_J3RWUVD56ONTGSUHOGM184WW2-2; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.keycloak_role
+    ADD CONSTRAINT "UK_J3RWUVD56ONTGSUHOGM184WW2-2" UNIQUE (name, client_realm_constraint);
+
+
+--
+-- Name: client_auth_flow_bindings c_cli_flow_bind; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_auth_flow_bindings
+    ADD CONSTRAINT c_cli_flow_bind PRIMARY KEY (client_id, binding_name);
+
+
+--
+-- Name: client_scope_client c_cli_scope_bind; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_scope_client
+    ADD CONSTRAINT c_cli_scope_bind PRIMARY KEY (client_id, scope_id);
+
+
+--
+-- Name: client_initial_access cnstr_client_init_acc_pk; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_initial_access
+    ADD CONSTRAINT cnstr_client_init_acc_pk PRIMARY KEY (id);
+
+
+--
+-- Name: realm_default_groups con_group_id_def_groups; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.realm_default_groups
+    ADD CONSTRAINT con_group_id_def_groups UNIQUE (group_id);
+
+
+--
+-- Name: broker_link constr_broker_link_pk; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.broker_link
+    ADD CONSTRAINT constr_broker_link_pk PRIMARY KEY (identity_provider, user_id);
+
+
+--
+-- Name: client_user_session_note constr_cl_usr_ses_note; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_user_session_note
+    ADD CONSTRAINT constr_cl_usr_ses_note PRIMARY KEY (client_session, name);
+
+
+--
+-- Name: client_default_roles constr_client_default_roles; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_default_roles
+    ADD CONSTRAINT constr_client_default_roles PRIMARY KEY (client_id, role_id);
+
+
+--
+-- Name: component_config constr_component_config_pk; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.component_config
+    ADD CONSTRAINT constr_component_config_pk PRIMARY KEY (id);
+
+
+--
+-- Name: component constr_component_pk; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.component
+    ADD CONSTRAINT constr_component_pk PRIMARY KEY (id);
+
+
+--
+-- Name: fed_user_required_action constr_fed_required_action; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.fed_user_required_action
+    ADD CONSTRAINT constr_fed_required_action PRIMARY KEY (required_action, user_id);
+
+
+--
+-- Name: fed_user_attribute constr_fed_user_attr_pk; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.fed_user_attribute
+    ADD CONSTRAINT constr_fed_user_attr_pk PRIMARY KEY (id);
+
+
+--
+-- Name: fed_user_consent constr_fed_user_consent_pk; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.fed_user_consent
+    ADD CONSTRAINT constr_fed_user_consent_pk PRIMARY KEY (id);
+
+
+--
+-- Name: fed_user_credential constr_fed_user_cred_pk; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.fed_user_credential
+    ADD CONSTRAINT constr_fed_user_cred_pk PRIMARY KEY (id);
+
+
+--
+-- Name: fed_user_group_membership constr_fed_user_group; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.fed_user_group_membership
+    ADD CONSTRAINT constr_fed_user_group PRIMARY KEY (group_id, user_id);
+
+
+--
+-- Name: fed_user_role_mapping constr_fed_user_role; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.fed_user_role_mapping
+    ADD CONSTRAINT constr_fed_user_role PRIMARY KEY (role_id, user_id);
+
+
+--
+-- Name: federated_user constr_federated_user; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.federated_user
+    ADD CONSTRAINT constr_federated_user PRIMARY KEY (id);
+
+
+--
+-- Name: realm_default_groups constr_realm_default_groups; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.realm_default_groups
+    ADD CONSTRAINT constr_realm_default_groups PRIMARY KEY (realm_id, group_id);
+
+
+--
+-- Name: realm_enabled_event_types constr_realm_enabl_event_types; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.realm_enabled_event_types
+    ADD CONSTRAINT constr_realm_enabl_event_types PRIMARY KEY (realm_id, value);
+
+
+--
+-- Name: realm_events_listeners constr_realm_events_listeners; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.realm_events_listeners
+    ADD CONSTRAINT constr_realm_events_listeners PRIMARY KEY (realm_id, value);
+
+
+--
+-- Name: realm_supported_locales constr_realm_supported_locales; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.realm_supported_locales
+    ADD CONSTRAINT constr_realm_supported_locales PRIMARY KEY (realm_id, value);
+
+
+--
+-- Name: identity_provider constraint_2b; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.identity_provider
+    ADD CONSTRAINT constraint_2b PRIMARY KEY (internal_id);
+
+
+--
+-- Name: client_attributes constraint_3c; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_attributes
+    ADD CONSTRAINT constraint_3c PRIMARY KEY (client_id, name);
+
+
+--
+-- Name: event_entity constraint_4; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.event_entity
+    ADD CONSTRAINT constraint_4 PRIMARY KEY (id);
+
+
+--
+-- Name: federated_identity constraint_40; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.federated_identity
+    ADD CONSTRAINT constraint_40 PRIMARY KEY (identity_provider, user_id);
+
+
+--
+-- Name: realm constraint_4a; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.realm
+    ADD CONSTRAINT constraint_4a PRIMARY KEY (id);
+
+
+--
+-- Name: client_session_role constraint_5; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_session_role
+    ADD CONSTRAINT constraint_5 PRIMARY KEY (client_session, role_id);
+
+
+--
+-- Name: user_session constraint_57; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.user_session
+    ADD CONSTRAINT constraint_57 PRIMARY KEY (id);
+
+
+--
+-- Name: user_federation_provider constraint_5c; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.user_federation_provider
+    ADD CONSTRAINT constraint_5c PRIMARY KEY (id);
+
+
+--
+-- Name: client_session_note constraint_5e; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_session_note
+    ADD CONSTRAINT constraint_5e PRIMARY KEY (client_session, name);
+
+
+--
+-- Name: client constraint_7; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client
+    ADD CONSTRAINT constraint_7 PRIMARY KEY (id);
+
+
+--
+-- Name: client_session constraint_8; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_session
+    ADD CONSTRAINT constraint_8 PRIMARY KEY (id);
+
+
+--
+-- Name: scope_mapping constraint_81; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.scope_mapping
+    ADD CONSTRAINT constraint_81 PRIMARY KEY (client_id, role_id);
+
+
+--
+-- Name: client_node_registrations constraint_84; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_node_registrations
+    ADD CONSTRAINT constraint_84 PRIMARY KEY (client_id, name);
+
+
+--
+-- Name: realm_attribute constraint_9; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.realm_attribute
+    ADD CONSTRAINT constraint_9 PRIMARY KEY (name, realm_id);
+
+
+--
+-- Name: realm_required_credential constraint_92; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.realm_required_credential
+    ADD CONSTRAINT constraint_92 PRIMARY KEY (realm_id, type);
+
+
+--
+-- Name: keycloak_role constraint_a; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.keycloak_role
+    ADD CONSTRAINT constraint_a PRIMARY KEY (id);
+
+
+--
+-- Name: admin_event_entity constraint_admin_event_entity; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.admin_event_entity
+    ADD CONSTRAINT constraint_admin_event_entity PRIMARY KEY (id);
+
+
+--
+-- Name: authenticator_config_entry constraint_auth_cfg_pk; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.authenticator_config_entry
+    ADD CONSTRAINT constraint_auth_cfg_pk PRIMARY KEY (authenticator_id, name);
+
+
+--
+-- Name: authentication_execution constraint_auth_exec_pk; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.authentication_execution
+    ADD CONSTRAINT constraint_auth_exec_pk PRIMARY KEY (id);
+
+
+--
+-- Name: authentication_flow constraint_auth_flow_pk; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.authentication_flow
+    ADD CONSTRAINT constraint_auth_flow_pk PRIMARY KEY (id);
+
+
+--
+-- Name: authenticator_config constraint_auth_pk; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.authenticator_config
+    ADD CONSTRAINT constraint_auth_pk PRIMARY KEY (id);
+
+
+--
+-- Name: client_session_auth_status constraint_auth_status_pk; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_session_auth_status
+    ADD CONSTRAINT constraint_auth_status_pk PRIMARY KEY (client_session, authenticator);
+
+
+--
+-- Name: user_role_mapping constraint_c; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.user_role_mapping
+    ADD CONSTRAINT constraint_c PRIMARY KEY (role_id, user_id);
+
+
+--
+-- Name: composite_role constraint_composite_role; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.composite_role
+    ADD CONSTRAINT constraint_composite_role PRIMARY KEY (composite, child_role);
+
+
+--
+-- Name: client_session_prot_mapper constraint_cs_pmp_pk; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_session_prot_mapper
+    ADD CONSTRAINT constraint_cs_pmp_pk PRIMARY KEY (client_session, protocol_mapper_id);
+
+
+--
+-- Name: identity_provider_config constraint_d; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.identity_provider_config
+    ADD CONSTRAINT constraint_d PRIMARY KEY (identity_provider_id, name);
+
+
+--
+-- Name: policy_config constraint_dpc; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.policy_config
+    ADD CONSTRAINT constraint_dpc PRIMARY KEY (policy_id, name);
+
+
+--
+-- Name: realm_smtp_config constraint_e; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.realm_smtp_config
+    ADD CONSTRAINT constraint_e PRIMARY KEY (realm_id, name);
+
+
+--
+-- Name: credential constraint_f; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.credential
+    ADD CONSTRAINT constraint_f PRIMARY KEY (id);
+
+
+--
+-- Name: user_federation_config constraint_f9; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.user_federation_config
+    ADD CONSTRAINT constraint_f9 PRIMARY KEY (user_federation_provider_id, name);
+
+
+--
+-- Name: resource_server_perm_ticket constraint_fapmt; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.resource_server_perm_ticket
+    ADD CONSTRAINT constraint_fapmt PRIMARY KEY (id);
+
+
+--
+-- Name: resource_server_resource constraint_farsr; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.resource_server_resource
+    ADD CONSTRAINT constraint_farsr PRIMARY KEY (id);
+
+
+--
+-- Name: resource_server_policy constraint_farsrp; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.resource_server_policy
+    ADD CONSTRAINT constraint_farsrp PRIMARY KEY (id);
+
+
+--
+-- Name: associated_policy constraint_farsrpap; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.associated_policy
+    ADD CONSTRAINT constraint_farsrpap PRIMARY KEY (policy_id, associated_policy_id);
+
+
+--
+-- Name: resource_policy constraint_farsrpp; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.resource_policy
+    ADD CONSTRAINT constraint_farsrpp PRIMARY KEY (resource_id, policy_id);
+
+
+--
+-- Name: resource_server_scope constraint_farsrs; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.resource_server_scope
+    ADD CONSTRAINT constraint_farsrs PRIMARY KEY (id);
+
+
+--
+-- Name: resource_scope constraint_farsrsp; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.resource_scope
+    ADD CONSTRAINT constraint_farsrsp PRIMARY KEY (resource_id, scope_id);
+
+
+--
+-- Name: scope_policy constraint_farsrsps; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.scope_policy
+    ADD CONSTRAINT constraint_farsrsps PRIMARY KEY (scope_id, policy_id);
+
+
+--
+-- Name: user_entity constraint_fb; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.user_entity
+    ADD CONSTRAINT constraint_fb PRIMARY KEY (id);
+
+
+--
+-- Name: user_federation_mapper_config constraint_fedmapper_cfg_pm; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.user_federation_mapper_config
+    ADD CONSTRAINT constraint_fedmapper_cfg_pm PRIMARY KEY (user_federation_mapper_id, name);
+
+
+--
+-- Name: user_federation_mapper constraint_fedmapperpm; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.user_federation_mapper
+    ADD CONSTRAINT constraint_fedmapperpm PRIMARY KEY (id);
+
+
+--
+-- Name: fed_user_consent_cl_scope constraint_fgrntcsnt_clsc_pm; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.fed_user_consent_cl_scope
+    ADD CONSTRAINT constraint_fgrntcsnt_clsc_pm PRIMARY KEY (user_consent_id, scope_id);
+
+
+--
+-- Name: user_consent_client_scope constraint_grntcsnt_clsc_pm; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.user_consent_client_scope
+    ADD CONSTRAINT constraint_grntcsnt_clsc_pm PRIMARY KEY (user_consent_id, scope_id);
+
+
+--
+-- Name: user_consent constraint_grntcsnt_pm; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.user_consent
+    ADD CONSTRAINT constraint_grntcsnt_pm PRIMARY KEY (id);
+
+
+--
+-- Name: keycloak_group constraint_group; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.keycloak_group
+    ADD CONSTRAINT constraint_group PRIMARY KEY (id);
+
+
+--
+-- Name: group_attribute constraint_group_attribute_pk; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.group_attribute
+    ADD CONSTRAINT constraint_group_attribute_pk PRIMARY KEY (id);
+
+
+--
+-- Name: group_role_mapping constraint_group_role; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.group_role_mapping
+    ADD CONSTRAINT constraint_group_role PRIMARY KEY (role_id, group_id);
+
+
+--
+-- Name: identity_provider_mapper constraint_idpm; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.identity_provider_mapper
+    ADD CONSTRAINT constraint_idpm PRIMARY KEY (id);
+
+
+--
+-- Name: idp_mapper_config constraint_idpmconfig; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.idp_mapper_config
+    ADD CONSTRAINT constraint_idpmconfig PRIMARY KEY (idp_mapper_id, name);
+
+
+--
+-- Name: migration_model constraint_migmod; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.migration_model
+    ADD CONSTRAINT constraint_migmod PRIMARY KEY (id);
+
+
+--
+-- Name: offline_client_session constraint_offl_cl_ses_pk3; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.offline_client_session
+    ADD CONSTRAINT constraint_offl_cl_ses_pk3 PRIMARY KEY (user_session_id, client_id, client_storage_provider, external_client_id, offline_flag);
+
+
+--
+-- Name: offline_user_session constraint_offl_us_ses_pk2; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.offline_user_session
+    ADD CONSTRAINT constraint_offl_us_ses_pk2 PRIMARY KEY (user_session_id, offline_flag);
+
+
+--
+-- Name: protocol_mapper constraint_pcm; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.protocol_mapper
+    ADD CONSTRAINT constraint_pcm PRIMARY KEY (id);
+
+
+--
+-- Name: protocol_mapper_config constraint_pmconfig; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.protocol_mapper_config
+    ADD CONSTRAINT constraint_pmconfig PRIMARY KEY (protocol_mapper_id, name);
+
+
+--
+-- Name: realm_default_roles constraint_realm_default_roles; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.realm_default_roles
+    ADD CONSTRAINT constraint_realm_default_roles PRIMARY KEY (realm_id, role_id);
+
+
+--
+-- Name: redirect_uris constraint_redirect_uris; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.redirect_uris
+    ADD CONSTRAINT constraint_redirect_uris PRIMARY KEY (client_id, value);
+
+
+--
+-- Name: required_action_config constraint_req_act_cfg_pk; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.required_action_config
+    ADD CONSTRAINT constraint_req_act_cfg_pk PRIMARY KEY (required_action_id, name);
+
+
+--
+-- Name: required_action_provider constraint_req_act_prv_pk; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.required_action_provider
+    ADD CONSTRAINT constraint_req_act_prv_pk PRIMARY KEY (id);
+
+
+--
+-- Name: user_required_action constraint_required_action; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.user_required_action
+    ADD CONSTRAINT constraint_required_action PRIMARY KEY (required_action, user_id);
+
+
+--
+-- Name: resource_uris constraint_resour_uris_pk; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.resource_uris
+    ADD CONSTRAINT constraint_resour_uris_pk PRIMARY KEY (resource_id, value);
+
+
+--
+-- Name: role_attribute constraint_role_attribute_pk; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.role_attribute
+    ADD CONSTRAINT constraint_role_attribute_pk PRIMARY KEY (id);
+
+
+--
+-- Name: user_attribute constraint_user_attribute_pk; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.user_attribute
+    ADD CONSTRAINT constraint_user_attribute_pk PRIMARY KEY (id);
+
+
+--
+-- Name: user_group_membership constraint_user_group; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.user_group_membership
+    ADD CONSTRAINT constraint_user_group PRIMARY KEY (group_id, user_id);
+
+
+--
+-- Name: user_session_note constraint_usn_pk; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.user_session_note
+    ADD CONSTRAINT constraint_usn_pk PRIMARY KEY (user_session, name);
+
+
+--
+-- Name: web_origins constraint_web_origins; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.web_origins
+    ADD CONSTRAINT constraint_web_origins PRIMARY KEY (client_id, value);
+
+
+--
+-- Name: client_scope_attributes pk_cl_tmpl_attr; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_scope_attributes
+    ADD CONSTRAINT pk_cl_tmpl_attr PRIMARY KEY (scope_id, name);
+
+
+--
+-- Name: client_scope pk_cli_template; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_scope
+    ADD CONSTRAINT pk_cli_template PRIMARY KEY (id);
+
+
+--
+-- Name: databasechangeloglock pk_databasechangeloglock; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.databasechangeloglock
+    ADD CONSTRAINT pk_databasechangeloglock PRIMARY KEY (id);
+
+
+--
+-- Name: resource_server pk_resource_server; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.resource_server
+    ADD CONSTRAINT pk_resource_server PRIMARY KEY (id);
+
+
+--
+-- Name: client_scope_role_mapping pk_template_scope; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_scope_role_mapping
+    ADD CONSTRAINT pk_template_scope PRIMARY KEY (scope_id, role_id);
+
+
+--
+-- Name: default_client_scope r_def_cli_scope_bind; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.default_client_scope
+    ADD CONSTRAINT r_def_cli_scope_bind PRIMARY KEY (realm_id, scope_id);
+
+
+--
+-- Name: resource_attribute res_attr_pk; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.resource_attribute
+    ADD CONSTRAINT res_attr_pk PRIMARY KEY (id);
+
+
+--
+-- Name: keycloak_group sibling_names; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.keycloak_group
+    ADD CONSTRAINT sibling_names UNIQUE (realm_id, parent_group, name);
+
+
+--
+-- Name: identity_provider uk_2daelwnibji49avxsrtuf6xj33; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.identity_provider
+    ADD CONSTRAINT uk_2daelwnibji49avxsrtuf6xj33 UNIQUE (provider_alias, realm_id);
+
+
+--
+-- Name: client_default_roles uk_8aelwnibji49avxsrtuf6xjow; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_default_roles
+    ADD CONSTRAINT uk_8aelwnibji49avxsrtuf6xjow UNIQUE (role_id);
+
+
+--
+-- Name: client uk_b71cjlbenv945rb6gcon438at; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client
+    ADD CONSTRAINT uk_b71cjlbenv945rb6gcon438at UNIQUE (realm_id, client_id);
+
+
+--
+-- Name: client_scope uk_cli_scope; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_scope
+    ADD CONSTRAINT uk_cli_scope UNIQUE (realm_id, name);
+
+
+--
+-- Name: user_entity uk_dykn684sl8up1crfei6eckhd7; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.user_entity
+    ADD CONSTRAINT uk_dykn684sl8up1crfei6eckhd7 UNIQUE (realm_id, email_constraint);
+
+
+--
+-- Name: resource_server_resource uk_frsr6t700s9v50bu18ws5ha6; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.resource_server_resource
+    ADD CONSTRAINT uk_frsr6t700s9v50bu18ws5ha6 UNIQUE (name, owner, resource_server_id);
+
+
+--
+-- Name: resource_server_perm_ticket uk_frsr6t700s9v50bu18ws5pmt; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.resource_server_perm_ticket
+    ADD CONSTRAINT uk_frsr6t700s9v50bu18ws5pmt UNIQUE (owner, requester, resource_server_id, resource_id, scope_id);
+
+
+--
+-- Name: resource_server_policy uk_frsrpt700s9v50bu18ws5ha6; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.resource_server_policy
+    ADD CONSTRAINT uk_frsrpt700s9v50bu18ws5ha6 UNIQUE (name, resource_server_id);
+
+
+--
+-- Name: resource_server_scope uk_frsrst700s9v50bu18ws5ha6; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.resource_server_scope
+    ADD CONSTRAINT uk_frsrst700s9v50bu18ws5ha6 UNIQUE (name, resource_server_id);
+
+
+--
+-- Name: realm_default_roles uk_h4wpd7w4hsoolni3h0sw7btje; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.realm_default_roles
+    ADD CONSTRAINT uk_h4wpd7w4hsoolni3h0sw7btje UNIQUE (role_id);
+
+
+--
+-- Name: user_consent uk_jkuwuvd56ontgsuhogm8uewrt; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.user_consent
+    ADD CONSTRAINT uk_jkuwuvd56ontgsuhogm8uewrt UNIQUE (client_id, client_storage_provider, external_client_id, user_id);
+
+
+--
+-- Name: realm uk_orvsdmla56612eaefiq6wl5oi; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.realm
+    ADD CONSTRAINT uk_orvsdmla56612eaefiq6wl5oi UNIQUE (name);
+
+
+--
+-- Name: user_entity uk_ru8tt6t700s9v50bu18ws5ha6; Type: CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.user_entity
+    ADD CONSTRAINT uk_ru8tt6t700s9v50bu18ws5ha6 UNIQUE (realm_id, username);
+
+
+--
+-- Name: idx_assoc_pol_assoc_pol_id; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_assoc_pol_assoc_pol_id ON public.associated_policy USING btree (associated_policy_id);
+
+
+--
+-- Name: idx_auth_config_realm; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_auth_config_realm ON public.authenticator_config USING btree (realm_id);
+
+
+--
+-- Name: idx_auth_exec_flow; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_auth_exec_flow ON public.authentication_execution USING btree (flow_id);
+
+
+--
+-- Name: idx_auth_exec_realm_flow; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_auth_exec_realm_flow ON public.authentication_execution USING btree (realm_id, flow_id);
+
+
+--
+-- Name: idx_auth_flow_realm; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_auth_flow_realm ON public.authentication_flow USING btree (realm_id);
+
+
+--
+-- Name: idx_cl_clscope; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_cl_clscope ON public.client_scope_client USING btree (scope_id);
+
+
+--
+-- Name: idx_client_def_roles_client; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_client_def_roles_client ON public.client_default_roles USING btree (client_id);
+
+
+--
+-- Name: idx_client_id; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_client_id ON public.client USING btree (client_id);
+
+
+--
+-- Name: idx_client_init_acc_realm; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_client_init_acc_realm ON public.client_initial_access USING btree (realm_id);
+
+
+--
+-- Name: idx_client_session_session; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_client_session_session ON public.client_session USING btree (session_id);
+
+
+--
+-- Name: idx_clscope_attrs; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_clscope_attrs ON public.client_scope_attributes USING btree (scope_id);
+
+
+--
+-- Name: idx_clscope_cl; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_clscope_cl ON public.client_scope_client USING btree (client_id);
+
+
+--
+-- Name: idx_clscope_protmap; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_clscope_protmap ON public.protocol_mapper USING btree (client_scope_id);
+
+
+--
+-- Name: idx_clscope_role; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_clscope_role ON public.client_scope_role_mapping USING btree (scope_id);
+
+
+--
+-- Name: idx_compo_config_compo; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_compo_config_compo ON public.component_config USING btree (component_id);
+
+
+--
+-- Name: idx_component_provider_type; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_component_provider_type ON public.component USING btree (provider_type);
+
+
+--
+-- Name: idx_component_realm; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_component_realm ON public.component USING btree (realm_id);
+
+
+--
+-- Name: idx_composite; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_composite ON public.composite_role USING btree (composite);
+
+
+--
+-- Name: idx_composite_child; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_composite_child ON public.composite_role USING btree (child_role);
+
+
+--
+-- Name: idx_defcls_realm; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_defcls_realm ON public.default_client_scope USING btree (realm_id);
+
+
+--
+-- Name: idx_defcls_scope; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_defcls_scope ON public.default_client_scope USING btree (scope_id);
+
+
+--
+-- Name: idx_event_time; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_event_time ON public.event_entity USING btree (realm_id, event_time);
+
+
+--
+-- Name: idx_fedidentity_feduser; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_fedidentity_feduser ON public.federated_identity USING btree (federated_user_id);
+
+
+--
+-- Name: idx_fedidentity_user; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_fedidentity_user ON public.federated_identity USING btree (user_id);
+
+
+--
+-- Name: idx_fu_attribute; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_fu_attribute ON public.fed_user_attribute USING btree (user_id, realm_id, name);
+
+
+--
+-- Name: idx_fu_cnsnt_ext; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_fu_cnsnt_ext ON public.fed_user_consent USING btree (user_id, client_storage_provider, external_client_id);
+
+
+--
+-- Name: idx_fu_consent; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_fu_consent ON public.fed_user_consent USING btree (user_id, client_id);
+
+
+--
+-- Name: idx_fu_consent_ru; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_fu_consent_ru ON public.fed_user_consent USING btree (realm_id, user_id);
+
+
+--
+-- Name: idx_fu_credential; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_fu_credential ON public.fed_user_credential USING btree (user_id, type);
+
+
+--
+-- Name: idx_fu_credential_ru; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_fu_credential_ru ON public.fed_user_credential USING btree (realm_id, user_id);
+
+
+--
+-- Name: idx_fu_group_membership; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_fu_group_membership ON public.fed_user_group_membership USING btree (user_id, group_id);
+
+
+--
+-- Name: idx_fu_group_membership_ru; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_fu_group_membership_ru ON public.fed_user_group_membership USING btree (realm_id, user_id);
+
+
+--
+-- Name: idx_fu_required_action; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_fu_required_action ON public.fed_user_required_action USING btree (user_id, required_action);
+
+
+--
+-- Name: idx_fu_required_action_ru; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_fu_required_action_ru ON public.fed_user_required_action USING btree (realm_id, user_id);
+
+
+--
+-- Name: idx_fu_role_mapping; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_fu_role_mapping ON public.fed_user_role_mapping USING btree (user_id, role_id);
+
+
+--
+-- Name: idx_fu_role_mapping_ru; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_fu_role_mapping_ru ON public.fed_user_role_mapping USING btree (realm_id, user_id);
+
+
+--
+-- Name: idx_group_attr_group; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_group_attr_group ON public.group_attribute USING btree (group_id);
+
+
+--
+-- Name: idx_group_role_mapp_group; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_group_role_mapp_group ON public.group_role_mapping USING btree (group_id);
+
+
+--
+-- Name: idx_id_prov_mapp_realm; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_id_prov_mapp_realm ON public.identity_provider_mapper USING btree (realm_id);
+
+
+--
+-- Name: idx_ident_prov_realm; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_ident_prov_realm ON public.identity_provider USING btree (realm_id);
+
+
+--
+-- Name: idx_keycloak_role_client; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_keycloak_role_client ON public.keycloak_role USING btree (client);
+
+
+--
+-- Name: idx_keycloak_role_realm; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_keycloak_role_realm ON public.keycloak_role USING btree (realm);
+
+
+--
+-- Name: idx_offline_uss_createdon; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_offline_uss_createdon ON public.offline_user_session USING btree (created_on);
+
+
+--
+-- Name: idx_protocol_mapper_client; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_protocol_mapper_client ON public.protocol_mapper USING btree (client_id);
+
+
+--
+-- Name: idx_realm_attr_realm; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_realm_attr_realm ON public.realm_attribute USING btree (realm_id);
+
+
+--
+-- Name: idx_realm_clscope; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_realm_clscope ON public.client_scope USING btree (realm_id);
+
+
+--
+-- Name: idx_realm_def_grp_realm; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_realm_def_grp_realm ON public.realm_default_groups USING btree (realm_id);
+
+
+--
+-- Name: idx_realm_def_roles_realm; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_realm_def_roles_realm ON public.realm_default_roles USING btree (realm_id);
+
+
+--
+-- Name: idx_realm_evt_list_realm; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_realm_evt_list_realm ON public.realm_events_listeners USING btree (realm_id);
+
+
+--
+-- Name: idx_realm_evt_types_realm; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_realm_evt_types_realm ON public.realm_enabled_event_types USING btree (realm_id);
+
+
+--
+-- Name: idx_realm_master_adm_cli; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_realm_master_adm_cli ON public.realm USING btree (master_admin_client);
+
+
+--
+-- Name: idx_realm_supp_local_realm; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_realm_supp_local_realm ON public.realm_supported_locales USING btree (realm_id);
+
+
+--
+-- Name: idx_redir_uri_client; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_redir_uri_client ON public.redirect_uris USING btree (client_id);
+
+
+--
+-- Name: idx_req_act_prov_realm; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_req_act_prov_realm ON public.required_action_provider USING btree (realm_id);
+
+
+--
+-- Name: idx_res_policy_policy; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_res_policy_policy ON public.resource_policy USING btree (policy_id);
+
+
+--
+-- Name: idx_res_scope_scope; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_res_scope_scope ON public.resource_scope USING btree (scope_id);
+
+
+--
+-- Name: idx_res_serv_pol_res_serv; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_res_serv_pol_res_serv ON public.resource_server_policy USING btree (resource_server_id);
+
+
+--
+-- Name: idx_res_srv_res_res_srv; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_res_srv_res_res_srv ON public.resource_server_resource USING btree (resource_server_id);
+
+
+--
+-- Name: idx_res_srv_scope_res_srv; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_res_srv_scope_res_srv ON public.resource_server_scope USING btree (resource_server_id);
+
+
+--
+-- Name: idx_role_attribute; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_role_attribute ON public.role_attribute USING btree (role_id);
+
+
+--
+-- Name: idx_role_clscope; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_role_clscope ON public.client_scope_role_mapping USING btree (role_id);
+
+
+--
+-- Name: idx_scope_mapping_role; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_scope_mapping_role ON public.scope_mapping USING btree (role_id);
+
+
+--
+-- Name: idx_scope_policy_policy; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_scope_policy_policy ON public.scope_policy USING btree (policy_id);
+
+
+--
+-- Name: idx_update_time; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_update_time ON public.migration_model USING btree (update_time);
+
+
+--
+-- Name: idx_us_sess_id_on_cl_sess; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_us_sess_id_on_cl_sess ON public.offline_client_session USING btree (user_session_id);
+
+
+--
+-- Name: idx_usconsent_clscope; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_usconsent_clscope ON public.user_consent_client_scope USING btree (user_consent_id);
+
+
+--
+-- Name: idx_user_attribute; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_user_attribute ON public.user_attribute USING btree (user_id);
+
+
+--
+-- Name: idx_user_consent; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_user_consent ON public.user_consent USING btree (user_id);
+
+
+--
+-- Name: idx_user_credential; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_user_credential ON public.credential USING btree (user_id);
+
+
+--
+-- Name: idx_user_email; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_user_email ON public.user_entity USING btree (email);
+
+
+--
+-- Name: idx_user_group_mapping; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_user_group_mapping ON public.user_group_membership USING btree (user_id);
+
+
+--
+-- Name: idx_user_reqactions; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_user_reqactions ON public.user_required_action USING btree (user_id);
+
+
+--
+-- Name: idx_user_role_mapping; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_user_role_mapping ON public.user_role_mapping USING btree (user_id);
+
+
+--
+-- Name: idx_usr_fed_map_fed_prv; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_usr_fed_map_fed_prv ON public.user_federation_mapper USING btree (federation_provider_id);
+
+
+--
+-- Name: idx_usr_fed_map_realm; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_usr_fed_map_realm ON public.user_federation_mapper USING btree (realm_id);
+
+
+--
+-- Name: idx_usr_fed_prv_realm; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_usr_fed_prv_realm ON public.user_federation_provider USING btree (realm_id);
+
+
+--
+-- Name: idx_web_orig_client; Type: INDEX; Schema: public; Owner: dbamaster01
+--
+
+CREATE INDEX idx_web_orig_client ON public.web_origins USING btree (client_id);
+
+
+--
+-- Name: client_session_auth_status auth_status_constraint; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_session_auth_status
+    ADD CONSTRAINT auth_status_constraint FOREIGN KEY (client_session) REFERENCES public.client_session(id);
+
+
+--
+-- Name: identity_provider fk2b4ebc52ae5c3b34; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.identity_provider
+    ADD CONSTRAINT fk2b4ebc52ae5c3b34 FOREIGN KEY (realm_id) REFERENCES public.realm(id);
+
+
+--
+-- Name: client_attributes fk3c47c64beacca966; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_attributes
+    ADD CONSTRAINT fk3c47c64beacca966 FOREIGN KEY (client_id) REFERENCES public.client(id);
+
+
+--
+-- Name: federated_identity fk404288b92ef007a6; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.federated_identity
+    ADD CONSTRAINT fk404288b92ef007a6 FOREIGN KEY (user_id) REFERENCES public.user_entity(id);
+
+
+--
+-- Name: client_node_registrations fk4129723ba992f594; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_node_registrations
+    ADD CONSTRAINT fk4129723ba992f594 FOREIGN KEY (client_id) REFERENCES public.client(id);
+
+
+--
+-- Name: client_session_note fk5edfb00ff51c2736; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_session_note
+    ADD CONSTRAINT fk5edfb00ff51c2736 FOREIGN KEY (client_session) REFERENCES public.client_session(id);
+
+
+--
+-- Name: user_session_note fk5edfb00ff51d3472; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.user_session_note
+    ADD CONSTRAINT fk5edfb00ff51d3472 FOREIGN KEY (user_session) REFERENCES public.user_session(id);
+
+
+--
+-- Name: client_session_role fk_11b7sgqw18i532811v7o2dv76; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_session_role
+    ADD CONSTRAINT fk_11b7sgqw18i532811v7o2dv76 FOREIGN KEY (client_session) REFERENCES public.client_session(id);
+
+
+--
+-- Name: redirect_uris fk_1burs8pb4ouj97h5wuppahv9f; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.redirect_uris
+    ADD CONSTRAINT fk_1burs8pb4ouj97h5wuppahv9f FOREIGN KEY (client_id) REFERENCES public.client(id);
+
+
+--
+-- Name: user_federation_provider fk_1fj32f6ptolw2qy60cd8n01e8; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.user_federation_provider
+    ADD CONSTRAINT fk_1fj32f6ptolw2qy60cd8n01e8 FOREIGN KEY (realm_id) REFERENCES public.realm(id);
+
+
+--
+-- Name: client_session_prot_mapper fk_33a8sgqw18i532811v7o2dk89; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_session_prot_mapper
+    ADD CONSTRAINT fk_33a8sgqw18i532811v7o2dk89 FOREIGN KEY (client_session) REFERENCES public.client_session(id);
+
+
+--
+-- Name: realm_required_credential fk_5hg65lybevavkqfki3kponh9v; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.realm_required_credential
+    ADD CONSTRAINT fk_5hg65lybevavkqfki3kponh9v FOREIGN KEY (realm_id) REFERENCES public.realm(id);
+
+
+--
+-- Name: resource_attribute fk_5hrm2vlf9ql5fu022kqepovbr; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.resource_attribute
+    ADD CONSTRAINT fk_5hrm2vlf9ql5fu022kqepovbr FOREIGN KEY (resource_id) REFERENCES public.resource_server_resource(id);
+
+
+--
+-- Name: user_attribute fk_5hrm2vlf9ql5fu043kqepovbr; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.user_attribute
+    ADD CONSTRAINT fk_5hrm2vlf9ql5fu043kqepovbr FOREIGN KEY (user_id) REFERENCES public.user_entity(id);
+
+
+--
+-- Name: user_required_action fk_6qj3w1jw9cvafhe19bwsiuvmd; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.user_required_action
+    ADD CONSTRAINT fk_6qj3w1jw9cvafhe19bwsiuvmd FOREIGN KEY (user_id) REFERENCES public.user_entity(id);
+
+
+--
+-- Name: keycloak_role fk_6vyqfe4cn4wlq8r6kt5vdsj5c; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.keycloak_role
+    ADD CONSTRAINT fk_6vyqfe4cn4wlq8r6kt5vdsj5c FOREIGN KEY (realm) REFERENCES public.realm(id);
+
+
+--
+-- Name: realm_smtp_config fk_70ej8xdxgxd0b9hh6180irr0o; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.realm_smtp_config
+    ADD CONSTRAINT fk_70ej8xdxgxd0b9hh6180irr0o FOREIGN KEY (realm_id) REFERENCES public.realm(id);
+
+
+--
+-- Name: client_default_roles fk_8aelwnibji49avxsrtuf6xjow; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_default_roles
+    ADD CONSTRAINT fk_8aelwnibji49avxsrtuf6xjow FOREIGN KEY (role_id) REFERENCES public.keycloak_role(id);
+
+
+--
+-- Name: realm_attribute fk_8shxd6l3e9atqukacxgpffptw; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.realm_attribute
+    ADD CONSTRAINT fk_8shxd6l3e9atqukacxgpffptw FOREIGN KEY (realm_id) REFERENCES public.realm(id);
+
+
+--
+-- Name: composite_role fk_a63wvekftu8jo1pnj81e7mce2; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.composite_role
+    ADD CONSTRAINT fk_a63wvekftu8jo1pnj81e7mce2 FOREIGN KEY (composite) REFERENCES public.keycloak_role(id);
+
+
+--
+-- Name: authentication_execution fk_auth_exec_flow; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.authentication_execution
+    ADD CONSTRAINT fk_auth_exec_flow FOREIGN KEY (flow_id) REFERENCES public.authentication_flow(id);
+
+
+--
+-- Name: authentication_execution fk_auth_exec_realm; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.authentication_execution
+    ADD CONSTRAINT fk_auth_exec_realm FOREIGN KEY (realm_id) REFERENCES public.realm(id);
+
+
+--
+-- Name: authentication_flow fk_auth_flow_realm; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.authentication_flow
+    ADD CONSTRAINT fk_auth_flow_realm FOREIGN KEY (realm_id) REFERENCES public.realm(id);
+
+
+--
+-- Name: authenticator_config fk_auth_realm; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.authenticator_config
+    ADD CONSTRAINT fk_auth_realm FOREIGN KEY (realm_id) REFERENCES public.realm(id);
+
+
+--
+-- Name: client_session fk_b4ao2vcvat6ukau74wbwtfqo1; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_session
+    ADD CONSTRAINT fk_b4ao2vcvat6ukau74wbwtfqo1 FOREIGN KEY (session_id) REFERENCES public.user_session(id);
+
+
+--
+-- Name: user_role_mapping fk_c4fqv34p1mbylloxang7b1q3l; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.user_role_mapping
+    ADD CONSTRAINT fk_c4fqv34p1mbylloxang7b1q3l FOREIGN KEY (user_id) REFERENCES public.user_entity(id);
+
+
+--
+-- Name: client_scope_client fk_c_cli_scope_client; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_scope_client
+    ADD CONSTRAINT fk_c_cli_scope_client FOREIGN KEY (client_id) REFERENCES public.client(id);
+
+
+--
+-- Name: client_scope_client fk_c_cli_scope_scope; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_scope_client
+    ADD CONSTRAINT fk_c_cli_scope_scope FOREIGN KEY (scope_id) REFERENCES public.client_scope(id);
+
+
+--
+-- Name: client_scope_attributes fk_cl_scope_attr_scope; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_scope_attributes
+    ADD CONSTRAINT fk_cl_scope_attr_scope FOREIGN KEY (scope_id) REFERENCES public.client_scope(id);
+
+
+--
+-- Name: client_scope_role_mapping fk_cl_scope_rm_role; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_scope_role_mapping
+    ADD CONSTRAINT fk_cl_scope_rm_role FOREIGN KEY (role_id) REFERENCES public.keycloak_role(id);
+
+
+--
+-- Name: client_scope_role_mapping fk_cl_scope_rm_scope; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_scope_role_mapping
+    ADD CONSTRAINT fk_cl_scope_rm_scope FOREIGN KEY (scope_id) REFERENCES public.client_scope(id);
+
+
+--
+-- Name: client_user_session_note fk_cl_usr_ses_note; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_user_session_note
+    ADD CONSTRAINT fk_cl_usr_ses_note FOREIGN KEY (client_session) REFERENCES public.client_session(id);
+
+
+--
+-- Name: protocol_mapper fk_cli_scope_mapper; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.protocol_mapper
+    ADD CONSTRAINT fk_cli_scope_mapper FOREIGN KEY (client_scope_id) REFERENCES public.client_scope(id);
+
+
+--
+-- Name: client_initial_access fk_client_init_acc_realm; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_initial_access
+    ADD CONSTRAINT fk_client_init_acc_realm FOREIGN KEY (realm_id) REFERENCES public.realm(id);
+
+
+--
+-- Name: component_config fk_component_config; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.component_config
+    ADD CONSTRAINT fk_component_config FOREIGN KEY (component_id) REFERENCES public.component(id);
+
+
+--
+-- Name: component fk_component_realm; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.component
+    ADD CONSTRAINT fk_component_realm FOREIGN KEY (realm_id) REFERENCES public.realm(id);
+
+
+--
+-- Name: realm_default_groups fk_def_groups_group; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.realm_default_groups
+    ADD CONSTRAINT fk_def_groups_group FOREIGN KEY (group_id) REFERENCES public.keycloak_group(id);
+
+
+--
+-- Name: realm_default_groups fk_def_groups_realm; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.realm_default_groups
+    ADD CONSTRAINT fk_def_groups_realm FOREIGN KEY (realm_id) REFERENCES public.realm(id);
+
+
+--
+-- Name: realm_default_roles fk_evudb1ppw84oxfax2drs03icc; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.realm_default_roles
+    ADD CONSTRAINT fk_evudb1ppw84oxfax2drs03icc FOREIGN KEY (realm_id) REFERENCES public.realm(id);
+
+
+--
+-- Name: user_federation_mapper_config fk_fedmapper_cfg; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.user_federation_mapper_config
+    ADD CONSTRAINT fk_fedmapper_cfg FOREIGN KEY (user_federation_mapper_id) REFERENCES public.user_federation_mapper(id);
+
+
+--
+-- Name: user_federation_mapper fk_fedmapperpm_fedprv; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.user_federation_mapper
+    ADD CONSTRAINT fk_fedmapperpm_fedprv FOREIGN KEY (federation_provider_id) REFERENCES public.user_federation_provider(id);
+
+
+--
+-- Name: user_federation_mapper fk_fedmapperpm_realm; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.user_federation_mapper
+    ADD CONSTRAINT fk_fedmapperpm_realm FOREIGN KEY (realm_id) REFERENCES public.realm(id);
+
+
+--
+-- Name: associated_policy fk_frsr5s213xcx4wnkog82ssrfy; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.associated_policy
+    ADD CONSTRAINT fk_frsr5s213xcx4wnkog82ssrfy FOREIGN KEY (associated_policy_id) REFERENCES public.resource_server_policy(id);
+
+
+--
+-- Name: scope_policy fk_frsrasp13xcx4wnkog82ssrfy; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.scope_policy
+    ADD CONSTRAINT fk_frsrasp13xcx4wnkog82ssrfy FOREIGN KEY (policy_id) REFERENCES public.resource_server_policy(id);
+
+
+--
+-- Name: resource_server_perm_ticket fk_frsrho213xcx4wnkog82sspmt; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.resource_server_perm_ticket
+    ADD CONSTRAINT fk_frsrho213xcx4wnkog82sspmt FOREIGN KEY (resource_server_id) REFERENCES public.resource_server(id);
+
+
+--
+-- Name: resource_server_resource fk_frsrho213xcx4wnkog82ssrfy; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.resource_server_resource
+    ADD CONSTRAINT fk_frsrho213xcx4wnkog82ssrfy FOREIGN KEY (resource_server_id) REFERENCES public.resource_server(id);
+
+
+--
+-- Name: resource_server_perm_ticket fk_frsrho213xcx4wnkog83sspmt; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.resource_server_perm_ticket
+    ADD CONSTRAINT fk_frsrho213xcx4wnkog83sspmt FOREIGN KEY (resource_id) REFERENCES public.resource_server_resource(id);
+
+
+--
+-- Name: resource_server_perm_ticket fk_frsrho213xcx4wnkog84sspmt; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.resource_server_perm_ticket
+    ADD CONSTRAINT fk_frsrho213xcx4wnkog84sspmt FOREIGN KEY (scope_id) REFERENCES public.resource_server_scope(id);
+
+
+--
+-- Name: associated_policy fk_frsrpas14xcx4wnkog82ssrfy; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.associated_policy
+    ADD CONSTRAINT fk_frsrpas14xcx4wnkog82ssrfy FOREIGN KEY (policy_id) REFERENCES public.resource_server_policy(id);
+
+
+--
+-- Name: scope_policy fk_frsrpass3xcx4wnkog82ssrfy; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.scope_policy
+    ADD CONSTRAINT fk_frsrpass3xcx4wnkog82ssrfy FOREIGN KEY (scope_id) REFERENCES public.resource_server_scope(id);
+
+
+--
+-- Name: resource_server_perm_ticket fk_frsrpo2128cx4wnkog82ssrfy; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.resource_server_perm_ticket
+    ADD CONSTRAINT fk_frsrpo2128cx4wnkog82ssrfy FOREIGN KEY (policy_id) REFERENCES public.resource_server_policy(id);
+
+
+--
+-- Name: resource_server_policy fk_frsrpo213xcx4wnkog82ssrfy; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.resource_server_policy
+    ADD CONSTRAINT fk_frsrpo213xcx4wnkog82ssrfy FOREIGN KEY (resource_server_id) REFERENCES public.resource_server(id);
+
+
+--
+-- Name: resource_scope fk_frsrpos13xcx4wnkog82ssrfy; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.resource_scope
+    ADD CONSTRAINT fk_frsrpos13xcx4wnkog82ssrfy FOREIGN KEY (resource_id) REFERENCES public.resource_server_resource(id);
+
+
+--
+-- Name: resource_policy fk_frsrpos53xcx4wnkog82ssrfy; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.resource_policy
+    ADD CONSTRAINT fk_frsrpos53xcx4wnkog82ssrfy FOREIGN KEY (resource_id) REFERENCES public.resource_server_resource(id);
+
+
+--
+-- Name: resource_policy fk_frsrpp213xcx4wnkog82ssrfy; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.resource_policy
+    ADD CONSTRAINT fk_frsrpp213xcx4wnkog82ssrfy FOREIGN KEY (policy_id) REFERENCES public.resource_server_policy(id);
+
+
+--
+-- Name: resource_scope fk_frsrps213xcx4wnkog82ssrfy; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.resource_scope
+    ADD CONSTRAINT fk_frsrps213xcx4wnkog82ssrfy FOREIGN KEY (scope_id) REFERENCES public.resource_server_scope(id);
+
+
+--
+-- Name: resource_server_scope fk_frsrso213xcx4wnkog82ssrfy; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.resource_server_scope
+    ADD CONSTRAINT fk_frsrso213xcx4wnkog82ssrfy FOREIGN KEY (resource_server_id) REFERENCES public.resource_server(id);
+
+
+--
+-- Name: composite_role fk_gr7thllb9lu8q4vqa4524jjy8; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.composite_role
+    ADD CONSTRAINT fk_gr7thllb9lu8q4vqa4524jjy8 FOREIGN KEY (child_role) REFERENCES public.keycloak_role(id);
+
+
+--
+-- Name: user_consent_client_scope fk_grntcsnt_clsc_usc; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.user_consent_client_scope
+    ADD CONSTRAINT fk_grntcsnt_clsc_usc FOREIGN KEY (user_consent_id) REFERENCES public.user_consent(id);
+
+
+--
+-- Name: user_consent fk_grntcsnt_user; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.user_consent
+    ADD CONSTRAINT fk_grntcsnt_user FOREIGN KEY (user_id) REFERENCES public.user_entity(id);
+
+
+--
+-- Name: group_attribute fk_group_attribute_group; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.group_attribute
+    ADD CONSTRAINT fk_group_attribute_group FOREIGN KEY (group_id) REFERENCES public.keycloak_group(id);
+
+
+--
+-- Name: keycloak_group fk_group_realm; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.keycloak_group
+    ADD CONSTRAINT fk_group_realm FOREIGN KEY (realm_id) REFERENCES public.realm(id);
+
+
+--
+-- Name: group_role_mapping fk_group_role_group; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.group_role_mapping
+    ADD CONSTRAINT fk_group_role_group FOREIGN KEY (group_id) REFERENCES public.keycloak_group(id);
+
+
+--
+-- Name: group_role_mapping fk_group_role_role; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.group_role_mapping
+    ADD CONSTRAINT fk_group_role_role FOREIGN KEY (role_id) REFERENCES public.keycloak_role(id);
+
+
+--
+-- Name: realm_default_roles fk_h4wpd7w4hsoolni3h0sw7btje; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.realm_default_roles
+    ADD CONSTRAINT fk_h4wpd7w4hsoolni3h0sw7btje FOREIGN KEY (role_id) REFERENCES public.keycloak_role(id);
+
+
+--
+-- Name: realm_enabled_event_types fk_h846o4h0w8epx5nwedrf5y69j; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.realm_enabled_event_types
+    ADD CONSTRAINT fk_h846o4h0w8epx5nwedrf5y69j FOREIGN KEY (realm_id) REFERENCES public.realm(id);
+
+
+--
+-- Name: realm_events_listeners fk_h846o4h0w8epx5nxev9f5y69j; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.realm_events_listeners
+    ADD CONSTRAINT fk_h846o4h0w8epx5nxev9f5y69j FOREIGN KEY (realm_id) REFERENCES public.realm(id);
+
+
+--
+-- Name: identity_provider_mapper fk_idpm_realm; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.identity_provider_mapper
+    ADD CONSTRAINT fk_idpm_realm FOREIGN KEY (realm_id) REFERENCES public.realm(id);
+
+
+--
+-- Name: idp_mapper_config fk_idpmconfig; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.idp_mapper_config
+    ADD CONSTRAINT fk_idpmconfig FOREIGN KEY (idp_mapper_id) REFERENCES public.identity_provider_mapper(id);
+
+
+--
+-- Name: web_origins fk_lojpho213xcx4wnkog82ssrfy; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.web_origins
+    ADD CONSTRAINT fk_lojpho213xcx4wnkog82ssrfy FOREIGN KEY (client_id) REFERENCES public.client(id);
+
+
+--
+-- Name: client_default_roles fk_nuilts7klwqw2h8m2b5joytky; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_default_roles
+    ADD CONSTRAINT fk_nuilts7klwqw2h8m2b5joytky FOREIGN KEY (client_id) REFERENCES public.client(id);
+
+
+--
+-- Name: scope_mapping fk_ouse064plmlr732lxjcn1q5f1; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.scope_mapping
+    ADD CONSTRAINT fk_ouse064plmlr732lxjcn1q5f1 FOREIGN KEY (client_id) REFERENCES public.client(id);
+
+
+--
+-- Name: scope_mapping fk_p3rh9grku11kqfrs4fltt7rnq; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.scope_mapping
+    ADD CONSTRAINT fk_p3rh9grku11kqfrs4fltt7rnq FOREIGN KEY (role_id) REFERENCES public.keycloak_role(id);
+
+
+--
+-- Name: client fk_p56ctinxxb9gsk57fo49f9tac; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client
+    ADD CONSTRAINT fk_p56ctinxxb9gsk57fo49f9tac FOREIGN KEY (realm_id) REFERENCES public.realm(id);
+
+
+--
+-- Name: protocol_mapper fk_pcm_realm; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.protocol_mapper
+    ADD CONSTRAINT fk_pcm_realm FOREIGN KEY (client_id) REFERENCES public.client(id);
+
+
+--
+-- Name: credential fk_pfyr0glasqyl0dei3kl69r6v0; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.credential
+    ADD CONSTRAINT fk_pfyr0glasqyl0dei3kl69r6v0 FOREIGN KEY (user_id) REFERENCES public.user_entity(id);
+
+
+--
+-- Name: protocol_mapper_config fk_pmconfig; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.protocol_mapper_config
+    ADD CONSTRAINT fk_pmconfig FOREIGN KEY (protocol_mapper_id) REFERENCES public.protocol_mapper(id);
+
+
+--
+-- Name: default_client_scope fk_r_def_cli_scope_realm; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.default_client_scope
+    ADD CONSTRAINT fk_r_def_cli_scope_realm FOREIGN KEY (realm_id) REFERENCES public.realm(id);
+
+
+--
+-- Name: default_client_scope fk_r_def_cli_scope_scope; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.default_client_scope
+    ADD CONSTRAINT fk_r_def_cli_scope_scope FOREIGN KEY (scope_id) REFERENCES public.client_scope(id);
+
+
+--
+-- Name: client_scope fk_realm_cli_scope; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.client_scope
+    ADD CONSTRAINT fk_realm_cli_scope FOREIGN KEY (realm_id) REFERENCES public.realm(id);
+
+
+--
+-- Name: required_action_provider fk_req_act_realm; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.required_action_provider
+    ADD CONSTRAINT fk_req_act_realm FOREIGN KEY (realm_id) REFERENCES public.realm(id);
+
+
+--
+-- Name: resource_uris fk_resource_server_uris; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.resource_uris
+    ADD CONSTRAINT fk_resource_server_uris FOREIGN KEY (resource_id) REFERENCES public.resource_server_resource(id);
+
+
+--
+-- Name: role_attribute fk_role_attribute_id; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.role_attribute
+    ADD CONSTRAINT fk_role_attribute_id FOREIGN KEY (role_id) REFERENCES public.keycloak_role(id);
+
+
+--
+-- Name: realm_supported_locales fk_supported_locales_realm; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.realm_supported_locales
+    ADD CONSTRAINT fk_supported_locales_realm FOREIGN KEY (realm_id) REFERENCES public.realm(id);
+
+
+--
+-- Name: user_federation_config fk_t13hpu1j94r2ebpekr39x5eu5; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.user_federation_config
+    ADD CONSTRAINT fk_t13hpu1j94r2ebpekr39x5eu5 FOREIGN KEY (user_federation_provider_id) REFERENCES public.user_federation_provider(id);
+
+
+--
+-- Name: user_group_membership fk_user_group_user; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.user_group_membership
+    ADD CONSTRAINT fk_user_group_user FOREIGN KEY (user_id) REFERENCES public.user_entity(id);
+
+
+--
+-- Name: policy_config fkdc34197cf864c4e43; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.policy_config
+    ADD CONSTRAINT fkdc34197cf864c4e43 FOREIGN KEY (policy_id) REFERENCES public.resource_server_policy(id);
+
+
+--
+-- Name: identity_provider_config fkdc4897cf864c4e43; Type: FK CONSTRAINT; Schema: public; Owner: dbamaster01
+--
+
+ALTER TABLE ONLY public.identity_provider_config
+    ADD CONSTRAINT fkdc4897cf864c4e43 FOREIGN KEY (identity_provider_id) REFERENCES public.identity_provider(internal_id);
+
+
+--
+-- Name: TABLE admin_event_entity; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.admin_event_entity TO replicator;
+
+
+--
+-- Name: TABLE associated_policy; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.associated_policy TO replicator;
+
+
+--
+-- Name: TABLE authentication_execution; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.authentication_execution TO replicator;
+
+
+--
+-- Name: TABLE authentication_flow; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.authentication_flow TO replicator;
+
+
+--
+-- Name: TABLE authenticator_config; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.authenticator_config TO replicator;
+
+
+--
+-- Name: TABLE authenticator_config_entry; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.authenticator_config_entry TO replicator;
+
+
+--
+-- Name: TABLE broker_link; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.broker_link TO replicator;
+
+
+--
+-- Name: TABLE client; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.client TO replicator;
+
+
+--
+-- Name: TABLE client_attributes; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.client_attributes TO replicator;
+
+
+--
+-- Name: TABLE client_auth_flow_bindings; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.client_auth_flow_bindings TO replicator;
+
+
+--
+-- Name: TABLE client_default_roles; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.client_default_roles TO replicator;
+
+
+--
+-- Name: TABLE client_initial_access; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.client_initial_access TO replicator;
+
+
+--
+-- Name: TABLE client_node_registrations; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.client_node_registrations TO replicator;
+
+
+--
+-- Name: TABLE client_scope; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.client_scope TO replicator;
+
+
+--
+-- Name: TABLE client_scope_attributes; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.client_scope_attributes TO replicator;
+
+
+--
+-- Name: TABLE client_scope_client; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.client_scope_client TO replicator;
+
+
+--
+-- Name: TABLE client_scope_role_mapping; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.client_scope_role_mapping TO replicator;
+
+
+--
+-- Name: TABLE client_session; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.client_session TO replicator;
+
+
+--
+-- Name: TABLE client_session_auth_status; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.client_session_auth_status TO replicator;
+
+
+--
+-- Name: TABLE client_session_note; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.client_session_note TO replicator;
+
+
+--
+-- Name: TABLE client_session_prot_mapper; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.client_session_prot_mapper TO replicator;
+
+
+--
+-- Name: TABLE client_session_role; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.client_session_role TO replicator;
+
+
+--
+-- Name: TABLE client_user_session_note; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.client_user_session_note TO replicator;
+
+
+--
+-- Name: TABLE component; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.component TO replicator;
+
+
+--
+-- Name: TABLE component_config; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.component_config TO replicator;
+
+
+--
+-- Name: TABLE composite_role; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.composite_role TO replicator;
+
+
+--
+-- Name: TABLE credential; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.credential TO replicator;
+
+
+--
+-- Name: TABLE databasechangelog; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.databasechangelog TO replicator;
+
+
+--
+-- Name: TABLE databasechangeloglock; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.databasechangeloglock TO replicator;
+
+
+--
+-- Name: TABLE default_client_scope; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.default_client_scope TO replicator;
+
+
+--
+-- Name: TABLE event_entity; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.event_entity TO replicator;
+
+
+--
+-- Name: TABLE fed_user_attribute; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.fed_user_attribute TO replicator;
+
+
+--
+-- Name: TABLE fed_user_consent; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.fed_user_consent TO replicator;
+
+
+--
+-- Name: TABLE fed_user_consent_cl_scope; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.fed_user_consent_cl_scope TO replicator;
+
+
+--
+-- Name: TABLE fed_user_credential; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.fed_user_credential TO replicator;
+
+
+--
+-- Name: TABLE fed_user_group_membership; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.fed_user_group_membership TO replicator;
+
+
+--
+-- Name: TABLE fed_user_required_action; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.fed_user_required_action TO replicator;
+
+
+--
+-- Name: TABLE fed_user_role_mapping; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.fed_user_role_mapping TO replicator;
+
+
+--
+-- Name: TABLE federated_identity; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.federated_identity TO replicator;
+
+
+--
+-- Name: TABLE federated_user; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.federated_user TO replicator;
+
+
+--
+-- Name: TABLE group_attribute; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.group_attribute TO replicator;
+
+
+--
+-- Name: TABLE group_role_mapping; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.group_role_mapping TO replicator;
+
+
+--
+-- Name: TABLE identity_provider; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.identity_provider TO replicator;
+
+
+--
+-- Name: TABLE identity_provider_config; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.identity_provider_config TO replicator;
+
+
+--
+-- Name: TABLE identity_provider_mapper; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.identity_provider_mapper TO replicator;
+
+
+--
+-- Name: TABLE idp_mapper_config; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.idp_mapper_config TO replicator;
+
+
+--
+-- Name: TABLE keycloak_group; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.keycloak_group TO replicator;
+
+
+--
+-- Name: TABLE keycloak_role; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.keycloak_role TO replicator;
+
+
+--
+-- Name: TABLE migration_model; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.migration_model TO replicator;
+
+
+--
+-- Name: TABLE offline_client_session; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.offline_client_session TO replicator;
+
+
+--
+-- Name: TABLE offline_user_session; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.offline_user_session TO replicator;
+
+
+--
+-- Name: TABLE policy_config; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.policy_config TO replicator;
+
+
+--
+-- Name: TABLE protocol_mapper; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.protocol_mapper TO replicator;
+
+
+--
+-- Name: TABLE protocol_mapper_config; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.protocol_mapper_config TO replicator;
+
+
+--
+-- Name: TABLE realm; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.realm TO replicator;
+
+
+--
+-- Name: TABLE realm_attribute; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.realm_attribute TO replicator;
+
+
+--
+-- Name: TABLE realm_default_groups; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.realm_default_groups TO replicator;
+
+
+--
+-- Name: TABLE realm_default_roles; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.realm_default_roles TO replicator;
+
+
+--
+-- Name: TABLE realm_enabled_event_types; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.realm_enabled_event_types TO replicator;
+
+
+--
+-- Name: TABLE realm_events_listeners; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.realm_events_listeners TO replicator;
+
+
+--
+-- Name: TABLE realm_required_credential; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.realm_required_credential TO replicator;
+
+
+--
+-- Name: TABLE realm_smtp_config; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.realm_smtp_config TO replicator;
+
+
+--
+-- Name: TABLE realm_supported_locales; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.realm_supported_locales TO replicator;
+
+
+--
+-- Name: TABLE redirect_uris; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.redirect_uris TO replicator;
+
+
+--
+-- Name: TABLE required_action_config; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.required_action_config TO replicator;
+
+
+--
+-- Name: TABLE required_action_provider; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.required_action_provider TO replicator;
+
+
+--
+-- Name: TABLE resource_attribute; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.resource_attribute TO replicator;
+
+
+--
+-- Name: TABLE resource_policy; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.resource_policy TO replicator;
 
-START TRANSACTION;
-SET time_zone = "+00:00";
 
+--
+-- Name: TABLE resource_scope; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.resource_scope TO replicator;
+
+
+--
+-- Name: TABLE resource_server; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.resource_server TO replicator;
+
+
+--
+-- Name: TABLE resource_server_perm_ticket; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.resource_server_perm_ticket TO replicator;
+
+
+--
+-- Name: TABLE resource_server_policy; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.resource_server_policy TO replicator;
+
+
+--
+-- Name: TABLE resource_server_resource; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.resource_server_resource TO replicator;
+
+
+--
+-- Name: TABLE resource_server_scope; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.resource_server_scope TO replicator;
+
+
+--
+-- Name: TABLE resource_uris; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.resource_uris TO replicator;
+
+
+--
+-- Name: TABLE role_attribute; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.role_attribute TO replicator;
+
+
+--
+-- Name: TABLE scope_mapping; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.scope_mapping TO replicator;
+
+
+--
+-- Name: TABLE scope_policy; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.scope_policy TO replicator;
+
+
+--
+-- Name: TABLE user_attribute; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.user_attribute TO replicator;
+
+
+--
+-- Name: TABLE user_consent; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.user_consent TO replicator;
+
+
+--
+-- Name: TABLE user_consent_client_scope; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.user_consent_client_scope TO replicator;
+
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+--
+-- Name: TABLE user_entity; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.user_entity TO replicator;
+
+
+--
+-- Name: TABLE user_federation_config; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.user_federation_config TO replicator;
+
+
+--
+-- Name: TABLE user_federation_mapper; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.user_federation_mapper TO replicator;
+
+
+--
+-- Name: TABLE user_federation_mapper_config; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.user_federation_mapper_config TO replicator;
+
+
+--
+-- Name: TABLE user_federation_provider; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.user_federation_provider TO replicator;
+
+
+--
+-- Name: TABLE user_group_membership; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.user_group_membership TO replicator;
+
+
+--
+-- Name: TABLE user_required_action; Type: ACL; Schema: public; Owner: dbamaster01
+--
 
+GRANT SELECT ON TABLE public.user_required_action TO replicator;
+
+
+--
+-- Name: TABLE user_role_mapping; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.user_role_mapping TO replicator;
+
+
+--
+-- Name: TABLE user_session; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.user_session TO replicator;
+
+
+--
+-- Name: TABLE user_session_note; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.user_session_note TO replicator;
+
+
+--
+-- Name: TABLE username_login_failure; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.username_login_failure TO replicator;
+
+
+--
+-- Name: TABLE web_origins; Type: ACL; Schema: public; Owner: dbamaster01
+--
+
+GRANT SELECT ON TABLE public.web_origins TO replicator;
+
+
+--
+-- Name: DEFAULT PRIVILEGES FOR TABLES; Type: DEFAULT ACL; Schema: public; Owner: dbamaster01
 --
--- Banco de dados: `dbkeycloak`
+
+ALTER DEFAULT PRIVILEGES FOR ROLE dbamaster01 IN SCHEMA public REVOKE ALL ON TABLES  FROM dbamaster01;
+ALTER DEFAULT PRIVILEGES FOR ROLE dbamaster01 IN SCHEMA public GRANT SELECT ON TABLES  TO replicator;
+
+
 --
-CREATE DATABASE IF NOT EXISTS `dbkeycloak` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
-USE dbkeycloak;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `admin_event_entity`
---
-
-DROP TABLE IF EXISTS `admin_event_entity`;
-CREATE TABLE IF NOT EXISTS `admin_event_entity` (
-  `ID` varchar(36) NOT NULL,
-  `ADMIN_EVENT_TIME` bigint DEFAULT NULL,
-  `REALM_ID` varchar(255) DEFAULT NULL,
-  `OPERATION_TYPE` varchar(255) DEFAULT NULL,
-  `AUTH_REALM_ID` varchar(255) DEFAULT NULL,
-  `AUTH_CLIENT_ID` varchar(255) DEFAULT NULL,
-  `AUTH_USER_ID` varchar(255) DEFAULT NULL,
-  `IP_ADDRESS` varchar(255) DEFAULT NULL,
-  `RESOURCE_PATH` text,
-  `REPRESENTATION` text,
-  `ERROR` varchar(255) DEFAULT NULL,
-  `RESOURCE_TYPE` varchar(64) DEFAULT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `associated_policy`
---
-
-DROP TABLE IF EXISTS `associated_policy`;
-CREATE TABLE IF NOT EXISTS `associated_policy` (
-  `POLICY_ID` varchar(36) NOT NULL,
-  `ASSOCIATED_POLICY_ID` varchar(36) NOT NULL,
-  PRIMARY KEY (`POLICY_ID`,`ASSOCIATED_POLICY_ID`),
-  KEY `IDX_ASSOC_POL_ASSOC_POL_ID` (`ASSOCIATED_POLICY_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `associated_policy`
---
-
-INSERT INTO `associated_policy` (`POLICY_ID`, `ASSOCIATED_POLICY_ID`) VALUES
-('d50a94d5-1756-434d-b110-4d53eece2e6d', 'ad943211-dd2c-4784-92a3-7ad1c524169b'),
-('4b5c72cc-b8b8-4bfc-95ac-61815669f985', 'ff09b194-0615-4cfd-9851-74adf540dabd');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `authentication_execution`
---
-
-DROP TABLE IF EXISTS `authentication_execution`;
-CREATE TABLE IF NOT EXISTS `authentication_execution` (
-  `ID` varchar(36) NOT NULL,
-  `ALIAS` varchar(255) DEFAULT NULL,
-  `AUTHENTICATOR` varchar(36) DEFAULT NULL,
-  `REALM_ID` varchar(36) DEFAULT NULL,
-  `FLOW_ID` varchar(36) DEFAULT NULL,
-  `REQUIREMENT` int DEFAULT NULL,
-  `PRIORITY` int DEFAULT NULL,
-  `AUTHENTICATOR_FLOW` bit(1) NOT NULL DEFAULT b'0',
-  `AUTH_FLOW_ID` varchar(36) DEFAULT NULL,
-  `AUTH_CONFIG` varchar(36) DEFAULT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `IDX_AUTH_EXEC_REALM_FLOW` (`REALM_ID`,`FLOW_ID`),
-  KEY `IDX_AUTH_EXEC_FLOW` (`FLOW_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `authentication_execution`
---
-
-INSERT INTO `authentication_execution` (`ID`, `ALIAS`, `AUTHENTICATOR`, `REALM_ID`, `FLOW_ID`, `REQUIREMENT`, `PRIORITY`, `AUTHENTICATOR_FLOW`, `AUTH_FLOW_ID`, `AUTH_CONFIG`) VALUES
-('007ed17c-bacf-4b9f-b564-7c4aa8d001bb', NULL, 'registration-profile-action', 'jhipster', '7344671e-65ba-43b8-a95b-ef85ba95a693', 0, 40, b'0', NULL, NULL),
-('058912ed-75eb-44d9-b345-e93a8000b68e', NULL, 'direct-grant-validate-password', 'jhipster', '4792c881-7800-47a7-9264-c2f50d602ee9', 0, 20, b'0', NULL, NULL),
-('153cdb45-06b2-4e87-bdc6-ff850224de6b', NULL, 'direct-grant-validate-otp', 'jhipster', '422c1ae4-70bc-4d99-b937-485bbe98d800', 0, 20, b'0', NULL, NULL),
-('154cd377-a655-4a97-8750-f1055e3ad01d', NULL, 'docker-http-basic-authenticator', 'master', '09a729e8-7ede-4d69-822c-59ea50e9c4eb', 0, 10, b'0', NULL, NULL),
-('1564c0e1-0a01-4b70-8052-af4d5b12be57', NULL, 'direct-grant-validate-username', 'jhipster', '4792c881-7800-47a7-9264-c2f50d602ee9', 0, 10, b'0', NULL, NULL),
-('1769170b-7eb9-41bd-bf74-01a6514315db', NULL, 'identity-provider-redirector', 'master', 'd6f21945-0811-4745-9491-4d06f6891f04', 2, 25, b'0', NULL, NULL),
-('19c9b58e-c0d7-4cf8-bc9c-e01d95a0ab55', NULL, NULL, 'master', '9e83783c-39b5-42e8-a28b-99f0c3322d40', 1, 20, b'1', 'b835f851-c9de-4976-99cb-f7c3f2de2738', NULL),
-('1af0dcde-0121-42dc-86b7-d38c950be21a', NULL, 'auth-spnego', 'master', 'd6f21945-0811-4745-9491-4d06f6891f04', 3, 20, b'0', NULL, NULL),
-('1b12133c-e5a7-4e9c-a758-887baecd6108', NULL, 'client-secret-jwt', 'jhipster', 'b2104493-52a1-4627-869b-a65b057b8147', 2, 30, b'0', NULL, NULL),
-('1ce1b616-2817-4a28-acd3-0e7a79133452', NULL, 'idp-review-profile', 'master', '26eac2ed-1c76-4889-9490-fbab660f9678', 0, 10, b'0', NULL, '09fa2388-1a34-4443-a82a-722766928d27'),
-('1dfd12ec-d607-419c-bd0d-3d758dae984a', NULL, NULL, 'jhipster', '9fcbb697-dadf-4079-9b02-f489c7394182', 1, 40, b'1', 'ea8e968d-8ffa-4825-9990-5e9a6b6d79f5', NULL),
-('25368c5c-18c0-4dc9-9245-65a45cc57ced', NULL, NULL, 'master', 'd6f21945-0811-4745-9491-4d06f6891f04', 2, 30, b'1', '9e83783c-39b5-42e8-a28b-99f0c3322d40', NULL),
-('29e47ed4-78ab-4d45-987d-c1028a42324c', NULL, 'reset-password', 'master', '02dbcfec-7c6a-4a98-81df-8839f710c4a8', 0, 30, b'0', NULL, NULL),
-('2c45c125-aa7d-4495-a11a-2e4703bf66f3', NULL, NULL, 'jhipster', 'df7b4317-4aad-43c3-bce9-aa7996206c91', 0, 20, b'1', '917dfac2-9890-4127-85c4-250fd9b4ff30', NULL),
-('3194f76a-966b-430d-bcc5-7bcc305919bf', NULL, 'reset-otp', 'master', 'a0dea53c-b018-4611-bf85-bf62d7dd490b', 0, 20, b'0', NULL, NULL),
-('33ac69f9-603b-43e9-a8a9-8a35269c59e3', NULL, 'direct-grant-validate-otp', 'master', 'e1f938a4-3754-4a36-ad91-6af2bb071f3c', 0, 20, b'0', NULL, NULL),
-('3505629b-584a-427b-90d9-703e6ab64c64', NULL, 'direct-grant-validate-username', 'master', '084f926f-6967-4bcb-b80e-31207678cf2c', 0, 10, b'0', NULL, NULL),
-('36e69f8e-bcfe-45dd-912f-cf12a60245d7', NULL, 'auth-cookie', 'master', 'd6f21945-0811-4745-9491-4d06f6891f04', 2, 10, b'0', NULL, NULL),
-('3b7223d0-df86-4b72-9f07-39e0f856dab9', NULL, 'direct-grant-validate-password', 'master', '084f926f-6967-4bcb-b80e-31207678cf2c', 0, 20, b'0', NULL, NULL),
-('3fd2a68c-65d3-4640-97de-f312a6887bd9', NULL, 'auth-spnego', 'master', '5f2605db-ce9c-4997-bc0d-a1a7b5f597e4', 3, 30, b'0', NULL, NULL),
-('425ec4de-6b56-468d-b4f3-91c3dc3fa495', NULL, 'client-secret', 'jhipster', 'b2104493-52a1-4627-869b-a65b057b8147', 2, 10, b'0', NULL, NULL),
-('46fafc7a-83c9-499c-b9b3-d889fd39a08c', NULL, 'basic-auth', 'master', '5f2605db-ce9c-4997-bc0d-a1a7b5f597e4', 0, 10, b'0', NULL, NULL),
-('481f6ce4-3ed6-4c8f-af26-9cfb6ba22db2', NULL, 'conditional-user-configured', 'jhipster', '9e0960af-64e7-4877-815e-ad75156fd238', 0, 10, b'0', NULL, NULL),
-('4a831c00-4e4b-4f28-be94-7e2c0194e4b5', NULL, NULL, 'jhipster', 'd4aa3e02-2fca-406a-a711-cd6919967b26', 0, 20, b'1', 'a9ba05b7-f6f2-45bf-8ac6-dbd41d30dd91', NULL),
-('4c000f00-0b68-43df-bfb3-772dc7f39d1d', NULL, NULL, 'master', '1a06b73c-7e02-4fe8-8e90-6e1bcd851d47', 0, 20, b'1', '5f2605db-ce9c-4997-bc0d-a1a7b5f597e4', NULL),
-('4d9f6ad0-30cb-4c7a-abe9-c4a05fe2daa7', NULL, 'auth-username-password-form', 'master', '9e83783c-39b5-42e8-a28b-99f0c3322d40', 0, 10, b'0', NULL, NULL),
-('4f7232b4-0db9-46a8-ae2b-497f0a65f53a', NULL, 'auth-otp-form', 'master', 'f66142a2-b680-470b-ac3f-110337499e2e', 0, 20, b'0', NULL, NULL),
-('512f04a6-d8d3-400a-859d-9cf9314287a1', NULL, 'conditional-user-configured', 'master', 'e1f938a4-3754-4a36-ad91-6af2bb071f3c', 0, 10, b'0', NULL, NULL),
-('53510832-def4-4bb1-8936-a82bbbbb6425', NULL, NULL, 'master', 'f5a59621-1cfc-469b-bf9c-a3c52b7c7865', 1, 20, b'1', 'f66142a2-b680-470b-ac3f-110337499e2e', NULL),
-('53ea16b1-6554-4dc1-bcf2-869ef78c202b', NULL, 'registration-profile-action', 'master', '4dcee836-1071-4f3c-b09c-8314ba300b34', 0, 40, b'0', NULL, NULL),
-('54a62ba2-d9de-4fa0-b4a9-543c55ee81a0', NULL, 'conditional-user-configured', 'jhipster', '422c1ae4-70bc-4d99-b937-485bbe98d800', 0, 10, b'0', NULL, NULL),
-('564161f0-8256-45c0-a474-ae916d20f12b', NULL, 'reset-password', 'jhipster', '9fcbb697-dadf-4079-9b02-f489c7394182', 0, 30, b'0', NULL, NULL),
-('5b915094-982d-491f-acae-446f6fa677d6', NULL, 'registration-page-form', 'jhipster', '4c6da64c-81dd-4680-afc5-744c93cd8286', 0, 10, b'1', '7344671e-65ba-43b8-a95b-ef85ba95a693', NULL),
-('60fde5ee-ba2d-4d6c-8834-c9c386963cef', NULL, 'reset-credential-email', 'master', '02dbcfec-7c6a-4a98-81df-8839f710c4a8', 0, 20, b'0', NULL, NULL),
-('635e94be-2ff0-4dd8-b0a9-307eff87dede', NULL, NULL, 'jhipster', '7fac2a6a-a4a9-4132-bf62-83bc22877c47', 1, 20, b'1', 'a582cb6d-479a-4bee-9c94-4fe1e011b5eb', NULL),
-('6618527a-5894-49d2-8998-d9ba76cf33f5', NULL, 'idp-email-verification', 'master', 'd3f890af-35c1-4a84-8d66-d228999d7b40', 2, 10, b'0', NULL, NULL),
-('6721be94-87f2-448b-adc6-63058c8f5144', NULL, 'docker-http-basic-authenticator', 'jhipster', 'e77f88e4-c597-4e89-8db8-7cba747d9601', 0, 10, b'0', NULL, NULL),
-('6a564f95-7c52-440c-bfa2-663fdfb2b5bb', NULL, 'idp-username-password-form', 'jhipster', '7fac2a6a-a4a9-4132-bf62-83bc22877c47', 0, 10, b'0', NULL, NULL),
-('6d2496c4-bdf6-4f22-93f7-ca8a1b5f6aa2', NULL, 'client-jwt', 'jhipster', 'b2104493-52a1-4627-869b-a65b057b8147', 2, 20, b'0', NULL, NULL),
-('6dcc7297-de3b-42b1-beed-1d011e88f96c', NULL, 'auth-otp-form', 'master', 'b835f851-c9de-4976-99cb-f7c3f2de2738', 0, 20, b'0', NULL, NULL),
-('7563f518-3a60-4ac4-aaf1-0f8653e57fa5', NULL, 'registration-recaptcha-action', 'master', '4dcee836-1071-4f3c-b09c-8314ba300b34', 3, 60, b'0', NULL, NULL),
-('75a8e743-be98-4c7e-b9ba-e28997c4740f', NULL, 'reset-otp', 'jhipster', 'ea8e968d-8ffa-4825-9990-5e9a6b6d79f5', 0, 20, b'0', NULL, NULL),
-('783db757-6686-42a7-8b85-5e7a619d9cc6', NULL, 'reset-credential-email', 'jhipster', '9fcbb697-dadf-4079-9b02-f489c7394182', 0, 20, b'0', NULL, NULL),
-('785fd48d-bf32-4913-8611-dbb40f485a10', NULL, 'basic-auth-otp', 'master', '5f2605db-ce9c-4997-bc0d-a1a7b5f597e4', 3, 20, b'0', NULL, NULL),
-('793db88d-a8f7-4808-bc26-fab72ef33ed3', NULL, 'registration-user-creation', 'jhipster', '7344671e-65ba-43b8-a95b-ef85ba95a693', 0, 20, b'0', NULL, NULL),
-('7d959c8f-3c7e-4d96-9fdb-8f668eea3103', NULL, NULL, 'master', '31583d45-da22-48bc-a9d6-6ec9d819c607', 0, 20, b'1', 'd3f890af-35c1-4a84-8d66-d228999d7b40', NULL),
-('7de6afd1-0675-4a59-a714-a3071fd01c17', NULL, 'auth-spnego', 'jhipster', '03019b44-fb0a-42bb-ab7f-b109f9118d62', 3, 20, b'0', NULL, NULL),
-('82c55cd7-bc06-4a95-a3af-8016649d92d8', NULL, 'idp-email-verification', 'jhipster', 'a9ba05b7-f6f2-45bf-8ac6-dbd41d30dd91', 2, 10, b'0', NULL, NULL),
-('84d81829-d82a-46f6-b42b-1b39b962b597', NULL, NULL, 'jhipster', '917dfac2-9890-4127-85c4-250fd9b4ff30', 2, 20, b'1', 'd4aa3e02-2fca-406a-a711-cd6919967b26', NULL),
-('86cd8b60-fe0b-4980-9945-c72f5af0db45', NULL, 'identity-provider-redirector', 'jhipster', '03019b44-fb0a-42bb-ab7f-b109f9118d62', 2, 25, b'0', NULL, NULL),
-('87356de6-edf7-4ab9-a491-aa29c3cbef2e', NULL, NULL, 'master', 'd3f890af-35c1-4a84-8d66-d228999d7b40', 2, 20, b'1', 'f5a59621-1cfc-469b-bf9c-a3c52b7c7865', NULL),
-('87e84f03-ba02-46aa-9d08-57f8b2a22168', NULL, 'idp-create-user-if-unique', 'master', '219b8c0b-e134-4d83-8da6-c1e6d3b166a9', 2, 10, b'0', NULL, 'cc851e89-2782-40a3-84ab-bc4535bcb763'),
-('8bf8eadc-7e57-4ec9-b1b6-aa0b9f241d35', NULL, 'idp-username-password-form', 'master', 'f5a59621-1cfc-469b-bf9c-a3c52b7c7865', 0, 10, b'0', NULL, NULL),
-('91c7e2d8-c628-4341-ba16-800ade1eff35', NULL, NULL, 'master', '26eac2ed-1c76-4889-9490-fbab660f9678', 0, 20, b'1', '219b8c0b-e134-4d83-8da6-c1e6d3b166a9', NULL),
-('9296a31e-bbe8-4fe3-a28a-94148e308421', NULL, 'no-cookie-redirect', 'master', '1a06b73c-7e02-4fe8-8e90-6e1bcd851d47', 0, 10, b'0', NULL, NULL),
-('933da5f7-5d88-4e69-9be2-93eeb4598456', NULL, 'auth-otp-form', 'jhipster', '9e0960af-64e7-4877-815e-ad75156fd238', 0, 20, b'0', NULL, NULL),
-('9e85cf8c-4e9b-43a7-8f7a-6e274f3500b0', NULL, 'conditional-user-configured', 'jhipster', 'ea8e968d-8ffa-4825-9990-5e9a6b6d79f5', 0, 10, b'0', NULL, NULL),
-('a9b6b43b-e7af-4449-92be-7e22a4acab11', NULL, 'registration-recaptcha-action', 'jhipster', '7344671e-65ba-43b8-a95b-ef85ba95a693', 3, 60, b'0', NULL, NULL),
-('adcd6bf1-a92d-4278-9932-7fda44b65d69', NULL, 'client-x509', 'jhipster', 'b2104493-52a1-4627-869b-a65b057b8147', 2, 40, b'0', NULL, NULL),
-('b791e402-c702-4a49-894a-8dc82a55020c', NULL, 'registration-page-form', 'master', '15ffed78-3316-425a-9649-11107e54c743', 0, 10, b'1', '4dcee836-1071-4f3c-b09c-8314ba300b34', NULL),
-('ba4648f6-c385-45da-b980-93107bc505ca', NULL, NULL, 'master', '219b8c0b-e134-4d83-8da6-c1e6d3b166a9', 2, 20, b'1', '31583d45-da22-48bc-a9d6-6ec9d819c607', NULL),
-('bc3953e0-030f-4739-be9d-3be301dc8116', NULL, 'http-basic-authenticator', 'jhipster', '108beb66-4d4d-460e-af6e-6d46bbe6f7e6', 0, 10, b'0', NULL, NULL),
-('be49c61d-0e8a-4589-af94-e550410a6d5e', NULL, NULL, 'master', '02dbcfec-7c6a-4a98-81df-8839f710c4a8', 1, 40, b'1', 'a0dea53c-b018-4611-bf85-bf62d7dd490b', NULL),
-('bec5b48b-8969-4f05-a3db-c7cb6bf6649b', NULL, NULL, 'jhipster', '03019b44-fb0a-42bb-ab7f-b109f9118d62', 2, 30, b'1', '92e96d69-e49f-4668-8448-39da27315448', NULL),
-('bf86f8a4-e6ea-4d2b-827b-fac7b738519f', NULL, 'auth-otp-form', 'jhipster', 'a582cb6d-479a-4bee-9c94-4fe1e011b5eb', 0, 20, b'0', NULL, NULL),
-('bf9ee7f4-ccd7-4c7e-aa7e-e3f43c08779b', NULL, 'client-secret', 'master', 'c486d764-c8c6-416e-98cf-45a19bb6746d', 2, 10, b'0', NULL, NULL),
-('bfabcd7f-907e-4a01-8a53-2c16cbcdd501', NULL, 'auth-cookie', 'jhipster', '03019b44-fb0a-42bb-ab7f-b109f9118d62', 2, 10, b'0', NULL, NULL),
-('bfaee21a-41db-43a6-a2fa-e322719c4df9', NULL, 'client-jwt', 'master', 'c486d764-c8c6-416e-98cf-45a19bb6746d', 2, 20, b'0', NULL, NULL),
-('c538455b-60d2-4c69-bd38-da1a060fd4c9', NULL, 'conditional-user-configured', 'jhipster', 'a582cb6d-479a-4bee-9c94-4fe1e011b5eb', 0, 10, b'0', NULL, NULL),
-('c57143ca-6534-40c9-9ee8-d24f6e1a72b8', NULL, NULL, 'jhipster', 'a9ba05b7-f6f2-45bf-8ac6-dbd41d30dd91', 2, 20, b'1', '7fac2a6a-a4a9-4132-bf62-83bc22877c47', NULL),
-('c7aedce4-aae3-4950-a6b7-13ea897620f6', NULL, 'idp-create-user-if-unique', 'jhipster', '917dfac2-9890-4127-85c4-250fd9b4ff30', 2, 10, b'0', NULL, 'c6e2a3c8-0e67-4a2f-8ec5-5f113f1a052c'),
-('cc749faf-e4a3-446e-94c4-01a4c7245701', NULL, NULL, 'jhipster', '4792c881-7800-47a7-9264-c2f50d602ee9', 1, 30, b'1', '422c1ae4-70bc-4d99-b937-485bbe98d800', NULL),
-('ce34e18f-e9f3-47df-8d8f-116f03248594', NULL, NULL, 'master', '084f926f-6967-4bcb-b80e-31207678cf2c', 1, 30, b'1', 'e1f938a4-3754-4a36-ad91-6af2bb071f3c', NULL),
-('d0b347bf-56b5-458e-8910-d0f76365191a', NULL, 'no-cookie-redirect', 'jhipster', '0b546166-822c-4450-b22a-40e710d79853', 0, 10, b'0', NULL, NULL),
-('d60f5fdf-d489-4003-b87a-2bc354a3093f', NULL, 'registration-password-action', 'jhipster', '7344671e-65ba-43b8-a95b-ef85ba95a693', 0, 50, b'0', NULL, NULL),
-('d8155474-e1be-41d5-b04a-9262296d5f0e', NULL, NULL, 'jhipster', '92e96d69-e49f-4668-8448-39da27315448', 1, 20, b'1', '9e0960af-64e7-4877-815e-ad75156fd238', NULL),
-('da1a1bbf-7c99-4926-b3f6-f6a742734915', NULL, 'idp-confirm-link', 'jhipster', 'd4aa3e02-2fca-406a-a711-cd6919967b26', 0, 10, b'0', NULL, NULL),
-('de5aec9c-9d54-43b8-ad39-08c730212727', NULL, 'registration-user-creation', 'master', '4dcee836-1071-4f3c-b09c-8314ba300b34', 0, 20, b'0', NULL, NULL),
-('deec6dd3-c655-42ae-8e39-8a5c4e6182cf', NULL, 'http-basic-authenticator', 'master', '96b348ec-bae4-490a-9c5f-f21770b2087b', 0, 10, b'0', NULL, NULL),
-('defdf2d8-510c-405d-8e55-9dfdefc51848', NULL, 'idp-review-profile', 'jhipster', 'df7b4317-4aad-43c3-bce9-aa7996206c91', 0, 10, b'0', NULL, 'e9774b41-3fda-4539-9db5-10805b1d7d2b'),
-('e089d26f-08ff-47be-9539-903ce02ed00b', NULL, 'basic-auth', 'jhipster', '0b546166-822c-4450-b22a-40e710d79853', 0, 20, b'0', NULL, NULL),
-('e3c85079-743c-4f0c-b045-ec5ac3cbf873', NULL, 'auth-spnego', 'jhipster', '0b546166-822c-4450-b22a-40e710d79853', 3, 40, b'0', NULL, NULL),
-('e5fc3f70-5563-4f0e-b5e0-b803b8cf07ee', NULL, 'reset-credentials-choose-user', 'jhipster', '9fcbb697-dadf-4079-9b02-f489c7394182', 0, 10, b'0', NULL, NULL),
-('e69e5e0b-238e-44b5-89f4-e6bcfa52d8c4', NULL, 'conditional-user-configured', 'master', 'a0dea53c-b018-4611-bf85-bf62d7dd490b', 0, 10, b'0', NULL, NULL),
-('e6f69827-eb52-4197-8822-921ecea4347a', NULL, 'conditional-user-configured', 'master', 'b835f851-c9de-4976-99cb-f7c3f2de2738', 0, 10, b'0', NULL, NULL),
-('ed6055df-634d-4096-939b-3b6461cc456d', NULL, 'conditional-user-configured', 'master', 'f66142a2-b680-470b-ac3f-110337499e2e', 0, 10, b'0', NULL, NULL),
-('efed1bde-8576-4c04-a777-f415422588de', NULL, 'client-secret-jwt', 'master', 'c486d764-c8c6-416e-98cf-45a19bb6746d', 2, 30, b'0', NULL, NULL),
-('f1d2fc3f-f5ca-4119-aedb-7f97ee7eb2df', NULL, 'auth-username-password-form', 'jhipster', '92e96d69-e49f-4668-8448-39da27315448', 0, 10, b'0', NULL, NULL),
-('f272512a-db63-4048-818c-41828db59669', NULL, 'registration-password-action', 'master', '4dcee836-1071-4f3c-b09c-8314ba300b34', 0, 50, b'0', NULL, NULL),
-('f2a6d32e-6b9d-46f4-ab10-f9f8a29f1696', NULL, 'reset-credentials-choose-user', 'master', '02dbcfec-7c6a-4a98-81df-8839f710c4a8', 0, 10, b'0', NULL, NULL),
-('f7a4b4a2-39cd-4b1d-aea3-49e97a823c38', NULL, 'client-x509', 'master', 'c486d764-c8c6-416e-98cf-45a19bb6746d', 2, 40, b'0', NULL, NULL),
-('fdc85783-7ad2-4cdb-b5eb-6aee3831cbf0', NULL, 'idp-confirm-link', 'master', '31583d45-da22-48bc-a9d6-6ec9d819c607', 0, 10, b'0', NULL, NULL),
-('ffe1a172-ff90-447b-99e3-282f2649fb2c', NULL, 'basic-auth-otp', 'jhipster', '0b546166-822c-4450-b22a-40e710d79853', 3, 30, b'0', NULL, NULL);
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `authentication_flow`
---
-
-DROP TABLE IF EXISTS `authentication_flow`;
-CREATE TABLE IF NOT EXISTS `authentication_flow` (
-  `ID` varchar(36) NOT NULL,
-  `ALIAS` varchar(255) DEFAULT NULL,
-  `DESCRIPTION` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-  `REALM_ID` varchar(36) DEFAULT NULL,
-  `PROVIDER_ID` varchar(36) NOT NULL DEFAULT 'basic-flow',
-  `TOP_LEVEL` bit(1) NOT NULL DEFAULT b'0',
-  `BUILT_IN` bit(1) NOT NULL DEFAULT b'0',
-  PRIMARY KEY (`ID`),
-  KEY `IDX_AUTH_FLOW_REALM` (`REALM_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `authentication_flow`
---
-
-INSERT INTO `authentication_flow` (`ID`, `ALIAS`, `DESCRIPTION`, `REALM_ID`, `PROVIDER_ID`, `TOP_LEVEL`, `BUILT_IN`) VALUES
-('02dbcfec-7c6a-4a98-81df-8839f710c4a8', 'reset credentials', 'Reset credentials for a user if they forgot their password or something', 'master', 'basic-flow', b'1', b'1'),
-('03019b44-fb0a-42bb-ab7f-b109f9118d62', 'browser', 'browser based authentication', 'jhipster', 'basic-flow', b'1', b'1'),
-('084f926f-6967-4bcb-b80e-31207678cf2c', 'direct grant', 'OpenID Connect Resource Owner Grant', 'master', 'basic-flow', b'1', b'1'),
-('09a729e8-7ede-4d69-822c-59ea50e9c4eb', 'docker auth', 'Used by Docker clients to authenticate against the IDP', 'master', 'basic-flow', b'1', b'1'),
-('0b546166-822c-4450-b22a-40e710d79853', 'http challenge', 'An authentication flow based on challenge-response HTTP Authentication Schemes', 'jhipster', 'basic-flow', b'1', b'1'),
-('108beb66-4d4d-460e-af6e-6d46bbe6f7e6', 'saml ecp', 'SAML ECP Profile Authentication Flow', 'jhipster', 'basic-flow', b'1', b'1'),
-('15ffed78-3316-425a-9649-11107e54c743', 'registration', 'registration flow', 'master', 'basic-flow', b'1', b'1'),
-('1a06b73c-7e02-4fe8-8e90-6e1bcd851d47', 'http challenge', 'An authentication flow based on challenge-response HTTP Authentication Schemes', 'master', 'basic-flow', b'1', b'1'),
-('219b8c0b-e134-4d83-8da6-c1e6d3b166a9', 'User creation or linking', 'Flow for the existing/non-existing user alternatives', 'master', 'basic-flow', b'0', b'1'),
-('26eac2ed-1c76-4889-9490-fbab660f9678', 'first broker login', 'Actions taken after first broker login with identity provider account, which is not yet linked to any Keycloak account', 'master', 'basic-flow', b'1', b'1'),
-('31583d45-da22-48bc-a9d6-6ec9d819c607', 'Handle Existing Account', 'Handle what to do if there is existing account with same email/username like authenticated identity provider', 'master', 'basic-flow', b'0', b'1'),
-('422c1ae4-70bc-4d99-b937-485bbe98d800', 'direct grant - direct-grant-validate-otp - Conditional', 'Flow to determine if the direct-grant-validate-otp authenticator should be used or not.', 'jhipster', 'basic-flow', b'0', b'1'),
-('4792c881-7800-47a7-9264-c2f50d602ee9', 'direct grant', 'OpenID Connect Resource Owner Grant', 'jhipster', 'basic-flow', b'1', b'1'),
-('4c6da64c-81dd-4680-afc5-744c93cd8286', 'registration', 'registration flow', 'jhipster', 'basic-flow', b'1', b'1'),
-('4dcee836-1071-4f3c-b09c-8314ba300b34', 'registration form', 'registration form', 'master', 'form-flow', b'0', b'1'),
-('5f2605db-ce9c-4997-bc0d-a1a7b5f597e4', 'Authentication Options', 'Authentication options.', 'master', 'basic-flow', b'0', b'1'),
-('7344671e-65ba-43b8-a95b-ef85ba95a693', 'registration form', 'registration form', 'jhipster', 'form-flow', b'0', b'1'),
-('7fac2a6a-a4a9-4132-bf62-83bc22877c47', 'Verify Existing Account by Re-authentication', 'Reauthentication of existing account', 'jhipster', 'basic-flow', b'0', b'1'),
-('917dfac2-9890-4127-85c4-250fd9b4ff30', 'first broker login - Alternatives - 0', 'Subflow of first broker login with alternative executions', 'jhipster', 'basic-flow', b'0', b'1'),
-('92e96d69-e49f-4668-8448-39da27315448', 'forms', 'Username, password, otp and other auth forms.', 'jhipster', 'basic-flow', b'0', b'1'),
-('96b348ec-bae4-490a-9c5f-f21770b2087b', 'saml ecp', 'SAML ECP Profile Authentication Flow', 'master', 'basic-flow', b'1', b'1'),
-('9e0960af-64e7-4877-815e-ad75156fd238', 'forms - auth-otp-form - Conditional', 'Flow to determine if the auth-otp-form authenticator should be used or not.', 'jhipster', 'basic-flow', b'0', b'1'),
-('9e83783c-39b5-42e8-a28b-99f0c3322d40', 'forms', 'Username, password, otp and other auth forms.', 'master', 'basic-flow', b'0', b'1'),
-('9fcbb697-dadf-4079-9b02-f489c7394182', 'reset credentials', 'Reset credentials for a user if they forgot their password or something', 'jhipster', 'basic-flow', b'1', b'1'),
-('a0dea53c-b018-4611-bf85-bf62d7dd490b', 'Reset - Conditional OTP', 'Flow to determine if the OTP should be reset or not. Set to REQUIRED to force.', 'master', 'basic-flow', b'0', b'1'),
-('a582cb6d-479a-4bee-9c94-4fe1e011b5eb', 'Verify Existing Account by Re-authentication - auth-otp-form - Conditional', 'Flow to determine if the auth-otp-form authenticator should be used or not.', 'jhipster', 'basic-flow', b'0', b'1'),
-('a9ba05b7-f6f2-45bf-8ac6-dbd41d30dd91', 'Handle Existing Account - Alternatives - 0', 'Subflow of Handle Existing Account with alternative executions', 'jhipster', 'basic-flow', b'0', b'1'),
-('b2104493-52a1-4627-869b-a65b057b8147', 'clients', 'Base authentication for clients', 'jhipster', 'client-flow', b'1', b'1'),
-('b835f851-c9de-4976-99cb-f7c3f2de2738', 'Browser - Conditional OTP', 'Flow to determine if the OTP is required for the authentication', 'master', 'basic-flow', b'0', b'1'),
-('c486d764-c8c6-416e-98cf-45a19bb6746d', 'clients', 'Base authentication for clients', 'master', 'client-flow', b'1', b'1'),
-('d3f890af-35c1-4a84-8d66-d228999d7b40', 'Account verification options', 'Method with which to verity the existing account', 'master', 'basic-flow', b'0', b'1'),
-('d4aa3e02-2fca-406a-a711-cd6919967b26', 'Handle Existing Account', 'Handle what to do if there is existing account with same email/username like authenticated identity provider', 'jhipster', 'basic-flow', b'0', b'1'),
-('d6f21945-0811-4745-9491-4d06f6891f04', 'browser', 'browser based authentication', 'master', 'basic-flow', b'1', b'1'),
-('df7b4317-4aad-43c3-bce9-aa7996206c91', 'first broker login', 'Actions taken after first broker login with identity provider account, which is not yet linked to any Keycloak account', 'jhipster', 'basic-flow', b'1', b'1'),
-('e1f938a4-3754-4a36-ad91-6af2bb071f3c', 'Direct Grant - Conditional OTP', 'Flow to determine if the OTP is required for the authentication', 'master', 'basic-flow', b'0', b'1'),
-('e77f88e4-c597-4e89-8db8-7cba747d9601', 'docker auth', 'Used by Docker clients to authenticate against the IDP', 'jhipster', 'basic-flow', b'1', b'1'),
-('ea8e968d-8ffa-4825-9990-5e9a6b6d79f5', 'reset credentials - reset-otp - Conditional', 'Flow to determine if the reset-otp authenticator should be used or not.', 'jhipster', 'basic-flow', b'0', b'1'),
-('f5a59621-1cfc-469b-bf9c-a3c52b7c7865', 'Verify Existing Account by Re-authentication', 'Reauthentication of existing account', 'master', 'basic-flow', b'0', b'1'),
-('f66142a2-b680-470b-ac3f-110337499e2e', 'First broker login - Conditional OTP', 'Flow to determine if the OTP is required for the authentication', 'master', 'basic-flow', b'0', b'1');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `authenticator_config`
---
-
-DROP TABLE IF EXISTS `authenticator_config`;
-CREATE TABLE IF NOT EXISTS `authenticator_config` (
-  `ID` varchar(36) NOT NULL,
-  `ALIAS` varchar(255) DEFAULT NULL,
-  `REALM_ID` varchar(36) DEFAULT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `IDX_AUTH_CONFIG_REALM` (`REALM_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `authenticator_config`
---
-
-INSERT INTO `authenticator_config` (`ID`, `ALIAS`, `REALM_ID`) VALUES
-('09fa2388-1a34-4443-a82a-722766928d27', 'review profile config', 'master'),
-('c6e2a3c8-0e67-4a2f-8ec5-5f113f1a052c', 'create unique user config', 'jhipster'),
-('cc851e89-2782-40a3-84ab-bc4535bcb763', 'create unique user config', 'master'),
-('e9774b41-3fda-4539-9db5-10805b1d7d2b', 'review profile config', 'jhipster');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `authenticator_config_entry`
---
-
-DROP TABLE IF EXISTS `authenticator_config_entry`;
-CREATE TABLE IF NOT EXISTS `authenticator_config_entry` (
-  `AUTHENTICATOR_ID` varchar(36) NOT NULL,
-  `VALUE` longtext,
-  `NAME` varchar(255) NOT NULL,
-  PRIMARY KEY (`AUTHENTICATOR_ID`,`NAME`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `authenticator_config_entry`
---
-
-INSERT INTO `authenticator_config_entry` (`AUTHENTICATOR_ID`, `VALUE`, `NAME`) VALUES
-('09fa2388-1a34-4443-a82a-722766928d27', 'missing', 'update.profile.on.first.login'),
-('c6e2a3c8-0e67-4a2f-8ec5-5f113f1a052c', 'false', 'require.password.update.after.registration'),
-('cc851e89-2782-40a3-84ab-bc4535bcb763', 'false', 'require.password.update.after.registration'),
-('e9774b41-3fda-4539-9db5-10805b1d7d2b', 'missing', 'update.profile.on.first.login');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `broker_link`
---
-
-DROP TABLE IF EXISTS `broker_link`;
-CREATE TABLE IF NOT EXISTS `broker_link` (
-  `IDENTITY_PROVIDER` varchar(255) NOT NULL,
-  `STORAGE_PROVIDER_ID` varchar(255) DEFAULT NULL,
-  `REALM_ID` varchar(36) NOT NULL,
-  `BROKER_USER_ID` varchar(255) DEFAULT NULL,
-  `BROKER_USERNAME` varchar(255) DEFAULT NULL,
-  `TOKEN` text,
-  `USER_ID` varchar(255) NOT NULL,
-  PRIMARY KEY (`IDENTITY_PROVIDER`,`USER_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `client`
---
-
-DROP TABLE IF EXISTS `client`;
-CREATE TABLE IF NOT EXISTS `client` (
-  `ID` varchar(36) NOT NULL,
-  `ENABLED` bit(1) NOT NULL DEFAULT b'0',
-  `FULL_SCOPE_ALLOWED` bit(1) NOT NULL DEFAULT b'0',
-  `CLIENT_ID` varchar(255) DEFAULT NULL,
-  `NOT_BEFORE` int DEFAULT NULL,
-  `PUBLIC_CLIENT` bit(1) NOT NULL DEFAULT b'0',
-  `SECRET` varchar(255) DEFAULT NULL,
-  `BASE_URL` varchar(255) DEFAULT NULL,
-  `BEARER_ONLY` bit(1) NOT NULL DEFAULT b'0',
-  `MANAGEMENT_URL` varchar(255) DEFAULT NULL,
-  `SURROGATE_AUTH_REQUIRED` bit(1) NOT NULL DEFAULT b'0',
-  `REALM_ID` varchar(36) DEFAULT NULL,
-  `PROTOCOL` varchar(255) DEFAULT NULL,
-  `NODE_REREG_TIMEOUT` int DEFAULT '0',
-  `FRONTCHANNEL_LOGOUT` bit(1) NOT NULL DEFAULT b'0',
-  `CONSENT_REQUIRED` bit(1) NOT NULL DEFAULT b'0',
-  `NAME` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-  `SERVICE_ACCOUNTS_ENABLED` bit(1) NOT NULL DEFAULT b'0',
-  `CLIENT_AUTHENTICATOR_TYPE` varchar(255) DEFAULT NULL,
-  `ROOT_URL` varchar(255) DEFAULT NULL,
-  `DESCRIPTION` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-  `REGISTRATION_TOKEN` varchar(255) DEFAULT NULL,
-  `STANDARD_FLOW_ENABLED` bit(1) NOT NULL DEFAULT b'1',
-  `IMPLICIT_FLOW_ENABLED` bit(1) NOT NULL DEFAULT b'0',
-  `DIRECT_ACCESS_GRANTS_ENABLED` bit(1) NOT NULL DEFAULT b'0',
-  `ALWAYS_DISPLAY_IN_CONSOLE` bit(1) NOT NULL DEFAULT b'0',
-  PRIMARY KEY (`ID`),
-  UNIQUE KEY `UK_B71CJLBENV945RB6GCON438AT` (`REALM_ID`,`CLIENT_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `client`
---
-
-INSERT INTO `client` (`ID`, `ENABLED`, `FULL_SCOPE_ALLOWED`, `CLIENT_ID`, `NOT_BEFORE`, `PUBLIC_CLIENT`, `SECRET`, `BASE_URL`, `BEARER_ONLY`, `MANAGEMENT_URL`, `SURROGATE_AUTH_REQUIRED`, `REALM_ID`, `PROTOCOL`, `NODE_REREG_TIMEOUT`, `FRONTCHANNEL_LOGOUT`, `CONSENT_REQUIRED`, `NAME`, `SERVICE_ACCOUNTS_ENABLED`, `CLIENT_AUTHENTICATOR_TYPE`, `ROOT_URL`, `DESCRIPTION`, `REGISTRATION_TOKEN`, `STANDARD_FLOW_ENABLED`, `IMPLICIT_FLOW_ENABLED`, `DIRECT_ACCESS_GRANTS_ENABLED`, `ALWAYS_DISPLAY_IN_CONSOLE`) VALUES
-('0aa176c1-8d28-4a8b-8e97-7e4b49a289ff', b'1', b'0', 'security-admin-console', 0, b'1', '**********', '/admin/CIBMTR-BioInformatics-Realm/console/', b'0', NULL, b'0', 'jhipster', 'openid-connect', 0, b'0', b'0', '${client_security-admin-console}', b'0', 'client-secret', '${authAdminUrl}', NULL, NULL, b'1', b'0', b'0', b'0'),
-('1cdadc8e-1773-47bc-9c01-875f84ea25ec', b'1', b'1', 'CIBMTR-BioInformatics-Realm', 0, b'0', '67bda7fd-482c-4050-82cd-744d117b4092', NULL, b'1', NULL, b'0', 'master', 'openid-connect', 0, b'0', b'0', 'CIBMTR-BioInformatics-Realm', b'0', 'client-secret', NULL, 'NMDP / CIBMTR-BioInformatics-Realm', NULL, b'1', b'0', b'0', b'0'),
-('1eabef67-6473-4ba8-b07c-14bdbae4aaed', b'1', b'1', 'PhycusSHFCApp', 0, b'0', '2981ec96-1e1a-4c41-a0dc-507ae757e6ac', 'http://172.17.0.1:8080/phycusApp', b'0', 'http://172.17.0.1:8080/phycusApp', b'0', 'jhipster', 'openid-connect', -1, b'0', b'0', 'PhycusSHFCApp', b'1', 'client-secret', '', 'PhycusSHFCApp Web App from NMDP/CIBMTR BioInformatics', NULL, b'1', b'1', b'1', b'0'),
-('274afcdb-7742-4a3a-acc5-17db61a4d200', b'1', b'0', 'broker', 0, b'0', '**********', NULL, b'0', NULL, b'0', 'jhipster', 'openid-connect', 0, b'0', b'0', '${client_broker}', b'0', 'client-secret', NULL, NULL, NULL, b'1', b'0', b'0', b'0'),
-('3deba736-cf6f-44b8-8022-31f82347cc96', b'1', b'0', 'account-console', 0, b'1', '50a143b5-6ff7-4152-ab77-0b592ca439d1', '/realms/master/account/', b'0', NULL, b'0', 'master', 'openid-connect', 0, b'0', b'0', '${client_account-console}', b'0', 'client-secret', '${authBaseUrl}', NULL, NULL, b'1', b'0', b'0', b'0'),
-('48fb7988-d909-445a-81db-fe825dca0db2', b'1', b'0', 'realm-management', 0, b'0', '**********', NULL, b'1', NULL, b'0', 'jhipster', 'openid-connect', 0, b'0', b'0', '${client_realm-management}', b'0', 'client-secret', NULL, NULL, NULL, b'1', b'0', b'0', b'0'),
-('5a9610bf-6a47-46a1-9442-9e43eacd98e8', b'1', b'0', 'admin-cli', 0, b'1', '**********', NULL, b'0', NULL, b'0', 'jhipster', 'openid-connect', 0, b'0', b'0', '${client_admin-cli}', b'0', 'client-secret', NULL, NULL, NULL, b'0', b'0', b'1', b'0'),
-('7b6ab455-242e-42aa-96d8-9c9e2b74da9d', b'1', b'0', 'account-console', 0, b'1', '**********', '/realms/cibmtr-bioinformatics-realm/account/', b'0', NULL, b'0', 'jhipster', 'openid-connect', 0, b'0', b'0', '${client_account-console}', b'0', 'client-secret', '${authBaseUrl}', NULL, NULL, b'1', b'0', b'0', b'0'),
-('98ae8603-4547-4218-8fb9-ebc550a0e10b', b'1', b'1', 'internal', 0, b'0', 'internal', NULL, b'0', NULL, b'0', 'jhipster', 'openid-connect', -1, b'0', b'0', NULL, b'1', 'client-secret', NULL, NULL, NULL, b'0', b'0', b'0', b'0'),
-('a48b81bb-db56-42a4-bf31-336a6e335001', b'1', b'0', 'admin-cli', 0, b'1', 'b4686441-2a6c-43f4-8be7-ab14b0de9daf', NULL, b'0', NULL, b'0', 'master', 'openid-connect', 0, b'0', b'0', '${client_admin-cli}', b'0', 'client-secret', NULL, NULL, NULL, b'0', b'0', b'1', b'0'),
-('ab9a50dd-ef39-46cf-add0-af8ce9a00e61', b'1', b'0', 'security-admin-console', 0, b'1', '993b943b-ba74-4bec-b803-45f5f18cf8f4', '/admin/master/console/', b'0', NULL, b'0', 'master', 'openid-connect', 0, b'0', b'0', '${client_security-admin-console}', b'0', 'client-secret', '${authAdminUrl}', NULL, NULL, b'1', b'0', b'0', b'0'),
-('bf8531b6-2a19-45e2-9a41-7a25d38ad69d', b'1', b'0', 'broker', 0, b'0', 'b1bb93eb-3463-4951-bf82-9428340bbfca', NULL, b'0', NULL, b'0', 'master', 'openid-connect', 0, b'0', b'0', '${client_broker}', b'0', 'client-secret', NULL, NULL, NULL, b'1', b'0', b'0', b'0'),
-('e07da50b-cddc-4524-b630-436a5a6ba8ab', b'1', b'0', 'account', 0, b'0', '**********', '/realms/CIBMTR-BioInformatics-Realm/account/', b'0', NULL, b'0', 'jhipster', 'openid-connect', 0, b'0', b'0', '${client_account}', b'0', 'client-secret', '${authBaseUrl}', NULL, NULL, b'1', b'0', b'0', b'0'),
-('f1cbf82e-a285-4a15-a172-ff97732a2648', b'1', b'1', 'master-realm', 0, b'0', '106e73b7-1445-45f0-be44-5ac1f01be92e', NULL, b'1', NULL, b'0', 'master', NULL, 0, b'0', b'0', 'master Realm', b'0', 'client-secret', NULL, NULL, NULL, b'1', b'0', b'0', b'0'),
-('f7123f46-5de8-4c40-8cff-5c52b3e26a84', b'1', b'0', 'account', 0, b'0', '262d9c71-22a7-4794-b2f7-3f63df3db367', '/realms/master/account/', b'0', NULL, b'0', 'master', 'openid-connect', 0, b'0', b'0', '${client_account}', b'0', 'client-secret', '${authBaseUrl}', NULL, NULL, b'1', b'0', b'0', b'0');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `client_attributes`
---
-
-DROP TABLE IF EXISTS `client_attributes`;
-CREATE TABLE IF NOT EXISTS `client_attributes` (
-  `CLIENT_ID` varchar(36) NOT NULL,
-  `VALUE` text,
-  `NAME` varchar(255) NOT NULL,
-  PRIMARY KEY (`CLIENT_ID`,`NAME`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `client_attributes`
---
-
-INSERT INTO `client_attributes` (`CLIENT_ID`, `VALUE`, `NAME`) VALUES
-('0aa176c1-8d28-4a8b-8e97-7e4b49a289ff', 'S256', 'pkce.code.challenge.method'),
-('1cdadc8e-1773-47bc-9c01-875f84ea25ec', 'false', 'display.on.consent.screen'),
-('1cdadc8e-1773-47bc-9c01-875f84ea25ec', 'false', 'exclude.session.state.from.auth.response'),
-('1cdadc8e-1773-47bc-9c01-875f84ea25ec', 'false', 'saml_force_name_id_format'),
-('1cdadc8e-1773-47bc-9c01-875f84ea25ec', 'false', 'saml.assertion.signature'),
-('1cdadc8e-1773-47bc-9c01-875f84ea25ec', 'false', 'saml.authnstatement'),
-('1cdadc8e-1773-47bc-9c01-875f84ea25ec', 'false', 'saml.client.signature'),
-('1cdadc8e-1773-47bc-9c01-875f84ea25ec', 'false', 'saml.encrypt'),
-('1cdadc8e-1773-47bc-9c01-875f84ea25ec', 'false', 'saml.force.post.binding'),
-('1cdadc8e-1773-47bc-9c01-875f84ea25ec', 'false', 'saml.multivalued.roles'),
-('1cdadc8e-1773-47bc-9c01-875f84ea25ec', 'false', 'saml.onetimeuse.condition'),
-('1cdadc8e-1773-47bc-9c01-875f84ea25ec', 'false', 'saml.server.signature'),
-('1cdadc8e-1773-47bc-9c01-875f84ea25ec', 'false', 'saml.server.signature.keyinfo.ext'),
-('1cdadc8e-1773-47bc-9c01-875f84ea25ec', 'false', 'tls.client.certificate.bound.access.tokens'),
-('1eabef67-6473-4ba8-b07c-14bdbae4aaed', '', 'access.token.signed.response.alg'),
-('1eabef67-6473-4ba8-b07c-14bdbae4aaed', 'false', 'display.on.consent.screen'),
-('1eabef67-6473-4ba8-b07c-14bdbae4aaed', 'false', 'exclude.session.state.from.auth.response'),
-('1eabef67-6473-4ba8-b07c-14bdbae4aaed', '', 'id.token.signed.response.alg'),
-('1eabef67-6473-4ba8-b07c-14bdbae4aaed', 'false', 'saml_force_name_id_format'),
-('1eabef67-6473-4ba8-b07c-14bdbae4aaed', 'false', 'saml.assertion.signature'),
-('1eabef67-6473-4ba8-b07c-14bdbae4aaed', 'false', 'saml.authnstatement'),
-('1eabef67-6473-4ba8-b07c-14bdbae4aaed', 'false', 'saml.client.signature'),
-('1eabef67-6473-4ba8-b07c-14bdbae4aaed', 'false', 'saml.encrypt'),
-('1eabef67-6473-4ba8-b07c-14bdbae4aaed', 'false', 'saml.force.post.binding'),
-('1eabef67-6473-4ba8-b07c-14bdbae4aaed', 'false', 'saml.multivalued.roles'),
-('1eabef67-6473-4ba8-b07c-14bdbae4aaed', 'false', 'saml.onetimeuse.condition'),
-('1eabef67-6473-4ba8-b07c-14bdbae4aaed', 'false', 'saml.server.signature'),
-('1eabef67-6473-4ba8-b07c-14bdbae4aaed', 'false', 'saml.server.signature.keyinfo.ext'),
-('1eabef67-6473-4ba8-b07c-14bdbae4aaed', 'false', 'tls.client.certificate.bound.access.tokens'),
-('3deba736-cf6f-44b8-8022-31f82347cc96', 'S256', 'pkce.code.challenge.method'),
-('7b6ab455-242e-42aa-96d8-9c9e2b74da9d', 'false', 'display.on.consent.screen'),
-('7b6ab455-242e-42aa-96d8-9c9e2b74da9d', 'false', 'exclude.session.state.from.auth.response'),
-('7b6ab455-242e-42aa-96d8-9c9e2b74da9d', 'S256', 'pkce.code.challenge.method'),
-('7b6ab455-242e-42aa-96d8-9c9e2b74da9d', 'false', 'saml_force_name_id_format'),
-('7b6ab455-242e-42aa-96d8-9c9e2b74da9d', 'false', 'saml.assertion.signature'),
-('7b6ab455-242e-42aa-96d8-9c9e2b74da9d', 'false', 'saml.authnstatement'),
-('7b6ab455-242e-42aa-96d8-9c9e2b74da9d', 'false', 'saml.client.signature'),
-('7b6ab455-242e-42aa-96d8-9c9e2b74da9d', 'false', 'saml.encrypt'),
-('7b6ab455-242e-42aa-96d8-9c9e2b74da9d', 'false', 'saml.force.post.binding'),
-('7b6ab455-242e-42aa-96d8-9c9e2b74da9d', 'false', 'saml.multivalued.roles'),
-('7b6ab455-242e-42aa-96d8-9c9e2b74da9d', 'false', 'saml.onetimeuse.condition'),
-('7b6ab455-242e-42aa-96d8-9c9e2b74da9d', 'false', 'saml.server.signature'),
-('7b6ab455-242e-42aa-96d8-9c9e2b74da9d', 'false', 'saml.server.signature.keyinfo.ext'),
-('7b6ab455-242e-42aa-96d8-9c9e2b74da9d', 'false', 'tls.client.certificate.bound.access.tokens'),
-('98ae8603-4547-4218-8fb9-ebc550a0e10b', 'false', 'display.on.consent.screen'),
-('98ae8603-4547-4218-8fb9-ebc550a0e10b', 'false', 'exclude.session.state.from.auth.response'),
-('98ae8603-4547-4218-8fb9-ebc550a0e10b', 'false', 'saml_force_name_id_format'),
-('98ae8603-4547-4218-8fb9-ebc550a0e10b', 'false', 'saml.assertion.signature'),
-('98ae8603-4547-4218-8fb9-ebc550a0e10b', 'false', 'saml.authnstatement'),
-('98ae8603-4547-4218-8fb9-ebc550a0e10b', 'false', 'saml.client.signature'),
-('98ae8603-4547-4218-8fb9-ebc550a0e10b', 'false', 'saml.encrypt'),
-('98ae8603-4547-4218-8fb9-ebc550a0e10b', 'false', 'saml.force.post.binding'),
-('98ae8603-4547-4218-8fb9-ebc550a0e10b', 'false', 'saml.multivalued.roles'),
-('98ae8603-4547-4218-8fb9-ebc550a0e10b', 'false', 'saml.onetimeuse.condition'),
-('98ae8603-4547-4218-8fb9-ebc550a0e10b', 'false', 'saml.server.signature'),
-('98ae8603-4547-4218-8fb9-ebc550a0e10b', 'false', 'saml.server.signature.keyinfo.ext'),
-('98ae8603-4547-4218-8fb9-ebc550a0e10b', 'false', 'tls.client.certificate.bound.access.tokens'),
-('ab9a50dd-ef39-46cf-add0-af8ce9a00e61', 'S256', 'pkce.code.challenge.method');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `client_auth_flow_bindings`
---
-
-DROP TABLE IF EXISTS `client_auth_flow_bindings`;
-CREATE TABLE IF NOT EXISTS `client_auth_flow_bindings` (
-  `CLIENT_ID` varchar(36) NOT NULL,
-  `FLOW_ID` varchar(36) DEFAULT NULL,
-  `BINDING_NAME` varchar(255) NOT NULL,
-  PRIMARY KEY (`CLIENT_ID`,`BINDING_NAME`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `client_default_roles`
---
-
-DROP TABLE IF EXISTS `client_default_roles`;
-CREATE TABLE IF NOT EXISTS `client_default_roles` (
-  `CLIENT_ID` varchar(36) NOT NULL,
-  `ROLE_ID` varchar(36) NOT NULL,
-  PRIMARY KEY (`CLIENT_ID`,`ROLE_ID`),
-  UNIQUE KEY `UK_8AELWNIBJI49AVXSRTUF6XJOW` (`ROLE_ID`),
-  KEY `IDX_CLIENT_DEF_ROLES_CLIENT` (`CLIENT_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `client_default_roles`
---
-
-INSERT INTO `client_default_roles` (`CLIENT_ID`, `ROLE_ID`) VALUES
-('e07da50b-cddc-4524-b630-436a5a6ba8ab', '21b65e52-b4e3-453e-b0f0-10a44a4a887d'),
-('e07da50b-cddc-4524-b630-436a5a6ba8ab', '354b3a09-47a6-4051-957c-c6a3ee28a190'),
-('f7123f46-5de8-4c40-8cff-5c52b3e26a84', 'aebcd69a-6a42-4790-9d80-6ad44be3f0e3'),
-('f7123f46-5de8-4c40-8cff-5c52b3e26a84', 'b6e3d2e0-ba1a-4420-84d1-2cf72096fd38');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `client_initial_access`
---
-
-DROP TABLE IF EXISTS `client_initial_access`;
-CREATE TABLE IF NOT EXISTS `client_initial_access` (
-  `ID` varchar(36) NOT NULL,
-  `REALM_ID` varchar(36) NOT NULL,
-  `TIMESTAMP` int DEFAULT NULL,
-  `EXPIRATION` int DEFAULT NULL,
-  `COUNT` int DEFAULT NULL,
-  `REMAINING_COUNT` int DEFAULT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `IDX_CLIENT_INIT_ACC_REALM` (`REALM_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `client_node_registrations`
---
-
-DROP TABLE IF EXISTS `client_node_registrations`;
-CREATE TABLE IF NOT EXISTS `client_node_registrations` (
-  `CLIENT_ID` varchar(36) NOT NULL,
-  `VALUE` int DEFAULT NULL,
-  `NAME` varchar(255) NOT NULL,
-  PRIMARY KEY (`CLIENT_ID`,`NAME`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `client_scope`
---
-
-DROP TABLE IF EXISTS `client_scope`;
-CREATE TABLE IF NOT EXISTS `client_scope` (
-  `ID` varchar(36) NOT NULL,
-  `NAME` varchar(255) DEFAULT NULL,
-  `REALM_ID` varchar(36) DEFAULT NULL,
-  `DESCRIPTION` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-  `PROTOCOL` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`ID`),
-  UNIQUE KEY `UK_CLI_SCOPE` (`REALM_ID`,`NAME`),
-  KEY `IDX_REALM_CLSCOPE` (`REALM_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `client_scope`
---
-
-INSERT INTO `client_scope` (`ID`, `NAME`, `REALM_ID`, `DESCRIPTION`, `PROTOCOL`) VALUES
-('021d9ac1-9650-401c-b2a2-efa2f3e6b70c', 'roles', 'jhipster', 'OpenID Connect scope for add user roles to the access token', 'openid-connect'),
-('0d3b55db-e68b-4c83-91d4-7370a6810a24', 'phone', 'jhipster', 'OpenID Connect built-in scope: phone', 'openid-connect'),
-('1c9c1b4c-ccb9-4e8f-82b7-5b3a4ac06229', 'role_list', 'master', 'SAML role list', 'saml'),
-('1dc1e050-891a-4f5b-ac9d-5ea0c2e3c05e', 'address', 'jhipster', 'OpenID Connect built-in scope: address', 'openid-connect'),
-('386b2097-465b-4135-a057-62709870909e', 'phone', 'master', 'OpenID Connect built-in scope: phone', 'openid-connect'),
-('38793860-edb1-452f-b2e0-e5ad2041cb70', 'profile', 'master', 'OpenID Connect built-in scope: profile', 'openid-connect'),
-('3880d5d9-fced-4446-97fe-0434f2bb76ea', 'PhycusSHFCClientScopeClaims01', 'jhipster', 'PhycusSHFC Specific Claims', 'openid-connect'),
-('391f1641-cb22-41a3-a0ed-752d9264aaf5', 'role_list', 'jhipster', 'SAML role list', 'saml'),
-('39e1693b-a924-4fbb-b98c-520869771f83', 'email', 'jhipster', 'OpenID Connect built-in scope: email', 'openid-connect'),
-('5253d2be-3116-4510-ac05-99619ce2494c', 'offline_access', 'jhipster', 'OpenID Connect built-in scope: offline_access', 'openid-connect'),
-('55178e4f-7c18-4d0d-b010-f9e4079d5d48', 'web-origins', 'master', 'OpenID Connect scope for add allowed web origins to the access token', 'openid-connect'),
-('84fdcb72-668b-408e-aaea-110d594afe5e', 'web-origins', 'jhipster', 'OpenID Connect scope for add allowed web origins to the access token', 'openid-connect'),
-('8dee153c-4e64-435f-8a7c-cd9de0eb653d', 'address', 'master', 'OpenID Connect built-in scope: address', 'openid-connect'),
-('8f9a1a9c-4bdf-41e2-a75b-544a12be1d67', 'offline_access', 'master', 'OpenID Connect built-in scope: offline_access', 'openid-connect'),
-('a72d436e-111b-445b-804a-967d249f6455', 'microprofile-jwt', 'jhipster', 'Microprofile - JWT built-in scope', 'openid-connect'),
-('a749b2db-a1ac-4e58-9fd3-1142e96b0445', 'microprofile-jwt', 'master', 'Microprofile - JWT built-in scope', 'openid-connect'),
-('bd76f66d-85f6-44a6-ad5a-133b3f32016a', 'email', 'master', 'OpenID Connect built-in scope: email', 'openid-connect'),
-('d5de6a8a-8894-4e72-b6ef-f9bf3a7a6541', 'profile', 'jhipster', 'OpenID Connect built-in scope: profile', 'openid-connect'),
-('e3279721-a5de-46c7-b463-8d076a1631ae', 'roles', 'master', 'OpenID Connect scope for add user roles to the access token', 'openid-connect');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `client_scope_attributes`
---
-
-DROP TABLE IF EXISTS `client_scope_attributes`;
-CREATE TABLE IF NOT EXISTS `client_scope_attributes` (
-  `SCOPE_ID` varchar(36) NOT NULL,
-  `VALUE` text,
-  `NAME` varchar(255) NOT NULL,
-  PRIMARY KEY (`SCOPE_ID`,`NAME`),
-  KEY `IDX_CLSCOPE_ATTRS` (`SCOPE_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `client_scope_attributes`
---
-
-INSERT INTO `client_scope_attributes` (`SCOPE_ID`, `VALUE`, `NAME`) VALUES
-('021d9ac1-9650-401c-b2a2-efa2f3e6b70c', '${rolesScopeConsentText}', 'consent.screen.text'),
-('021d9ac1-9650-401c-b2a2-efa2f3e6b70c', 'true', 'display.on.consent.screen'),
-('021d9ac1-9650-401c-b2a2-efa2f3e6b70c', 'false', 'include.in.token.scope'),
-('0d3b55db-e68b-4c83-91d4-7370a6810a24', '${phoneScopeConsentText}', 'consent.screen.text'),
-('0d3b55db-e68b-4c83-91d4-7370a6810a24', 'true', 'display.on.consent.screen'),
-('1c9c1b4c-ccb9-4e8f-82b7-5b3a4ac06229', '${samlRoleListScopeConsentText}', 'consent.screen.text'),
-('1c9c1b4c-ccb9-4e8f-82b7-5b3a4ac06229', 'true', 'display.on.consent.screen'),
-('1dc1e050-891a-4f5b-ac9d-5ea0c2e3c05e', '${addressScopeConsentText}', 'consent.screen.text'),
-('1dc1e050-891a-4f5b-ac9d-5ea0c2e3c05e', 'true', 'display.on.consent.screen'),
-('386b2097-465b-4135-a057-62709870909e', '${phoneScopeConsentText}', 'consent.screen.text'),
-('386b2097-465b-4135-a057-62709870909e', 'true', 'display.on.consent.screen'),
-('386b2097-465b-4135-a057-62709870909e', 'true', 'include.in.token.scope'),
-('38793860-edb1-452f-b2e0-e5ad2041cb70', '${profileScopeConsentText}', 'consent.screen.text'),
-('38793860-edb1-452f-b2e0-e5ad2041cb70', 'true', 'display.on.consent.screen'),
-('38793860-edb1-452f-b2e0-e5ad2041cb70', 'true', 'include.in.token.scope'),
-('3880d5d9-fced-4446-97fe-0434f2bb76ea', 'Data fields you are consenting access.', 'consent.screen.text'),
-('3880d5d9-fced-4446-97fe-0434f2bb76ea', 'true', 'display.on.consent.screen'),
-('3880d5d9-fced-4446-97fe-0434f2bb76ea', 'true', 'include.in.token.scope'),
-('391f1641-cb22-41a3-a0ed-752d9264aaf5', '${samlRoleListScopeConsentText}', 'consent.screen.text'),
-('391f1641-cb22-41a3-a0ed-752d9264aaf5', 'true', 'display.on.consent.screen'),
-('39e1693b-a924-4fbb-b98c-520869771f83', '${emailScopeConsentText}', 'consent.screen.text'),
-('39e1693b-a924-4fbb-b98c-520869771f83', 'true', 'display.on.consent.screen'),
-('5253d2be-3116-4510-ac05-99619ce2494c', '${offlineAccessScopeConsentText}', 'consent.screen.text'),
-('5253d2be-3116-4510-ac05-99619ce2494c', 'true', 'display.on.consent.screen'),
-('55178e4f-7c18-4d0d-b010-f9e4079d5d48', '', 'consent.screen.text'),
-('55178e4f-7c18-4d0d-b010-f9e4079d5d48', 'false', 'display.on.consent.screen'),
-('55178e4f-7c18-4d0d-b010-f9e4079d5d48', 'false', 'include.in.token.scope'),
-('84fdcb72-668b-408e-aaea-110d594afe5e', '', 'consent.screen.text'),
-('84fdcb72-668b-408e-aaea-110d594afe5e', 'false', 'display.on.consent.screen'),
-('84fdcb72-668b-408e-aaea-110d594afe5e', 'false', 'include.in.token.scope'),
-('8dee153c-4e64-435f-8a7c-cd9de0eb653d', '${addressScopeConsentText}', 'consent.screen.text'),
-('8dee153c-4e64-435f-8a7c-cd9de0eb653d', 'true', 'display.on.consent.screen'),
-('8dee153c-4e64-435f-8a7c-cd9de0eb653d', 'true', 'include.in.token.scope'),
-('8f9a1a9c-4bdf-41e2-a75b-544a12be1d67', '${offlineAccessScopeConsentText}', 'consent.screen.text'),
-('8f9a1a9c-4bdf-41e2-a75b-544a12be1d67', 'true', 'display.on.consent.screen'),
-('a72d436e-111b-445b-804a-967d249f6455', 'false', 'display.on.consent.screen'),
-('a72d436e-111b-445b-804a-967d249f6455', 'true', 'include.in.token.scope'),
-('a749b2db-a1ac-4e58-9fd3-1142e96b0445', 'false', 'display.on.consent.screen'),
-('a749b2db-a1ac-4e58-9fd3-1142e96b0445', 'true', 'include.in.token.scope'),
-('bd76f66d-85f6-44a6-ad5a-133b3f32016a', '${emailScopeConsentText}', 'consent.screen.text'),
-('bd76f66d-85f6-44a6-ad5a-133b3f32016a', 'true', 'display.on.consent.screen'),
-('bd76f66d-85f6-44a6-ad5a-133b3f32016a', 'true', 'include.in.token.scope'),
-('d5de6a8a-8894-4e72-b6ef-f9bf3a7a6541', '${profileScopeConsentText}', 'consent.screen.text'),
-('d5de6a8a-8894-4e72-b6ef-f9bf3a7a6541', 'true', 'display.on.consent.screen'),
-('e3279721-a5de-46c7-b463-8d076a1631ae', '${rolesScopeConsentText}', 'consent.screen.text'),
-('e3279721-a5de-46c7-b463-8d076a1631ae', 'true', 'display.on.consent.screen'),
-('e3279721-a5de-46c7-b463-8d076a1631ae', 'false', 'include.in.token.scope');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `client_scope_client`
---
-
-DROP TABLE IF EXISTS `client_scope_client`;
-CREATE TABLE IF NOT EXISTS `client_scope_client` (
-  `CLIENT_ID` varchar(36) NOT NULL,
-  `SCOPE_ID` varchar(36) NOT NULL,
-  `DEFAULT_SCOPE` bit(1) NOT NULL DEFAULT b'0',
-  PRIMARY KEY (`CLIENT_ID`,`SCOPE_ID`),
-  KEY `IDX_CLSCOPE_CL` (`CLIENT_ID`),
-  KEY `IDX_CL_CLSCOPE` (`SCOPE_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `client_scope_client`
---
-
-INSERT INTO `client_scope_client` (`CLIENT_ID`, `SCOPE_ID`, `DEFAULT_SCOPE`) VALUES
-('0aa176c1-8d28-4a8b-8e97-7e4b49a289ff', '021d9ac1-9650-401c-b2a2-efa2f3e6b70c', b'1'),
-('0aa176c1-8d28-4a8b-8e97-7e4b49a289ff', '0d3b55db-e68b-4c83-91d4-7370a6810a24', b'0'),
-('0aa176c1-8d28-4a8b-8e97-7e4b49a289ff', '1dc1e050-891a-4f5b-ac9d-5ea0c2e3c05e', b'0'),
-('0aa176c1-8d28-4a8b-8e97-7e4b49a289ff', '391f1641-cb22-41a3-a0ed-752d9264aaf5', b'1'),
-('0aa176c1-8d28-4a8b-8e97-7e4b49a289ff', '39e1693b-a924-4fbb-b98c-520869771f83', b'1'),
-('0aa176c1-8d28-4a8b-8e97-7e4b49a289ff', '5253d2be-3116-4510-ac05-99619ce2494c', b'0'),
-('0aa176c1-8d28-4a8b-8e97-7e4b49a289ff', '84fdcb72-668b-408e-aaea-110d594afe5e', b'1'),
-('0aa176c1-8d28-4a8b-8e97-7e4b49a289ff', 'a72d436e-111b-445b-804a-967d249f6455', b'0'),
-('0aa176c1-8d28-4a8b-8e97-7e4b49a289ff', 'd5de6a8a-8894-4e72-b6ef-f9bf3a7a6541', b'1'),
-('1cdadc8e-1773-47bc-9c01-875f84ea25ec', '1c9c1b4c-ccb9-4e8f-82b7-5b3a4ac06229', b'1'),
-('1cdadc8e-1773-47bc-9c01-875f84ea25ec', '386b2097-465b-4135-a057-62709870909e', b'0'),
-('1cdadc8e-1773-47bc-9c01-875f84ea25ec', '38793860-edb1-452f-b2e0-e5ad2041cb70', b'1'),
-('1cdadc8e-1773-47bc-9c01-875f84ea25ec', '55178e4f-7c18-4d0d-b010-f9e4079d5d48', b'1'),
-('1cdadc8e-1773-47bc-9c01-875f84ea25ec', '8dee153c-4e64-435f-8a7c-cd9de0eb653d', b'0'),
-('1cdadc8e-1773-47bc-9c01-875f84ea25ec', '8f9a1a9c-4bdf-41e2-a75b-544a12be1d67', b'0'),
-('1cdadc8e-1773-47bc-9c01-875f84ea25ec', 'a749b2db-a1ac-4e58-9fd3-1142e96b0445', b'0'),
-('1cdadc8e-1773-47bc-9c01-875f84ea25ec', 'bd76f66d-85f6-44a6-ad5a-133b3f32016a', b'1'),
-('1cdadc8e-1773-47bc-9c01-875f84ea25ec', 'e3279721-a5de-46c7-b463-8d076a1631ae', b'1'),
-('1eabef67-6473-4ba8-b07c-14bdbae4aaed', '021d9ac1-9650-401c-b2a2-efa2f3e6b70c', b'1'),
-('1eabef67-6473-4ba8-b07c-14bdbae4aaed', '0d3b55db-e68b-4c83-91d4-7370a6810a24', b'0'),
-('1eabef67-6473-4ba8-b07c-14bdbae4aaed', '1dc1e050-891a-4f5b-ac9d-5ea0c2e3c05e', b'0'),
-('1eabef67-6473-4ba8-b07c-14bdbae4aaed', '3880d5d9-fced-4446-97fe-0434f2bb76ea', b'1'),
-('1eabef67-6473-4ba8-b07c-14bdbae4aaed', '391f1641-cb22-41a3-a0ed-752d9264aaf5', b'1'),
-('1eabef67-6473-4ba8-b07c-14bdbae4aaed', '39e1693b-a924-4fbb-b98c-520869771f83', b'1'),
-('1eabef67-6473-4ba8-b07c-14bdbae4aaed', '5253d2be-3116-4510-ac05-99619ce2494c', b'0'),
-('1eabef67-6473-4ba8-b07c-14bdbae4aaed', '84fdcb72-668b-408e-aaea-110d594afe5e', b'1'),
-('1eabef67-6473-4ba8-b07c-14bdbae4aaed', 'a72d436e-111b-445b-804a-967d249f6455', b'0'),
-('1eabef67-6473-4ba8-b07c-14bdbae4aaed', 'd5de6a8a-8894-4e72-b6ef-f9bf3a7a6541', b'1'),
-('274afcdb-7742-4a3a-acc5-17db61a4d200', '021d9ac1-9650-401c-b2a2-efa2f3e6b70c', b'1'),
-('274afcdb-7742-4a3a-acc5-17db61a4d200', '0d3b55db-e68b-4c83-91d4-7370a6810a24', b'0'),
-('274afcdb-7742-4a3a-acc5-17db61a4d200', '1dc1e050-891a-4f5b-ac9d-5ea0c2e3c05e', b'0'),
-('274afcdb-7742-4a3a-acc5-17db61a4d200', '391f1641-cb22-41a3-a0ed-752d9264aaf5', b'1'),
-('274afcdb-7742-4a3a-acc5-17db61a4d200', '39e1693b-a924-4fbb-b98c-520869771f83', b'1'),
-('274afcdb-7742-4a3a-acc5-17db61a4d200', '5253d2be-3116-4510-ac05-99619ce2494c', b'0'),
-('274afcdb-7742-4a3a-acc5-17db61a4d200', '84fdcb72-668b-408e-aaea-110d594afe5e', b'1'),
-('274afcdb-7742-4a3a-acc5-17db61a4d200', 'a72d436e-111b-445b-804a-967d249f6455', b'0'),
-('274afcdb-7742-4a3a-acc5-17db61a4d200', 'd5de6a8a-8894-4e72-b6ef-f9bf3a7a6541', b'1'),
-('3deba736-cf6f-44b8-8022-31f82347cc96', '1c9c1b4c-ccb9-4e8f-82b7-5b3a4ac06229', b'1'),
-('3deba736-cf6f-44b8-8022-31f82347cc96', '386b2097-465b-4135-a057-62709870909e', b'0'),
-('3deba736-cf6f-44b8-8022-31f82347cc96', '38793860-edb1-452f-b2e0-e5ad2041cb70', b'1'),
-('3deba736-cf6f-44b8-8022-31f82347cc96', '55178e4f-7c18-4d0d-b010-f9e4079d5d48', b'1'),
-('3deba736-cf6f-44b8-8022-31f82347cc96', '8dee153c-4e64-435f-8a7c-cd9de0eb653d', b'0'),
-('3deba736-cf6f-44b8-8022-31f82347cc96', '8f9a1a9c-4bdf-41e2-a75b-544a12be1d67', b'0'),
-('3deba736-cf6f-44b8-8022-31f82347cc96', 'a749b2db-a1ac-4e58-9fd3-1142e96b0445', b'0'),
-('3deba736-cf6f-44b8-8022-31f82347cc96', 'bd76f66d-85f6-44a6-ad5a-133b3f32016a', b'1'),
-('3deba736-cf6f-44b8-8022-31f82347cc96', 'e3279721-a5de-46c7-b463-8d076a1631ae', b'1'),
-('48fb7988-d909-445a-81db-fe825dca0db2', '0d3b55db-e68b-4c83-91d4-7370a6810a24', b'0'),
-('48fb7988-d909-445a-81db-fe825dca0db2', '1dc1e050-891a-4f5b-ac9d-5ea0c2e3c05e', b'0'),
-('48fb7988-d909-445a-81db-fe825dca0db2', '391f1641-cb22-41a3-a0ed-752d9264aaf5', b'1'),
-('48fb7988-d909-445a-81db-fe825dca0db2', '39e1693b-a924-4fbb-b98c-520869771f83', b'1'),
-('48fb7988-d909-445a-81db-fe825dca0db2', '5253d2be-3116-4510-ac05-99619ce2494c', b'0'),
-('48fb7988-d909-445a-81db-fe825dca0db2', 'a72d436e-111b-445b-804a-967d249f6455', b'0'),
-('48fb7988-d909-445a-81db-fe825dca0db2', 'd5de6a8a-8894-4e72-b6ef-f9bf3a7a6541', b'1'),
-('5a9610bf-6a47-46a1-9442-9e43eacd98e8', '021d9ac1-9650-401c-b2a2-efa2f3e6b70c', b'1'),
-('5a9610bf-6a47-46a1-9442-9e43eacd98e8', '0d3b55db-e68b-4c83-91d4-7370a6810a24', b'0'),
-('5a9610bf-6a47-46a1-9442-9e43eacd98e8', '1dc1e050-891a-4f5b-ac9d-5ea0c2e3c05e', b'0'),
-('5a9610bf-6a47-46a1-9442-9e43eacd98e8', '391f1641-cb22-41a3-a0ed-752d9264aaf5', b'1'),
-('5a9610bf-6a47-46a1-9442-9e43eacd98e8', '39e1693b-a924-4fbb-b98c-520869771f83', b'1'),
-('5a9610bf-6a47-46a1-9442-9e43eacd98e8', '5253d2be-3116-4510-ac05-99619ce2494c', b'0'),
-('5a9610bf-6a47-46a1-9442-9e43eacd98e8', '84fdcb72-668b-408e-aaea-110d594afe5e', b'1'),
-('5a9610bf-6a47-46a1-9442-9e43eacd98e8', 'a72d436e-111b-445b-804a-967d249f6455', b'0'),
-('5a9610bf-6a47-46a1-9442-9e43eacd98e8', 'd5de6a8a-8894-4e72-b6ef-f9bf3a7a6541', b'1'),
-('7b6ab455-242e-42aa-96d8-9c9e2b74da9d', '021d9ac1-9650-401c-b2a2-efa2f3e6b70c', b'1'),
-('7b6ab455-242e-42aa-96d8-9c9e2b74da9d', '0d3b55db-e68b-4c83-91d4-7370a6810a24', b'0'),
-('7b6ab455-242e-42aa-96d8-9c9e2b74da9d', '1dc1e050-891a-4f5b-ac9d-5ea0c2e3c05e', b'0'),
-('7b6ab455-242e-42aa-96d8-9c9e2b74da9d', '391f1641-cb22-41a3-a0ed-752d9264aaf5', b'1'),
-('7b6ab455-242e-42aa-96d8-9c9e2b74da9d', '39e1693b-a924-4fbb-b98c-520869771f83', b'1'),
-('7b6ab455-242e-42aa-96d8-9c9e2b74da9d', '5253d2be-3116-4510-ac05-99619ce2494c', b'0'),
-('7b6ab455-242e-42aa-96d8-9c9e2b74da9d', '84fdcb72-668b-408e-aaea-110d594afe5e', b'1'),
-('7b6ab455-242e-42aa-96d8-9c9e2b74da9d', 'a72d436e-111b-445b-804a-967d249f6455', b'0'),
-('7b6ab455-242e-42aa-96d8-9c9e2b74da9d', 'd5de6a8a-8894-4e72-b6ef-f9bf3a7a6541', b'1'),
-('98ae8603-4547-4218-8fb9-ebc550a0e10b', '021d9ac1-9650-401c-b2a2-efa2f3e6b70c', b'1'),
-('98ae8603-4547-4218-8fb9-ebc550a0e10b', '0d3b55db-e68b-4c83-91d4-7370a6810a24', b'0'),
-('98ae8603-4547-4218-8fb9-ebc550a0e10b', '1dc1e050-891a-4f5b-ac9d-5ea0c2e3c05e', b'0'),
-('98ae8603-4547-4218-8fb9-ebc550a0e10b', '391f1641-cb22-41a3-a0ed-752d9264aaf5', b'1'),
-('98ae8603-4547-4218-8fb9-ebc550a0e10b', '39e1693b-a924-4fbb-b98c-520869771f83', b'1'),
-('98ae8603-4547-4218-8fb9-ebc550a0e10b', '5253d2be-3116-4510-ac05-99619ce2494c', b'0'),
-('98ae8603-4547-4218-8fb9-ebc550a0e10b', '84fdcb72-668b-408e-aaea-110d594afe5e', b'1'),
-('98ae8603-4547-4218-8fb9-ebc550a0e10b', 'a72d436e-111b-445b-804a-967d249f6455', b'0'),
-('98ae8603-4547-4218-8fb9-ebc550a0e10b', 'd5de6a8a-8894-4e72-b6ef-f9bf3a7a6541', b'1'),
-('a48b81bb-db56-42a4-bf31-336a6e335001', '1c9c1b4c-ccb9-4e8f-82b7-5b3a4ac06229', b'1'),
-('a48b81bb-db56-42a4-bf31-336a6e335001', '386b2097-465b-4135-a057-62709870909e', b'0'),
-('a48b81bb-db56-42a4-bf31-336a6e335001', '38793860-edb1-452f-b2e0-e5ad2041cb70', b'1'),
-('a48b81bb-db56-42a4-bf31-336a6e335001', '55178e4f-7c18-4d0d-b010-f9e4079d5d48', b'1'),
-('a48b81bb-db56-42a4-bf31-336a6e335001', '8dee153c-4e64-435f-8a7c-cd9de0eb653d', b'0'),
-('a48b81bb-db56-42a4-bf31-336a6e335001', '8f9a1a9c-4bdf-41e2-a75b-544a12be1d67', b'0'),
-('a48b81bb-db56-42a4-bf31-336a6e335001', 'a749b2db-a1ac-4e58-9fd3-1142e96b0445', b'0'),
-('a48b81bb-db56-42a4-bf31-336a6e335001', 'bd76f66d-85f6-44a6-ad5a-133b3f32016a', b'1'),
-('a48b81bb-db56-42a4-bf31-336a6e335001', 'e3279721-a5de-46c7-b463-8d076a1631ae', b'1'),
-('ab9a50dd-ef39-46cf-add0-af8ce9a00e61', '1c9c1b4c-ccb9-4e8f-82b7-5b3a4ac06229', b'1'),
-('ab9a50dd-ef39-46cf-add0-af8ce9a00e61', '386b2097-465b-4135-a057-62709870909e', b'0'),
-('ab9a50dd-ef39-46cf-add0-af8ce9a00e61', '38793860-edb1-452f-b2e0-e5ad2041cb70', b'1'),
-('ab9a50dd-ef39-46cf-add0-af8ce9a00e61', '55178e4f-7c18-4d0d-b010-f9e4079d5d48', b'1'),
-('ab9a50dd-ef39-46cf-add0-af8ce9a00e61', '8dee153c-4e64-435f-8a7c-cd9de0eb653d', b'0'),
-('ab9a50dd-ef39-46cf-add0-af8ce9a00e61', '8f9a1a9c-4bdf-41e2-a75b-544a12be1d67', b'0'),
-('ab9a50dd-ef39-46cf-add0-af8ce9a00e61', 'a749b2db-a1ac-4e58-9fd3-1142e96b0445', b'0'),
-('ab9a50dd-ef39-46cf-add0-af8ce9a00e61', 'bd76f66d-85f6-44a6-ad5a-133b3f32016a', b'1'),
-('ab9a50dd-ef39-46cf-add0-af8ce9a00e61', 'e3279721-a5de-46c7-b463-8d076a1631ae', b'1'),
-('bf8531b6-2a19-45e2-9a41-7a25d38ad69d', '1c9c1b4c-ccb9-4e8f-82b7-5b3a4ac06229', b'1'),
-('bf8531b6-2a19-45e2-9a41-7a25d38ad69d', '386b2097-465b-4135-a057-62709870909e', b'0'),
-('bf8531b6-2a19-45e2-9a41-7a25d38ad69d', '38793860-edb1-452f-b2e0-e5ad2041cb70', b'1'),
-('bf8531b6-2a19-45e2-9a41-7a25d38ad69d', '55178e4f-7c18-4d0d-b010-f9e4079d5d48', b'1'),
-('bf8531b6-2a19-45e2-9a41-7a25d38ad69d', '8dee153c-4e64-435f-8a7c-cd9de0eb653d', b'0'),
-('bf8531b6-2a19-45e2-9a41-7a25d38ad69d', '8f9a1a9c-4bdf-41e2-a75b-544a12be1d67', b'0'),
-('bf8531b6-2a19-45e2-9a41-7a25d38ad69d', 'a749b2db-a1ac-4e58-9fd3-1142e96b0445', b'0'),
-('bf8531b6-2a19-45e2-9a41-7a25d38ad69d', 'bd76f66d-85f6-44a6-ad5a-133b3f32016a', b'1'),
-('bf8531b6-2a19-45e2-9a41-7a25d38ad69d', 'e3279721-a5de-46c7-b463-8d076a1631ae', b'1'),
-('e07da50b-cddc-4524-b630-436a5a6ba8ab', '021d9ac1-9650-401c-b2a2-efa2f3e6b70c', b'1'),
-('e07da50b-cddc-4524-b630-436a5a6ba8ab', '0d3b55db-e68b-4c83-91d4-7370a6810a24', b'0'),
-('e07da50b-cddc-4524-b630-436a5a6ba8ab', '1dc1e050-891a-4f5b-ac9d-5ea0c2e3c05e', b'0'),
-('e07da50b-cddc-4524-b630-436a5a6ba8ab', '391f1641-cb22-41a3-a0ed-752d9264aaf5', b'1'),
-('e07da50b-cddc-4524-b630-436a5a6ba8ab', '39e1693b-a924-4fbb-b98c-520869771f83', b'1'),
-('e07da50b-cddc-4524-b630-436a5a6ba8ab', '5253d2be-3116-4510-ac05-99619ce2494c', b'0'),
-('e07da50b-cddc-4524-b630-436a5a6ba8ab', '84fdcb72-668b-408e-aaea-110d594afe5e', b'1'),
-('e07da50b-cddc-4524-b630-436a5a6ba8ab', 'a72d436e-111b-445b-804a-967d249f6455', b'0'),
-('e07da50b-cddc-4524-b630-436a5a6ba8ab', 'd5de6a8a-8894-4e72-b6ef-f9bf3a7a6541', b'1'),
-('f1cbf82e-a285-4a15-a172-ff97732a2648', '1c9c1b4c-ccb9-4e8f-82b7-5b3a4ac06229', b'1'),
-('f1cbf82e-a285-4a15-a172-ff97732a2648', '386b2097-465b-4135-a057-62709870909e', b'0'),
-('f1cbf82e-a285-4a15-a172-ff97732a2648', '38793860-edb1-452f-b2e0-e5ad2041cb70', b'1'),
-('f1cbf82e-a285-4a15-a172-ff97732a2648', '55178e4f-7c18-4d0d-b010-f9e4079d5d48', b'1'),
-('f1cbf82e-a285-4a15-a172-ff97732a2648', '8dee153c-4e64-435f-8a7c-cd9de0eb653d', b'0'),
-('f1cbf82e-a285-4a15-a172-ff97732a2648', '8f9a1a9c-4bdf-41e2-a75b-544a12be1d67', b'0'),
-('f1cbf82e-a285-4a15-a172-ff97732a2648', 'a749b2db-a1ac-4e58-9fd3-1142e96b0445', b'0'),
-('f1cbf82e-a285-4a15-a172-ff97732a2648', 'bd76f66d-85f6-44a6-ad5a-133b3f32016a', b'1'),
-('f1cbf82e-a285-4a15-a172-ff97732a2648', 'e3279721-a5de-46c7-b463-8d076a1631ae', b'1'),
-('f7123f46-5de8-4c40-8cff-5c52b3e26a84', '1c9c1b4c-ccb9-4e8f-82b7-5b3a4ac06229', b'1'),
-('f7123f46-5de8-4c40-8cff-5c52b3e26a84', '386b2097-465b-4135-a057-62709870909e', b'0'),
-('f7123f46-5de8-4c40-8cff-5c52b3e26a84', '38793860-edb1-452f-b2e0-e5ad2041cb70', b'1'),
-('f7123f46-5de8-4c40-8cff-5c52b3e26a84', '55178e4f-7c18-4d0d-b010-f9e4079d5d48', b'1'),
-('f7123f46-5de8-4c40-8cff-5c52b3e26a84', '8dee153c-4e64-435f-8a7c-cd9de0eb653d', b'0'),
-('f7123f46-5de8-4c40-8cff-5c52b3e26a84', '8f9a1a9c-4bdf-41e2-a75b-544a12be1d67', b'0'),
-('f7123f46-5de8-4c40-8cff-5c52b3e26a84', 'a749b2db-a1ac-4e58-9fd3-1142e96b0445', b'0'),
-('f7123f46-5de8-4c40-8cff-5c52b3e26a84', 'bd76f66d-85f6-44a6-ad5a-133b3f32016a', b'1'),
-('f7123f46-5de8-4c40-8cff-5c52b3e26a84', 'e3279721-a5de-46c7-b463-8d076a1631ae', b'1');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `client_scope_role_mapping`
---
-
-DROP TABLE IF EXISTS `client_scope_role_mapping`;
-CREATE TABLE IF NOT EXISTS `client_scope_role_mapping` (
-  `SCOPE_ID` varchar(36) NOT NULL,
-  `ROLE_ID` varchar(36) NOT NULL,
-  PRIMARY KEY (`SCOPE_ID`,`ROLE_ID`),
-  KEY `IDX_CLSCOPE_ROLE` (`SCOPE_ID`),
-  KEY `IDX_ROLE_CLSCOPE` (`ROLE_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `client_scope_role_mapping`
---
-
-INSERT INTO `client_scope_role_mapping` (`SCOPE_ID`, `ROLE_ID`) VALUES
-('3880d5d9-fced-4446-97fe-0434f2bb76ea', '62880c1c-3e64-48fa-902f-fa8354347ab8'),
-('5253d2be-3116-4510-ac05-99619ce2494c', '932ca70d-a311-42f9-9042-431cef835b9e'),
-('8f9a1a9c-4bdf-41e2-a75b-544a12be1d67', 'a91bfa14-c447-4159-9de1-64a51fbf2227');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `client_session`
---
-
-DROP TABLE IF EXISTS `client_session`;
-CREATE TABLE IF NOT EXISTS `client_session` (
-  `ID` varchar(36) NOT NULL,
-  `CLIENT_ID` varchar(36) DEFAULT NULL,
-  `REDIRECT_URI` varchar(255) DEFAULT NULL,
-  `STATE` varchar(255) DEFAULT NULL,
-  `TIMESTAMP` int DEFAULT NULL,
-  `SESSION_ID` varchar(36) DEFAULT NULL,
-  `AUTH_METHOD` varchar(255) DEFAULT NULL,
-  `REALM_ID` varchar(255) DEFAULT NULL,
-  `AUTH_USER_ID` varchar(36) DEFAULT NULL,
-  `CURRENT_ACTION` varchar(36) DEFAULT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `IDX_CLIENT_SESSION_SESSION` (`SESSION_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `client_session_auth_status`
---
-
-DROP TABLE IF EXISTS `client_session_auth_status`;
-CREATE TABLE IF NOT EXISTS `client_session_auth_status` (
-  `AUTHENTICATOR` varchar(36) NOT NULL,
-  `STATUS` int DEFAULT NULL,
-  `CLIENT_SESSION` varchar(36) NOT NULL,
-  PRIMARY KEY (`CLIENT_SESSION`,`AUTHENTICATOR`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `client_session_note`
---
-
-DROP TABLE IF EXISTS `client_session_note`;
-CREATE TABLE IF NOT EXISTS `client_session_note` (
-  `NAME` varchar(255) NOT NULL,
-  `VALUE` varchar(255) DEFAULT NULL,
-  `CLIENT_SESSION` varchar(36) NOT NULL,
-  PRIMARY KEY (`CLIENT_SESSION`,`NAME`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `client_session_prot_mapper`
---
-
-DROP TABLE IF EXISTS `client_session_prot_mapper`;
-CREATE TABLE IF NOT EXISTS `client_session_prot_mapper` (
-  `PROTOCOL_MAPPER_ID` varchar(36) NOT NULL,
-  `CLIENT_SESSION` varchar(36) NOT NULL,
-  PRIMARY KEY (`CLIENT_SESSION`,`PROTOCOL_MAPPER_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `client_session_role`
---
-
-DROP TABLE IF EXISTS `client_session_role`;
-CREATE TABLE IF NOT EXISTS `client_session_role` (
-  `ROLE_ID` varchar(255) NOT NULL,
-  `CLIENT_SESSION` varchar(36) NOT NULL,
-  PRIMARY KEY (`CLIENT_SESSION`,`ROLE_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `client_user_session_note`
---
-
-DROP TABLE IF EXISTS `client_user_session_note`;
-CREATE TABLE IF NOT EXISTS `client_user_session_note` (
-  `NAME` varchar(255) NOT NULL,
-  `VALUE` text,
-  `CLIENT_SESSION` varchar(36) NOT NULL,
-  PRIMARY KEY (`CLIENT_SESSION`,`NAME`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `component`
---
-
-DROP TABLE IF EXISTS `component`;
-CREATE TABLE IF NOT EXISTS `component` (
-  `ID` varchar(36) NOT NULL,
-  `NAME` varchar(255) DEFAULT NULL,
-  `PARENT_ID` varchar(36) DEFAULT NULL,
-  `PROVIDER_ID` varchar(36) DEFAULT NULL,
-  `PROVIDER_TYPE` varchar(255) DEFAULT NULL,
-  `REALM_ID` varchar(36) DEFAULT NULL,
-  `SUB_TYPE` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `IDX_COMPONENT_REALM` (`REALM_ID`),
-  KEY `IDX_COMPONENT_PROVIDER_TYPE` (`PROVIDER_TYPE`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `component`
---
-
-INSERT INTO `component` (`ID`, `NAME`, `PARENT_ID`, `PROVIDER_ID`, `PROVIDER_TYPE`, `REALM_ID`, `SUB_TYPE`) VALUES
-('10b808c5-dd59-4f4b-a45b-8591deaa4f17', 'Max Clients Limit', 'master', 'max-clients', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'master', 'anonymous'),
-('1175c6f8-2d58-437f-bb21-4660c8c1a62c', 'Full Scope Disabled', 'jhipster', 'scope', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'jhipster', 'anonymous'),
-('1d291cea-3d41-41cb-9ab6-ef1513fe3fe8', 'hmac-generated', 'jhipster', 'hmac-generated', 'org.keycloak.keys.KeyProvider', 'jhipster', NULL),
-('280c7b8a-d954-47ec-b29d-44330785410d', 'Full Scope Disabled', 'master', 'scope', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'master', 'anonymous'),
-('2a3661d8-3594-4872-881a-9f2d394b675d', 'rsa-generated', 'jhipster', 'rsa-generated', 'org.keycloak.keys.KeyProvider', 'jhipster', NULL),
-('3ac8184d-24a7-4abb-988e-b075015c9826', 'fallback-ES256', 'jhipster', 'ecdsa-generated', 'org.keycloak.keys.KeyProvider', 'jhipster', NULL),
-('41441c32-3b55-4685-8bde-b331f699d74b', 'hmac-generated', 'master', 'hmac-generated', 'org.keycloak.keys.KeyProvider', 'master', NULL),
-('4bd2778a-908f-4ac3-873f-61e674eecc2f', 'Consent Required', 'jhipster', 'consent-required', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'jhipster', 'anonymous'),
-('4d25f10d-e980-4e13-b9d0-b5afe7a44e33', 'Allowed Client Scopes', 'master', 'allowed-client-templates', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'master', 'authenticated'),
-('5782d02c-2ba5-47d1-9732-dfaaf0e5cfdf', 'Allowed Protocol Mapper Types', 'jhipster', 'allowed-protocol-mappers', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'jhipster', 'authenticated'),
-('65809493-b60f-4b44-b1dc-28a22772c321', 'Allowed Client Scopes', 'jhipster', 'allowed-client-templates', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'jhipster', 'anonymous'),
-('7821abd7-f4e0-424e-9964-fd847592b290', 'Trusted Hosts', 'master', 'trusted-hosts', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'master', 'anonymous'),
-('7c57905e-d208-49cf-ac53-088e60607811', 'Allowed Protocol Mapper Types', 'master', 'allowed-protocol-mappers', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'master', 'anonymous'),
-('8ab3be1d-3e01-4eb6-8ff2-d116b02ffc48', 'aes-generated', 'jhipster', 'aes-generated', 'org.keycloak.keys.KeyProvider', 'jhipster', NULL),
-('950acf43-614d-47a3-a7c9-d5072433c4b8', 'Max Clients Limit', 'jhipster', 'max-clients', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'jhipster', 'anonymous'),
-('96bb5289-e057-4a3d-a273-89372bbc8cc0', 'Allowed Client Scopes', 'jhipster', 'allowed-client-templates', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'jhipster', 'authenticated'),
-('9c298b30-b0af-4e8e-8f7a-a29decd984e5', 'Allowed Protocol Mapper Types', 'master', 'allowed-protocol-mappers', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'master', 'authenticated'),
-('a465cc7b-3b76-40fe-940e-4724872fe9ba', 'Allowed Client Scopes', 'master', 'allowed-client-templates', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'master', 'anonymous'),
-('c8d395e2-dd81-4118-b838-7095be5cc1c8', 'Allowed Protocol Mapper Types', 'jhipster', 'allowed-protocol-mappers', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'jhipster', 'anonymous'),
-('d386fa7e-48fd-4cef-bf92-0cc7bfa90751', 'Consent Required', 'master', 'consent-required', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'master', 'anonymous'),
-('d471fa1e-c844-4b58-8220-e511b8aa748a', 'rsa-generated', 'master', 'rsa-generated', 'org.keycloak.keys.KeyProvider', 'master', NULL),
-('d6558e3e-8262-46d7-a344-df82c6f1bbd8', 'aes-generated', 'master', 'aes-generated', 'org.keycloak.keys.KeyProvider', 'master', NULL),
-('e2a65f9f-5ad8-4634-ab3a-810409a3e067', 'Trusted Hosts', 'jhipster', 'trusted-hosts', 'org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy', 'jhipster', 'anonymous');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `component_config`
---
-
-DROP TABLE IF EXISTS `component_config`;
-CREATE TABLE IF NOT EXISTS `component_config` (
-  `ID` varchar(36) NOT NULL,
-  `COMPONENT_ID` varchar(36) NOT NULL,
-  `NAME` varchar(255) NOT NULL,
-  `VALUE` varchar(4000) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `IDX_COMPO_CONFIG_COMPO` (`COMPONENT_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `component_config`
---
-
-INSERT INTO `component_config` (`ID`, `COMPONENT_ID`, `NAME`, `VALUE`) VALUES
-('00934a7b-f490-4901-824a-2e6eddbad8df', '96bb5289-e057-4a3d-a273-89372bbc8cc0', 'allow-default-scopes', 'true'),
-('043fe56c-188e-4c2d-8c2f-ac1124505b96', '950acf43-614d-47a3-a7c9-d5072433c4b8', 'max-clients', '200'),
-('06834866-1d25-418e-8f97-acf5ccb755f3', 'd471fa1e-c844-4b58-8220-e511b8aa748a', 'priority', '100'),
-('0e9cbc0e-218c-4fea-9a61-d795a72b8457', '4d25f10d-e980-4e13-b9d0-b5afe7a44e33', 'allow-default-scopes', 'true'),
-('0f3f2c8a-3c37-420a-838e-332b55493da8', '5782d02c-2ba5-47d1-9732-dfaaf0e5cfdf', 'allowed-protocol-mapper-types', 'oidc-usermodel-property-mapper'),
-('16ab7ffd-559d-4725-9453-f5bb2c7e6ff6', '7821abd7-f4e0-424e-9964-fd847592b290', 'host-sending-registration-request-must-match', 'true'),
-('18166645-7b0c-4975-9604-11a9b349cfdf', '7c57905e-d208-49cf-ac53-088e60607811', 'allowed-protocol-mapper-types', 'saml-role-list-mapper'),
-('1eda3c77-6b8c-471a-8d77-6463eb1e5a32', 'd6558e3e-8262-46d7-a344-df82c6f1bbd8', 'kid', '7c5a0d5a-7f72-4e79-bdd0-1e9a38b7f1ff'),
-('1fe03c89-7f0e-47aa-9523-15bee76ad6fe', '9c298b30-b0af-4e8e-8f7a-a29decd984e5', 'allowed-protocol-mapper-types', 'oidc-address-mapper'),
-('22a5d182-b63e-4899-971b-6d0a028b3e87', 'c8d395e2-dd81-4118-b838-7095be5cc1c8', 'allowed-protocol-mapper-types', 'saml-user-property-mapper'),
-('25ab8a4b-49ca-4f90-9445-557d3b9a9b48', '7c57905e-d208-49cf-ac53-088e60607811', 'allowed-protocol-mapper-types', 'oidc-sha256-pairwise-sub-mapper'),
-('270df5da-887b-42bc-8c75-12f34d198001', 'c8d395e2-dd81-4118-b838-7095be5cc1c8', 'allowed-protocol-mapper-types', 'oidc-usermodel-attribute-mapper'),
-('27edbb05-8183-43ca-ae83-34f3e6746b04', 'a465cc7b-3b76-40fe-940e-4724872fe9ba', 'allow-default-scopes', 'true'),
-('295e97ba-180b-4eea-8165-1057273c9ba0', 'd471fa1e-c844-4b58-8220-e511b8aa748a', 'privateKey', 'MIIEpAIBAAKCAQEAnZSctIOJ1gHbJqnnZQ+85vG8smI9pHVT0SF3duIgyI8KRluQA8adbcQVL3nPEa/n9+91xP75y6zdnLdBpQIGlb/VLPQTHmkYuqAphcGwc3Lda+Q7nmfm3b422nnCLyLMPGkcpc5AiYiGvTtwgyoIUgqG9Bt8X/1PWbYAwiKSI68P4K/taJAowbVDRM4g7FjfpOXvn9EHWe9TMc5MGObVo1FRKIVV8ZNhTXwwCA2nq740cC+APUpUfVgRd4sEJDUcovyI9X168MrtJyKgJWVferU6vsjUWviG6mnQ2EsjRhkrjXNybnl3iE0J+5kTdAHSf0SNxsKSGNBmiao8+0mv/wIDAQABAoIBADAVjxPOJ5s0Cclsgv1lpgDatve/3ot2edMQ4UFXkyVf8ISzn+hnDNbXxJcuFi+Re7k+SrOIEnVCFIWjrdZKHfRICyaie8sFytP313PHPK6d2E753+9gSSRUzKwyBz0W4zdz45f8rdjJ3kOUBasgglV2fOO0F2m7BCGd1fFnVyyn3OevQqN76TK7lmZXWJXb2f7+1EIHdovtz1SJN7D/RrfzMNlx0DFauqIAofZlSCHZ5zvyXuAJ0cC0t9ioIQTiGOOWVGwRY7a1MCPuqBoo395NcEPNBV9W2RVhjyAZG/VsvNW9m7ZGWcXqZXPDNPnR5JumTY1PxKHeGsGrP1OTuBECgYEA5zH9VG8PAijou9o+BwthmKkY8hlHSGo9qFzdw7o1ja3LuW4yiHUBhF5DmGYMveb1nIWkvYHn9FEFFQOL05DbpXmChArnb1rpTKOcZPY1Fgf7Zvmvh1TWbbd0gt1t/NJrdv7OpDTQEF89HKMjuaFfCVC1e77yl2SdW+4g6JXwvlsCgYEArny4JjBWkKJqWrCDKPF5VxOm2iG+jnp7HiQsKHxNYi+dfshleLooYXGmYGUa0PH/Ss2dv0vGGa680e9tVgt2X6m0Sl76TsPtxwF0AHENL3jakM2owznzMGrqzRNPsgEsywe2bVi+EEmZ1KMU2GoQW/4oitqbZHJ32madq8RRzi0CgYEAwjisqRHjed0EJ0vgb+qPwr/LxRaXW65kvdvGMXdtJeirDMwWh6xD6f+GqbCRY7dy/lsHWmyXgBfQPScNgF5hJ1I84tCGPHYTJ98Ks4Zicm+iM4/udbI/sUw9BPMgQxRCU2UcE7aKVDauEDC9AmUegaTb0WlIQwaza1dRLhNIe6ECgYAfvG+CAqi8Bc5yUEiK2eDIBbsDUb/nCj/6a3ncoz8v7Jkoxioumy1dC97HCZynBFz6rgtTD+UoJrARPwsT62HMZIF2RXAhg2FsIMeIjQdo6wJV9BIN8CxbUhcC1dBY//21r+FuYgWv0LM6Ca9w7VmsYb3eA4Tf8DH8d02WQE7gwQKBgQCSCVyLah6zTZW/nlAe+88i5TvQ4125AaYKTrQ+yS1XPuFRNNLStseOYo+Wsj9/zX59NLkjAYZnA2KktYWcMzWis/pgqdk4FdW3sCHcxhmtHm9DXuA0MZ6fXdQTs3AjVcbZFo1HGaC1Q/4XilIwzdHa/RZBbFnMlkFZ/8N3k+Llgg=='),
-('2e66e5ae-5843-462c-b493-3bec30f80059', '1d291cea-3d41-41cb-9ab6-ef1513fe3fe8', 'secret', 'r2X9QG4kCwPcI4FYZiCjM3rRjMIfTibUUCP_Wdr1eTRoR7mNy2vQsKxi6F0rg76VVw0Ga3iLbyq2RJ_8kqfHEA'),
-('3299e005-91c1-4c89-85ae-9d03df4aee5d', '9c298b30-b0af-4e8e-8f7a-a29decd984e5', 'allowed-protocol-mapper-types', 'saml-user-property-mapper'),
-('338f7664-ba3e-453e-85f2-c519e40323fa', '5782d02c-2ba5-47d1-9732-dfaaf0e5cfdf', 'allowed-protocol-mapper-types', 'saml-user-attribute-mapper'),
-('35f22889-d93c-4714-962a-898f89909304', '5782d02c-2ba5-47d1-9732-dfaaf0e5cfdf', 'allowed-protocol-mapper-types', 'oidc-full-name-mapper'),
-('37778c22-b5e1-4314-8bd9-3f9e31e8baf6', 'c8d395e2-dd81-4118-b838-7095be5cc1c8', 'allowed-protocol-mapper-types', 'oidc-address-mapper'),
-('388aee91-d5e2-4cd3-94b6-116a3a65ccf2', 'd6558e3e-8262-46d7-a344-df82c6f1bbd8', 'secret', 'BAptjMCDGj4amt5LrGDyMQ'),
-('3b823056-14f2-4dfc-b32f-b7a3cbac4f76', '7c57905e-d208-49cf-ac53-088e60607811', 'allowed-protocol-mapper-types', 'saml-user-attribute-mapper'),
-('4026bef3-5bac-48af-84f6-293eb89822e3', '65809493-b60f-4b44-b1dc-28a22772c321', 'allow-default-scopes', 'true'),
-('40e35be9-478e-4112-9168-78f17c3d1ba4', 'c8d395e2-dd81-4118-b838-7095be5cc1c8', 'allowed-protocol-mapper-types', 'saml-role-list-mapper'),
-('49f459b6-6118-4229-99f6-c997a95664ce', '5782d02c-2ba5-47d1-9732-dfaaf0e5cfdf', 'allowed-protocol-mapper-types', 'saml-user-property-mapper'),
-('50431eb8-2d68-4600-8fb8-f2f798f16400', '7c57905e-d208-49cf-ac53-088e60607811', 'allowed-protocol-mapper-types', 'oidc-usermodel-attribute-mapper'),
-('53407c10-4d4b-45de-b1bb-f3b7bf5b8ba6', '5782d02c-2ba5-47d1-9732-dfaaf0e5cfdf', 'allowed-protocol-mapper-types', 'oidc-sha256-pairwise-sub-mapper'),
-('552ddf7d-3acb-40f3-8112-efcb01ff147e', '7c57905e-d208-49cf-ac53-088e60607811', 'allowed-protocol-mapper-types', 'saml-user-property-mapper'),
-('58709cca-2433-4ebb-b6a2-8b37ad687cef', '3ac8184d-24a7-4abb-988e-b075015c9826', 'priority', '-100'),
-('73cfb901-0aaa-4178-98a6-4aadc0fbfae7', '5782d02c-2ba5-47d1-9732-dfaaf0e5cfdf', 'allowed-protocol-mapper-types', 'oidc-address-mapper'),
-('749750cf-4f59-4f76-9b29-315c03e5fb44', 'c8d395e2-dd81-4118-b838-7095be5cc1c8', 'allowed-protocol-mapper-types', 'saml-user-attribute-mapper'),
-('7bb8df9e-19e9-4329-9114-c661d971aad5', '41441c32-3b55-4685-8bde-b331f699d74b', 'priority', '100'),
-('7bf10eee-321f-4bf8-ad61-50ceb1fe3953', '41441c32-3b55-4685-8bde-b331f699d74b', 'secret', 'KEICM7xU-JmzxfTDs_FvuFTDrIYJfousOQQhHj2UmChQGnkhwln9Uh91i_4Tpf6ovFbQID6iGwjcUiSHzeijxQ'),
-('82cf1387-c7f2-4581-901c-09facf50ccce', '2a3661d8-3594-4872-881a-9f2d394b675d', 'certificate', 'MIICnzCCAYcCBgFw/2G5qjANBgkqhkiG9w0BAQsFADATMREwDwYDVQQDDAhqaGlwc3RlcjAeFw0yMDAzMjEyMzE0MTlaFw0zMDAzMjEyMzE1NTlaMBMxETAPBgNVBAMMCGpoaXBzdGVyMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAugeXBRxbZrcE1Mz0c/WxRtc3sG623ooKCvb0RI+Z+XLX6cOhBQhIzJUTs390XxmDqYk6mxc0G9K9BzeAUjiMViKnqZI7DYWvGs252FMcSHtgy8j9GsBPtPbz6eHGecDEuS6xeTQyPBGdYAUywEuXnBHK2ON7zUYJBH5EhmjpqsxqF92g+nr8bHa77Uv1poinSakHGu/dd+tLsR/w0V++HW8gsYhcxcNV19a4tJpRnRu2JajIv+W4QgcOnwBbu5ekEmIJp4FOpt4/0wgLEYp+miv3hwqTK1tUdTN8Ll+4L+pYQZPPnvRFWAKcEdOUVY4R1HYoaJDkT3npfCN6H9mMRwIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQBX5RiWVoKBUxNuyqnD2o+u1qUSW7O50yrRShlBK7qpvj+q6yN7DIMUYc/yxpYKSEdK+W5QoH2VIdshOAXJC2UP2s6Q48qQxV5Nhr9z4LVcBN9QPcCafVtZXfhU8yyZ1rZsJAtsaF0CrA3vwJ/gmEdv9O4ZC9FzCyKQwxwtw9Eac2TOj6X8ZOaHI5PSEXLZxzJOP5ICq0HOqah9RWpPw+a3Y+Yv7ITL18KJAsLSrm0IkVrHsLMp7sVkeNow30qHs9Eo8GNXVAm8MhmqGgwlo3siCVUGk2gsty5d9cIx7uFAQ8WnBkVMgb5NzZsqtGUmGNkwkdjTcTEOjID49xdhZdTW'),
-('8564d1ea-91c6-4638-8176-6a15096a9eb9', '3ac8184d-24a7-4abb-988e-b075015c9826', 'ecdsaPublicKey', 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEZrelamB2+MWrwDt8gXsYp+/7V2/IHPblBe2OktILXcOFvC9it6VM5SHT+IKGqPzbRz90lQMD8DONZjtG3vBR5Q=='),
-('87ae009e-9d92-48f9-8861-cca5e902442d', 'c8d395e2-dd81-4118-b838-7095be5cc1c8', 'allowed-protocol-mapper-types', 'oidc-sha256-pairwise-sub-mapper'),
-('8bbb6abf-ad4c-4c2c-bed9-161017171297', '9c298b30-b0af-4e8e-8f7a-a29decd984e5', 'allowed-protocol-mapper-types', 'oidc-sha256-pairwise-sub-mapper'),
-('8e111c44-4bbe-4308-9bbd-ea2ef8cc68d5', '41441c32-3b55-4685-8bde-b331f699d74b', 'kid', '35b948f2-3f6e-4016-a50e-77930af5fc73'),
-('922d4e40-15d4-470d-af46-d8997ff779b5', '7c57905e-d208-49cf-ac53-088e60607811', 'allowed-protocol-mapper-types', 'oidc-address-mapper'),
-('942db24d-2e29-4922-b13b-8e14961ef5dd', '7821abd7-f4e0-424e-9964-fd847592b290', 'client-uris-must-match', 'true'),
-('94bf3fb9-8575-47b9-b84b-0ff5c52e3439', '5782d02c-2ba5-47d1-9732-dfaaf0e5cfdf', 'allowed-protocol-mapper-types', 'saml-role-list-mapper'),
-('9b814224-b261-4892-8690-3f588950ff5b', '8ab3be1d-3e01-4eb6-8ff2-d116b02ffc48', 'secret', 'R7fZxuI65r5vQEQvR9_98A'),
-('9c1ee22d-7ae7-4b7a-b0bf-a87268decd49', 'c8d395e2-dd81-4118-b838-7095be5cc1c8', 'allowed-protocol-mapper-types', 'oidc-usermodel-property-mapper'),
-('a3d9d971-f626-44e1-ae9e-50c1e63c9c80', '9c298b30-b0af-4e8e-8f7a-a29decd984e5', 'allowed-protocol-mapper-types', 'oidc-full-name-mapper'),
-('a5f090fd-c24d-47e4-85c7-01f31acf9ef1', '9c298b30-b0af-4e8e-8f7a-a29decd984e5', 'allowed-protocol-mapper-types', 'saml-user-attribute-mapper'),
-('a64ac3ee-4a86-46ea-8eda-29a5e0271440', '5782d02c-2ba5-47d1-9732-dfaaf0e5cfdf', 'allowed-protocol-mapper-types', 'oidc-usermodel-attribute-mapper'),
-('a8adff24-497b-49b8-8b80-f9d9be22a051', '8ab3be1d-3e01-4eb6-8ff2-d116b02ffc48', 'priority', '100'),
-('a91ac465-39b7-4af5-a054-055fe267ad3c', '7c57905e-d208-49cf-ac53-088e60607811', 'allowed-protocol-mapper-types', 'oidc-full-name-mapper'),
-('b150fb23-b26b-40b9-9e9e-69b84f4d4fad', '2a3661d8-3594-4872-881a-9f2d394b675d', 'privateKey', 'MIIEowIBAAKCAQEAugeXBRxbZrcE1Mz0c/WxRtc3sG623ooKCvb0RI+Z+XLX6cOhBQhIzJUTs390XxmDqYk6mxc0G9K9BzeAUjiMViKnqZI7DYWvGs252FMcSHtgy8j9GsBPtPbz6eHGecDEuS6xeTQyPBGdYAUywEuXnBHK2ON7zUYJBH5EhmjpqsxqF92g+nr8bHa77Uv1poinSakHGu/dd+tLsR/w0V++HW8gsYhcxcNV19a4tJpRnRu2JajIv+W4QgcOnwBbu5ekEmIJp4FOpt4/0wgLEYp+miv3hwqTK1tUdTN8Ll+4L+pYQZPPnvRFWAKcEdOUVY4R1HYoaJDkT3npfCN6H9mMRwIDAQABAoIBAQCb+9E9j9F0BvIeHNy8fr7uz3b6kVr0rnpNR1T6SA6rgwhYEpjpR1EDedzTHYPOWe50MYTallIzIjkt2/PU/WVutBAxt1OcuwNgTjAOm2GTxSAcv6K605YB/y/2ZEGvxVsui2B0aLfWdk6nPLSZWMj/LEwSIGymapsVEWsT6NRFSUOG/vWdNe0OuMno5viq+MnZCHRSnlHg4UyeWC6VejM23sI1Z4GqLxUfqNgp9mTWnYA7C+Oa8xiuxT5O/zI6wcMvb+Wn1q/ujyrQI1M+G+B/2r4nj83m+1YuHh2+5WJui4LDhXJi88/JVWvsHFf4FTCy+NgMdI2p8fKYn6Igr7YBAoGBAN3rXExBEt7ciuuHLkDYKcfmnSg5luQXAdX6cn+NpYFrCu6i5CS9CHQgh/Y2NqKjtf2TyhD9uKOwVxIHYYwtcn/tGGFfsyLY2OvFjusONgH1rxFh4g89Tx7S9NpnN5sRofu0EwRbWT35Dnou/FWm782HM5MZ1drICACIDGOI1zKhAoGBANaZPoYMf/T98u3x+2ldZtzrLcwxuWeyvVhY7IQFjzA072PKsTrlW7zJ1vp1YIVu7roO2cRvcfk+B0i2fZk1Rwc4Ky9YG+C4hVcvu1+WSQ1EBVmE1kZUfn04dJ3XZC9cmxelpwEdoxDsz+Hs8H6Aym1CceaQ+SeTJjIZryHrCr3nAoGAUUnTR0NW7DeQ03Fy6eHEfCrnSkK+GNKso3rX0g1KoLtbB8q3ExYDMLZx1yhInw6krTwjelHV/m+rlTkK7FQBawaoNZLehVc1Ljfxf/x2oAUkmZNnQPnOL5ZKhm3kmnK9CPwPMzta1y6RtQPc/mrl0D1EERAXm8pF1BwBnbwUR8ECgYBIXZzr70MnBovpGXTCbzDExrnG5e2zvl6DcFkxm/5RL0iayjtBtR5eZ2ILS5Gk7Werbl6ZE0vH1Nb3+jIYfBLbqGFHsdqUySSN5ha1gSRZSNrU+SqYxN1ytJr+ryeloQDb1Iygn7HhfzoK4a+nuR6KAaIPMkwSwFhdBLQ+J9iTeQKBgF3Wge+HgsVWIet+xPESjuVG+MIM0XmUoUY0g9HiBcH7AvNqrH0lzt/cK7I1beql/o9eHsnRHecaBGMa3Q9fjfvDFlg6HQAAj5s/Uz4wy2Un83JMoB0v6FLpTNosT8P0ZtLxTZB2kF05T392lgwDm2alKeo4UKsMd9g2J3YKtuM5'),
-('bbcda9b8-e25b-41b3-983d-2a56747a280b', '7c57905e-d208-49cf-ac53-088e60607811', 'allowed-protocol-mapper-types', 'oidc-usermodel-property-mapper'),
-('bc231638-67c2-4bb1-bdab-aa8e348d9b49', 'd6558e3e-8262-46d7-a344-df82c6f1bbd8', 'priority', '100'),
-('be86039a-c2c9-4055-beb9-bfb33b47957c', '2a3661d8-3594-4872-881a-9f2d394b675d', 'priority', '100'),
-('c388739f-1205-4681-ba7c-89c6b08576af', '3ac8184d-24a7-4abb-988e-b075015c9826', 'ecdsaPrivateKey', 'MEECAQAwEwYHKoZIzj0CAQYIKoZIzj0DAQcEJzAlAgEBBCAfN0seE3XOtAlONsoH2vxsRKVCgwEh7Vjac56Kz0EAhA=='),
-('ca06d5dc-cace-432a-9ac7-dca6ba302091', '3ac8184d-24a7-4abb-988e-b075015c9826', 'ecdsaEllipticCurveKey', 'P-256'),
-('cab6dff8-5a7e-41b4-9d70-57639c3b5f0b', '10b808c5-dd59-4f4b-a45b-8591deaa4f17', 'max-clients', '200'),
-('dabc7737-a4e1-4215-8962-056d80fdf49b', 'c8d395e2-dd81-4118-b838-7095be5cc1c8', 'allowed-protocol-mapper-types', 'oidc-full-name-mapper'),
-('dbb8d809-fb31-45a0-87cb-5eb85dc7edf9', 'e2a65f9f-5ad8-4634-ab3a-810409a3e067', 'host-sending-registration-request-must-match', 'true'),
-('dd4968ae-96cb-49b8-8ba1-cd3dab134ada', '1d291cea-3d41-41cb-9ab6-ef1513fe3fe8', 'kid', '6c8dacf3-d9dd-4272-8a6a-b3951f2d2c89'),
-('e2cb926e-1ba7-4421-b11f-7700c000a2d3', '1d291cea-3d41-41cb-9ab6-ef1513fe3fe8', 'priority', '100'),
-('e55d6964-bda7-4801-a710-234f0151b08f', 'e2a65f9f-5ad8-4634-ab3a-810409a3e067', 'client-uris-must-match', 'true'),
-('e641e3ae-bfd5-41b8-b199-aa766fb081a7', '9c298b30-b0af-4e8e-8f7a-a29decd984e5', 'allowed-protocol-mapper-types', 'oidc-usermodel-property-mapper'),
-('efcd3c6b-7bec-4a2c-aa34-547c72d1fcc2', '9c298b30-b0af-4e8e-8f7a-a29decd984e5', 'allowed-protocol-mapper-types', 'oidc-usermodel-attribute-mapper'),
-('f549df25-9c1f-4390-ad3d-70f91161fe69', '8ab3be1d-3e01-4eb6-8ff2-d116b02ffc48', 'kid', '60154949-aa70-4ff8-9e14-49bbdcc232de'),
-('f9da3b8a-0b8f-4db8-8155-e8011482f575', '41441c32-3b55-4685-8bde-b331f699d74b', 'algorithm', 'HS256'),
-('fafd16cd-d6e0-4215-8480-0d06b4fe353c', 'd471fa1e-c844-4b58-8220-e511b8aa748a', 'certificate', 'MIICmzCCAYMCBgFw/2GvmzANBgkqhkiG9w0BAQsFADARMQ8wDQYDVQQDDAZtYXN0ZXIwHhcNMjAwMzIxMjMxNDE2WhcNMzAwMzIxMjMxNTU2WjARMQ8wDQYDVQQDDAZtYXN0ZXIwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCdlJy0g4nWAdsmqedlD7zm8byyYj2kdVPRIXd24iDIjwpGW5ADxp1txBUvec8Rr+f373XE/vnLrN2ct0GlAgaVv9Us9BMeaRi6oCmFwbBzct1r5DueZ+bdvjbaecIvIsw8aRylzkCJiIa9O3CDKghSCob0G3xf/U9ZtgDCIpIjrw/gr+1okCjBtUNEziDsWN+k5e+f0QdZ71MxzkwY5tWjUVEohVXxk2FNfDAIDaervjRwL4A9SlR9WBF3iwQkNRyi/Ij1fXrwyu0nIqAlZV96tTq+yNRa+IbqadDYSyNGGSuNc3JueXeITQn7mRN0AdJ/RI3GwpIY0GaJqjz7Sa//AgMBAAEwDQYJKoZIhvcNAQELBQADggEBADL7nPWkR2QTOF3oJVbg7i6J6bpUpniDhlPdB22fP0d3brX0+5SyDEFN7hVxDUWY9SKU1D+w3DF8HHfglq3dYnD/H5vf8780lsoId/P0tzQBciOPLi8V5RJEUD+rWJQw00GjScgGDx/7rsmZXEk73Ua2kvZp06WZTjwCyYqwaXmwxpLUfRb0TZS2zt+NVr0d/TT8vNnzy5sFcd9Y+mqnHGghRURxBpLLgt3kLYWkkIO5dBU/bhQDFwt2PK3bNxJ6Uk8o1YAYQ+DzkN0fQC+wgu3ISS9du8O6n+C3/Zkc9dGuGT6SSVCk9yK0hm4mfuU4nrVSdhQEvB9Fhqcd5/0a8co='),
-('ff274641-0250-469d-a6d7-4c4d40c9034d', '9c298b30-b0af-4e8e-8f7a-a29decd984e5', 'allowed-protocol-mapper-types', 'saml-role-list-mapper');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `composite_role`
---
-
-DROP TABLE IF EXISTS `composite_role`;
-CREATE TABLE IF NOT EXISTS `composite_role` (
-  `COMPOSITE` varchar(36) NOT NULL,
-  `CHILD_ROLE` varchar(36) NOT NULL,
-  PRIMARY KEY (`COMPOSITE`,`CHILD_ROLE`),
-  KEY `IDX_COMPOSITE` (`COMPOSITE`),
-  KEY `IDX_COMPOSITE_CHILD` (`CHILD_ROLE`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `composite_role`
---
-
-INSERT INTO `composite_role` (`COMPOSITE`, `CHILD_ROLE`) VALUES
-('083a848a-49cb-457f-9615-120be8c74d9e', '11bc32e5-55a6-431d-b6c7-32bd9504d070'),
-('083a848a-49cb-457f-9615-120be8c74d9e', '24493c26-5ea3-4e53-b949-ca27a06ff098'),
-('083a848a-49cb-457f-9615-120be8c74d9e', '24ba1589-1141-4836-91bb-ad1b10db4944'),
-('083a848a-49cb-457f-9615-120be8c74d9e', '2a54d26e-7a55-4fc9-92cb-45e613084562'),
-('083a848a-49cb-457f-9615-120be8c74d9e', '2d8a0ec8-111b-41a2-bf49-7f1ae086c5b1'),
-('083a848a-49cb-457f-9615-120be8c74d9e', '2f58d746-0582-47fe-9b67-30809d5ad461'),
-('083a848a-49cb-457f-9615-120be8c74d9e', '3774414f-db0d-4928-b080-f22599622e97'),
-('083a848a-49cb-457f-9615-120be8c74d9e', '38cbec3e-9ca1-4292-a513-09e86fdcf6b1'),
-('083a848a-49cb-457f-9615-120be8c74d9e', '42abef51-b33b-4eb3-8515-3c6b16ca3849'),
-('083a848a-49cb-457f-9615-120be8c74d9e', '4873b8a8-8035-4b5e-bdd9-99ac74a4a43b'),
-('083a848a-49cb-457f-9615-120be8c74d9e', '4ee94804-bc06-4d02-8541-410768b88a49'),
-('083a848a-49cb-457f-9615-120be8c74d9e', '5aa18f9b-2fb1-4edb-bdde-fb79273eee38'),
-('083a848a-49cb-457f-9615-120be8c74d9e', '5ea73aac-d0cf-4303-87a4-c9d7f5852734'),
-('083a848a-49cb-457f-9615-120be8c74d9e', '8018bd1e-0b43-4b0c-8e5a-fbf31f8ee6db'),
-('083a848a-49cb-457f-9615-120be8c74d9e', '84752518-6f2f-451f-ab59-de3ce6674ba1'),
-('083a848a-49cb-457f-9615-120be8c74d9e', '8fdff21b-f46c-407c-b566-ce4fcc4c51d4'),
-('083a848a-49cb-457f-9615-120be8c74d9e', 'a3f9ba91-6ed5-47ff-a1cc-384c00cc203d'),
-('083a848a-49cb-457f-9615-120be8c74d9e', 'c9fb6965-e734-46b4-a174-fa9d1fb7e1cc'),
-('0e81ebbb-f3d1-4fbd-bfef-72f9b987d6c3', '62880c1c-3e64-48fa-902f-fa8354347ab8'),
-('11bc32e5-55a6-431d-b6c7-32bd9504d070', '4873b8a8-8035-4b5e-bdd9-99ac74a4a43b'),
-('1720600c-859b-44a5-9c18-5e52dc2889c6', 'fa28bdd3-33ed-4a5a-a09f-6561fce814e5'),
-('21a2bc5f-a976-435d-bee4-48b69da694e0', '5537c057-dd18-4349-871e-170ca3b0d8c1'),
-('21b65e52-b4e3-453e-b0f0-10a44a4a887d', '8d650dc2-d0e7-4ad7-8193-3ce1b7361b02'),
-('2de49c9d-f49d-4740-9efe-60300788a4e7', '76a4f31d-7149-4d92-bfba-654c2cb6c754'),
-('42dcf4f5-8f73-4907-bd90-669cccd66c23', '91f398b2-23a0-4cd3-8bc0-c3097df0e1e5'),
-('4a092fac-6395-411d-96d7-89d44bd5f45b', 'd0e1cd3e-97c6-4d95-9e8e-82672d651bc3'),
-('5537c057-dd18-4349-871e-170ca3b0d8c1', '62880c1c-3e64-48fa-902f-fa8354347ab8'),
-('5537c057-dd18-4349-871e-170ca3b0d8c1', 'a374e2d8-5a96-4f06-bdeb-87d2d1fd92f2'),
-('6c47d98c-a723-4053-8e87-762c04a3c72f', '2de49c9d-f49d-4740-9efe-60300788a4e7'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', '009e9136-3a22-481c-963f-1975f8752bdc'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', '0712cdcc-c020-4adb-9666-e455b77f4803'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', '1088e338-7373-46fb-aa87-886ed7c3907d'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', '1235ad96-d5a3-4632-b9f7-367030b03962'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', '1280edcf-1968-4cba-9a1f-a3ea2153ce1b'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', '23f08d10-bcf7-4247-b4c0-684e3e29c1bb'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', '25d085af-e999-4256-b07d-a2832be50fe6'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', '26874e1f-65be-45c2-a6b4-ab133a85c169'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', '2751187a-c709-4ac1-bada-8fd93cdbdcf4'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', '2c2938a2-8c99-4c66-bfd7-47331dd9d45c'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', '4a092fac-6395-411d-96d7-89d44bd5f45b'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', '4ee6ec5a-1aa5-4458-9575-8e3879b90575'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', '4f099d14-b60c-4389-9a7a-7c96e149f912'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', '5f884970-9b9e-4d53-89b7-700d93dba404'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', '631e9bda-5884-47b8-b0d6-838e2ce5002a'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', '6a80905b-a478-4508-ad14-34cf340aca3e'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', '6c8abaad-5f92-4c96-843b-65fa9442893c'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', '751e44ac-04c7-4a95-805c-f907f205c48a'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', '7d14203c-2cb4-4d49-8bb3-c56d425e9db1'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', '8b2aacae-a622-446c-9954-a8de983150f0'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', '9315172c-6dc1-4d8c-973a-4309599cf07b'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', '944d3748-9707-4ff3-95a6-4a6b6d34243b'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', '9d7cc7b1-217f-47bd-9347-a3f141638576'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', 'a1daea5c-dd4c-4528-bcfd-2922afc47cc0'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', 'a29864c1-5a10-4c4d-82f7-72b6becb4416'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', 'a6174657-cbd7-40a6-ae34-c83cabdd1791'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', 'b8fb8449-0975-425e-abe9-edcf6bfcdc9a'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', 'c6ceaf7a-8a48-45d6-99b0-99665a2e4136'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', 'd0e1cd3e-97c6-4d95-9e8e-82672d651bc3'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', 'd810cfe5-f254-4e37-8b9a-0922ebd84a27'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', 'dfb5d699-91ee-4938-8991-618fecf0aaba'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', 'dfebf1c8-3fb6-4b78-9b05-ae9dd4ff92be'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', 'e1481a47-36c4-42e2-b55c-fcf0e0395af2'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', 'e58b182a-9ca9-4135-9562-d5493bcf26cc'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', 'f6e211bd-443d-47fe-9888-ed50e6463eaa'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', 'f793ecc6-713f-4630-8777-90c5f45a504a'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', 'f909e7c2-1f7d-4dc4-b0ca-bdfc8d1f7b2c'),
-('76a4f31d-7149-4d92-bfba-654c2cb6c754', '21a2bc5f-a976-435d-bee4-48b69da694e0'),
-('84752518-6f2f-451f-ab59-de3ce6674ba1', '2f58d746-0582-47fe-9b67-30809d5ad461'),
-('84752518-6f2f-451f-ab59-de3ce6674ba1', '8018bd1e-0b43-4b0c-8e5a-fbf31f8ee6db'),
-('b6e3d2e0-ba1a-4420-84d1-2cf72096fd38', '9ce77c75-2e84-4d14-9655-706a2f3fc159'),
-('d810cfe5-f254-4e37-8b9a-0922ebd84a27', '4f099d14-b60c-4389-9a7a-7c96e149f912'),
-('f793ecc6-713f-4630-8777-90c5f45a504a', '4ee6ec5a-1aa5-4458-9575-8e3879b90575'),
-('f793ecc6-713f-4630-8777-90c5f45a504a', '9315172c-6dc1-4d8c-973a-4309599cf07b'),
-('f909e7c2-1f7d-4dc4-b0ca-bdfc8d1f7b2c', '26874e1f-65be-45c2-a6b4-ab133a85c169'),
-('f909e7c2-1f7d-4dc4-b0ca-bdfc8d1f7b2c', '8b2aacae-a622-446c-9954-a8de983150f0');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `credential`
---
-
-DROP TABLE IF EXISTS `credential`;
-CREATE TABLE IF NOT EXISTS `credential` (
-  `ID` varchar(36) NOT NULL,
-  `SALT` tinyblob,
-  `TYPE` varchar(255) DEFAULT NULL,
-  `USER_ID` varchar(36) DEFAULT NULL,
-  `CREATED_DATE` bigint DEFAULT NULL,
-  `USER_LABEL` varchar(255) DEFAULT NULL,
-  `SECRET_DATA` longtext,
-  `CREDENTIAL_DATA` longtext,
-  `PRIORITY` int DEFAULT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `IDX_USER_CREDENTIAL` (`USER_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `credential`
---
-
-INSERT INTO `credential` (`ID`, `SALT`, `TYPE`, `USER_ID`, `CREATED_DATE`, `USER_LABEL`, `SECRET_DATA`, `CREDENTIAL_DATA`, `PRIORITY`) VALUES
-('0d2417b8-8b49-4d79-ac42-7d52fc16ac42', NULL, 'password', '2286609b-e45f-49d0-a0de-3194d2e98d6d', 1584890674225, NULL, '{\"value\":\"LDSTwa72rOGC5eYjnoKQt0n3mRorwCV8iCGlCdNgSZuMmyyhmFE8cRfgi8WwYz8tYvC90DgcixOpoagJYdabMw==\",\"salt\":\"aKC0nTjAFfqSpK5fCAsJ7w==\"}', '{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\"}', 10),
-('1f45ac21-e589-4911-a4f4-62e42ece36cf', NULL, 'password', '70bb6673-d928-4320-87b8-e7b8af6c5a27', 1584888748188, NULL, '{\"value\":\"ZYGNf8Q84T1HBnGNNepva4N4WOdk1sbmNzzRtslHb80c1kiH06D29MQ/68ELGoCnjE2DCm7HsyxUAC6lAG+6Rg==\",\"salt\":\"wCdXzmsyhcHAh/psD73caw==\"}', '{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\"}', 10),
-('381e8ad0-4bad-4c96-a5b8-65a2ef7a33e8', NULL, 'password', '1a038ff7-3be2-4d48-98c8-02dd11750cb0', 1584890596203, NULL, '{\"value\":\"Ub0fMLzt05QD1CwKqxiYOFM0egZve60e/lOfZkwigFY+Yf7M65qY/1N64frPOXB8G55BUGWfppluviQvW0JGvQ==\",\"salt\":\"Rwlb3L8zjhMd45CHTRQH5A==\"}', '{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\"}', 10),
-('454dd372-579d-4593-9344-1679ffcdead7', NULL, 'password', '688171b4-638a-43df-87c4-c5e85751346f', 1584888405526, NULL, '{\"value\":\"pmuoNZ5IlbYAyaMvkH07edBdhWdNGUDhZ4IWoNCcRVwoILkl8RcmaDlHJGc7ZAJdcaSgDSv8b0v+Vtr/rgzMCw==\",\"salt\":\"eIOX2sKFcRXugg2cY2TNCQ==\"}', '{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\"}', 10),
-('63c91e19-de3e-49a2-9f5e-99bb40279c07', NULL, 'password', 'c96b54e0-8164-4004-aec8-025f7af0838c', 1584887748675, NULL, '{\"value\":\"Nw1ui9LNMy4u9eRayXW7Mr6q71c0WzbuCDT09BTPUlsb9A3Pulgc8qwpQGU3OrWNuAfj9XdNta7awAosr9dQPw==\",\"salt\":\"djJ7bt0FuQxvzd+rFQuTiw==\"}', '{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\"}', 10),
-('7821832b-1e82-45a2-b8d3-f1a6ad909e64', NULL, 'password', 'c4af4e2f-b432-4c3b-8405-cca86cd5b97b', 1505479392766, NULL, '{\"value\":\"MbKsMgWPnZyImih8s4SaoCSCq+XIY/c6S9F93sXEidHF1TjPWxCqMkec0+o3860CMLXHt3az61cIJOWI0FW9aw==\",\"salt\":\"fmpBI1r8R1u75hDLMUlwBw==\"}', '{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\"}', 10),
-('9a611fc5-5e7d-4dd9-a33e-8cf68944c584', NULL, 'password', '54384ff2-4758-49f5-be96-9a944eafa60f', 1584832560623, NULL, '{\"value\":\"s2UuQX+Af91Se/WuC1nmmJilwLr2XHofZTnWKG+/K+U9m6GddJrlsL+0K9Us1nBOd8QbtE6mamsbS/R7jqbGOA==\",\"salt\":\"cAGlG/Hy2CXAsGiBUJ/llw==\"}', '{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\"}', 10),
-('a7ecd220-d60a-4083-8f23-b220de9f5b6e', NULL, 'password', 'b3c1bfae-0a77-48a2-8dba-7b6559b8959f', 1584888065712, NULL, '{\"value\":\"Quf0MO9OwQenLbjqxQiD9d/e6iP4hHXpAQx9+16Qxtz9SCvnl7C3YaVJZ3MuW8TaaRl5NOYF4/I04M/FgKravg==\",\"salt\":\"WBdEcSfHDdmxN7wqa774HA==\"}', '{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\"}', 10),
-('bd5fdfc7-3c1f-412d-bf60-9bf97791d71c', NULL, 'password', '8f57c0d4-2f03-4f33-b3b3-837ed2a147f1', 1584890457644, NULL, '{\"value\":\"46Kxg5HQA3FWlNqM/WPB61RB8jvseSv2AQkIm43luKvpoQWByUIHhNZe+lS4DJBGuOP3tk5e5g1WD8DUZ9MxbA==\",\"salt\":\"Gs+USXarxGetZKz1J5iKUg==\"}', '{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\"}', 10),
-('da5509b6-246c-4db8-880f-0f103f972995', NULL, 'password', '4c973896-5761-41fc-8217-07c5d13a004b', 1584995642370, NULL, '{\"value\":\"2MwhfRvMCgOxrls+tg2lWWc8Ccu/9+LzY5X1y815enXkFwUdDbAgXR6wZP5hawzG//hqBktxMN/MxO91PefCbQ==\",\"salt\":\"YiT3pc+0HYtK8Ac6GmgeMg==\"}', '{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\"}', 10),
-('e91b8cf4-07b9-47ec-86b4-2dcd743b54bc', NULL, 'password', '600c76dd-7e28-4067-83a8-8afd8acdadaa', 1584887949924, NULL, '{\"value\":\"a8Kb0KtZsoKBXACW+0HrRl+gGjFmLy/s4Wzh86Pp+JVy/mTC37Z9vAqd+zIW2FWvc13rZTtjINe2aBHa29K1RQ==\",\"salt\":\"feQR13mB7Rj2Lslt+NEq+A==\"}', '{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\"}', 10);
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `databasechangelog`
---
-
-DROP TABLE IF EXISTS `databasechangelog`;
-CREATE TABLE IF NOT EXISTS `databasechangelog` (
-  `ID` varchar(255) NOT NULL,
-  `AUTHOR` varchar(255) NOT NULL,
-  `FILENAME` varchar(255) NOT NULL,
-  `DATEEXECUTED` datetime NOT NULL,
-  `ORDEREXECUTED` int NOT NULL,
-  `EXECTYPE` varchar(10) NOT NULL,
-  `MD5SUM` varchar(35) DEFAULT NULL,
-  `DESCRIPTION` varchar(255) DEFAULT NULL,
-  `COMMENTS` varchar(255) DEFAULT NULL,
-  `TAG` varchar(255) DEFAULT NULL,
-  `LIQUIBASE` varchar(20) DEFAULT NULL,
-  `CONTEXTS` varchar(255) DEFAULT NULL,
-  `LABELS` varchar(255) DEFAULT NULL,
-  `DEPLOYMENT_ID` varchar(10) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `databasechangelog`
---
-
-INSERT INTO `databasechangelog` (`ID`, `AUTHOR`, `FILENAME`, `DATEEXECUTED`, `ORDEREXECUTED`, `EXECTYPE`, `MD5SUM`, `DESCRIPTION`, `COMMENTS`, `TAG`, `LIQUIBASE`, `CONTEXTS`, `LABELS`, `DEPLOYMENT_ID`) VALUES
-('1.0.0.Final-KEYCLOAK-5461', 'sthorger@redhat.com', 'META-INF/jpa-changelog-1.0.0.Final.xml', '2020-03-21 23:14:38', 1, 'EXECUTED', '7:4e70412f24a3f382c82183742ec79317', 'createTable tableName=APPLICATION_DEFAULT_ROLES; createTable tableName=CLIENT; createTable tableName=CLIENT_SESSION; createTable tableName=CLIENT_SESSION_ROLE; createTable tableName=COMPOSITE_ROLE; createTable tableName=CREDENTIAL; createTable tab...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('1.0.0.Final-KEYCLOAK-5461', 'sthorger@redhat.com', 'META-INF/db2-jpa-changelog-1.0.0.Final.xml', '2020-03-21 23:14:38', 2, 'MARK_RAN', '7:cb16724583e9675711801c6875114f28', 'createTable tableName=APPLICATION_DEFAULT_ROLES; createTable tableName=CLIENT; createTable tableName=CLIENT_SESSION; createTable tableName=CLIENT_SESSION_ROLE; createTable tableName=COMPOSITE_ROLE; createTable tableName=CREDENTIAL; createTable tab...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('1.1.0.Beta1', 'sthorger@redhat.com', 'META-INF/jpa-changelog-1.1.0.Beta1.xml', '2020-03-21 23:14:40', 3, 'EXECUTED', '7:0310eb8ba07cec616460794d42ade0fa', 'delete tableName=CLIENT_SESSION_ROLE; delete tableName=CLIENT_SESSION; delete tableName=USER_SESSION; createTable tableName=CLIENT_ATTRIBUTES; createTable tableName=CLIENT_SESSION_NOTE; createTable tableName=APP_NODE_REGISTRATIONS; addColumn table...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('1.1.0.Final', 'sthorger@redhat.com', 'META-INF/jpa-changelog-1.1.0.Final.xml', '2020-03-21 23:14:40', 4, 'EXECUTED', '7:5d25857e708c3233ef4439df1f93f012', 'renameColumn newColumnName=EVENT_TIME, oldColumnName=TIME, tableName=EVENT_ENTITY', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('1.2.0.Beta1', 'psilva@redhat.com', 'META-INF/jpa-changelog-1.2.0.Beta1.xml', '2020-03-21 23:14:44', 5, 'EXECUTED', '7:c7a54a1041d58eb3817a4a883b4d4e84', 'delete tableName=CLIENT_SESSION_ROLE; delete tableName=CLIENT_SESSION_NOTE; delete tableName=CLIENT_SESSION; delete tableName=USER_SESSION; createTable tableName=PROTOCOL_MAPPER; createTable tableName=PROTOCOL_MAPPER_CONFIG; createTable tableName=...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('1.2.0.Beta1', 'psilva@redhat.com', 'META-INF/db2-jpa-changelog-1.2.0.Beta1.xml', '2020-03-21 23:14:44', 6, 'MARK_RAN', '7:2e01012df20974c1c2a605ef8afe25b7', 'delete tableName=CLIENT_SESSION_ROLE; delete tableName=CLIENT_SESSION_NOTE; delete tableName=CLIENT_SESSION; delete tableName=USER_SESSION; createTable tableName=PROTOCOL_MAPPER; createTable tableName=PROTOCOL_MAPPER_CONFIG; createTable tableName=...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('1.2.0.RC1', 'bburke@redhat.com', 'META-INF/jpa-changelog-1.2.0.CR1.xml', '2020-03-21 23:14:50', 7, 'EXECUTED', '7:0f08df48468428e0f30ee59a8ec01a41', 'delete tableName=CLIENT_SESSION_ROLE; delete tableName=CLIENT_SESSION_NOTE; delete tableName=CLIENT_SESSION; delete tableName=USER_SESSION_NOTE; delete tableName=USER_SESSION; createTable tableName=MIGRATION_MODEL; createTable tableName=IDENTITY_P...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('1.2.0.RC1', 'bburke@redhat.com', 'META-INF/db2-jpa-changelog-1.2.0.CR1.xml', '2020-03-21 23:14:50', 8, 'MARK_RAN', '7:a77ea2ad226b345e7d689d366f185c8c', 'delete tableName=CLIENT_SESSION_ROLE; delete tableName=CLIENT_SESSION_NOTE; delete tableName=CLIENT_SESSION; delete tableName=USER_SESSION_NOTE; delete tableName=USER_SESSION; createTable tableName=MIGRATION_MODEL; createTable tableName=IDENTITY_P...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('1.2.0.Final', 'keycloak', 'META-INF/jpa-changelog-1.2.0.Final.xml', '2020-03-21 23:14:50', 9, 'EXECUTED', '7:a3377a2059aefbf3b90ebb4c4cc8e2ab', 'update tableName=CLIENT; update tableName=CLIENT; update tableName=CLIENT', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('1.3.0', 'bburke@redhat.com', 'META-INF/jpa-changelog-1.3.0.xml', '2020-03-21 23:14:55', 10, 'EXECUTED', '7:04c1dbedc2aa3e9756d1a1668e003451', 'delete tableName=CLIENT_SESSION_ROLE; delete tableName=CLIENT_SESSION_PROT_MAPPER; delete tableName=CLIENT_SESSION_NOTE; delete tableName=CLIENT_SESSION; delete tableName=USER_SESSION_NOTE; delete tableName=USER_SESSION; createTable tableName=ADMI...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('1.4.0', 'bburke@redhat.com', 'META-INF/jpa-changelog-1.4.0.xml', '2020-03-21 23:14:57', 11, 'EXECUTED', '7:36ef39ed560ad07062d956db861042ba', 'delete tableName=CLIENT_SESSION_AUTH_STATUS; delete tableName=CLIENT_SESSION_ROLE; delete tableName=CLIENT_SESSION_PROT_MAPPER; delete tableName=CLIENT_SESSION_NOTE; delete tableName=CLIENT_SESSION; delete tableName=USER_SESSION_NOTE; delete table...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('1.4.0', 'bburke@redhat.com', 'META-INF/db2-jpa-changelog-1.4.0.xml', '2020-03-21 23:14:57', 12, 'MARK_RAN', '7:d909180b2530479a716d3f9c9eaea3d7', 'delete tableName=CLIENT_SESSION_AUTH_STATUS; delete tableName=CLIENT_SESSION_ROLE; delete tableName=CLIENT_SESSION_PROT_MAPPER; delete tableName=CLIENT_SESSION_NOTE; delete tableName=CLIENT_SESSION; delete tableName=USER_SESSION_NOTE; delete table...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('1.5.0', 'bburke@redhat.com', 'META-INF/jpa-changelog-1.5.0.xml', '2020-03-21 23:14:58', 13, 'EXECUTED', '7:cf12b04b79bea5152f165eb41f3955f6', 'delete tableName=CLIENT_SESSION_AUTH_STATUS; delete tableName=CLIENT_SESSION_ROLE; delete tableName=CLIENT_SESSION_PROT_MAPPER; delete tableName=CLIENT_SESSION_NOTE; delete tableName=CLIENT_SESSION; delete tableName=USER_SESSION_NOTE; delete table...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('1.6.1_from15', 'mposolda@redhat.com', 'META-INF/jpa-changelog-1.6.1.xml', '2020-03-21 23:14:59', 14, 'EXECUTED', '7:7e32c8f05c755e8675764e7d5f514509', 'addColumn tableName=REALM; addColumn tableName=KEYCLOAK_ROLE; addColumn tableName=CLIENT; createTable tableName=OFFLINE_USER_SESSION; createTable tableName=OFFLINE_CLIENT_SESSION; addPrimaryKey constraintName=CONSTRAINT_OFFL_US_SES_PK2, tableName=...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('1.6.1_from16-pre', 'mposolda@redhat.com', 'META-INF/jpa-changelog-1.6.1.xml', '2020-03-21 23:14:59', 15, 'MARK_RAN', '7:980ba23cc0ec39cab731ce903dd01291', 'delete tableName=OFFLINE_CLIENT_SESSION; delete tableName=OFFLINE_USER_SESSION', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('1.6.1_from16', 'mposolda@redhat.com', 'META-INF/jpa-changelog-1.6.1.xml', '2020-03-21 23:14:59', 16, 'MARK_RAN', '7:2fa220758991285312eb84f3b4ff5336', 'dropPrimaryKey constraintName=CONSTRAINT_OFFLINE_US_SES_PK, tableName=OFFLINE_USER_SESSION; dropPrimaryKey constraintName=CONSTRAINT_OFFLINE_CL_SES_PK, tableName=OFFLINE_CLIENT_SESSION; addColumn tableName=OFFLINE_USER_SESSION; update tableName=OF...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('1.6.1', 'mposolda@redhat.com', 'META-INF/jpa-changelog-1.6.1.xml', '2020-03-21 23:14:59', 17, 'EXECUTED', '7:d41d8cd98f00b204e9800998ecf8427e', 'empty', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('1.7.0', 'bburke@redhat.com', 'META-INF/jpa-changelog-1.7.0.xml', '2020-03-21 23:15:02', 18, 'EXECUTED', '7:91ace540896df890cc00a0490ee52bbc', 'createTable tableName=KEYCLOAK_GROUP; createTable tableName=GROUP_ROLE_MAPPING; createTable tableName=GROUP_ATTRIBUTE; createTable tableName=USER_GROUP_MEMBERSHIP; createTable tableName=REALM_DEFAULT_GROUPS; addColumn tableName=IDENTITY_PROVIDER; ...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('1.8.0', 'mposolda@redhat.com', 'META-INF/jpa-changelog-1.8.0.xml', '2020-03-21 23:15:05', 19, 'EXECUTED', '7:c31d1646dfa2618a9335c00e07f89f24', 'addColumn tableName=IDENTITY_PROVIDER; createTable tableName=CLIENT_TEMPLATE; createTable tableName=CLIENT_TEMPLATE_ATTRIBUTES; createTable tableName=TEMPLATE_SCOPE_MAPPING; dropNotNullConstraint columnName=CLIENT_ID, tableName=PROTOCOL_MAPPER; ad...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('1.8.0-2', 'keycloak', 'META-INF/jpa-changelog-1.8.0.xml', '2020-03-21 23:15:05', 20, 'EXECUTED', '7:df8bc21027a4f7cbbb01f6344e89ce07', 'dropDefaultValue columnName=ALGORITHM, tableName=CREDENTIAL; update tableName=CREDENTIAL', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('1.8.0', 'mposolda@redhat.com', 'META-INF/db2-jpa-changelog-1.8.0.xml', '2020-03-21 23:15:05', 21, 'MARK_RAN', '7:f987971fe6b37d963bc95fee2b27f8df', 'addColumn tableName=IDENTITY_PROVIDER; createTable tableName=CLIENT_TEMPLATE; createTable tableName=CLIENT_TEMPLATE_ATTRIBUTES; createTable tableName=TEMPLATE_SCOPE_MAPPING; dropNotNullConstraint columnName=CLIENT_ID, tableName=PROTOCOL_MAPPER; ad...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('1.8.0-2', 'keycloak', 'META-INF/db2-jpa-changelog-1.8.0.xml', '2020-03-21 23:15:05', 22, 'MARK_RAN', '7:df8bc21027a4f7cbbb01f6344e89ce07', 'dropDefaultValue columnName=ALGORITHM, tableName=CREDENTIAL; update tableName=CREDENTIAL', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('1.9.0', 'mposolda@redhat.com', 'META-INF/jpa-changelog-1.9.0.xml', '2020-03-21 23:15:05', 23, 'EXECUTED', '7:ed2dc7f799d19ac452cbcda56c929e47', 'update tableName=REALM; update tableName=REALM; update tableName=REALM; update tableName=REALM; update tableName=CREDENTIAL; update tableName=CREDENTIAL; update tableName=CREDENTIAL; update tableName=REALM; update tableName=REALM; customChange; dr...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('1.9.1', 'keycloak', 'META-INF/jpa-changelog-1.9.1.xml', '2020-03-21 23:15:06', 24, 'EXECUTED', '7:80b5db88a5dda36ece5f235be8757615', 'modifyDataType columnName=PRIVATE_KEY, tableName=REALM; modifyDataType columnName=PUBLIC_KEY, tableName=REALM; modifyDataType columnName=CERTIFICATE, tableName=REALM', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('1.9.1', 'keycloak', 'META-INF/db2-jpa-changelog-1.9.1.xml', '2020-03-21 23:15:06', 25, 'MARK_RAN', '7:1437310ed1305a9b93f8848f301726ce', 'modifyDataType columnName=PRIVATE_KEY, tableName=REALM; modifyDataType columnName=CERTIFICATE, tableName=REALM', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('1.9.2', 'keycloak', 'META-INF/jpa-changelog-1.9.2.xml', '2020-03-21 23:15:06', 26, 'EXECUTED', '7:b82ffb34850fa0836be16deefc6a87c4', 'createIndex indexName=IDX_USER_EMAIL, tableName=USER_ENTITY; createIndex indexName=IDX_USER_ROLE_MAPPING, tableName=USER_ROLE_MAPPING; createIndex indexName=IDX_USER_GROUP_MAPPING, tableName=USER_GROUP_MEMBERSHIP; createIndex indexName=IDX_USER_CO...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('authz-2.0.0', 'psilva@redhat.com', 'META-INF/jpa-changelog-authz-2.0.0.xml', '2020-03-21 23:15:11', 27, 'EXECUTED', '7:9cc98082921330d8d9266decdd4bd658', 'createTable tableName=RESOURCE_SERVER; addPrimaryKey constraintName=CONSTRAINT_FARS, tableName=RESOURCE_SERVER; addUniqueConstraint constraintName=UK_AU8TT6T700S9V50BU18WS5HA6, tableName=RESOURCE_SERVER; createTable tableName=RESOURCE_SERVER_RESOU...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('authz-2.5.1', 'psilva@redhat.com', 'META-INF/jpa-changelog-authz-2.5.1.xml', '2020-03-21 23:15:11', 28, 'EXECUTED', '7:03d64aeed9cb52b969bd30a7ac0db57e', 'update tableName=RESOURCE_SERVER_POLICY', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('2.1.0-KEYCLOAK-5461', 'bburke@redhat.com', 'META-INF/jpa-changelog-2.1.0.xml', '2020-03-21 23:15:13', 29, 'EXECUTED', '7:f1f9fd8710399d725b780f463c6b21cd', 'createTable tableName=BROKER_LINK; createTable tableName=FED_USER_ATTRIBUTE; createTable tableName=FED_USER_CONSENT; createTable tableName=FED_USER_CONSENT_ROLE; createTable tableName=FED_USER_CONSENT_PROT_MAPPER; createTable tableName=FED_USER_CR...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('2.2.0', 'bburke@redhat.com', 'META-INF/jpa-changelog-2.2.0.xml', '2020-03-21 23:15:14', 30, 'EXECUTED', '7:53188c3eb1107546e6f765835705b6c1', 'addColumn tableName=ADMIN_EVENT_ENTITY; createTable tableName=CREDENTIAL_ATTRIBUTE; createTable tableName=FED_CREDENTIAL_ATTRIBUTE; modifyDataType columnName=VALUE, tableName=CREDENTIAL; addForeignKeyConstraint baseTableName=FED_CREDENTIAL_ATTRIBU...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('2.3.0', 'bburke@redhat.com', 'META-INF/jpa-changelog-2.3.0.xml', '2020-03-21 23:15:16', 31, 'EXECUTED', '7:d6e6f3bc57a0c5586737d1351725d4d4', 'createTable tableName=FEDERATED_USER; addPrimaryKey constraintName=CONSTR_FEDERATED_USER, tableName=FEDERATED_USER; dropDefaultValue columnName=TOTP, tableName=USER_ENTITY; dropColumn columnName=TOTP, tableName=USER_ENTITY; addColumn tableName=IDE...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('2.4.0', 'bburke@redhat.com', 'META-INF/jpa-changelog-2.4.0.xml', '2020-03-21 23:15:16', 32, 'EXECUTED', '7:454d604fbd755d9df3fd9c6329043aa5', 'customChange', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('2.5.0', 'bburke@redhat.com', 'META-INF/jpa-changelog-2.5.0.xml', '2020-03-21 23:15:16', 33, 'EXECUTED', '7:57e98a3077e29caf562f7dbf80c72600', 'customChange; modifyDataType columnName=USER_ID, tableName=OFFLINE_USER_SESSION', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('2.5.0-unicode-oracle', 'hmlnarik@redhat.com', 'META-INF/jpa-changelog-2.5.0.xml', '2020-03-21 23:15:16', 34, 'MARK_RAN', '7:e4c7e8f2256210aee71ddc42f538b57a', 'modifyDataType columnName=DESCRIPTION, tableName=AUTHENTICATION_FLOW; modifyDataType columnName=DESCRIPTION, tableName=CLIENT_TEMPLATE; modifyDataType columnName=DESCRIPTION, tableName=RESOURCE_SERVER_POLICY; modifyDataType columnName=DESCRIPTION,...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('2.5.0-unicode-other-dbs', 'hmlnarik@redhat.com', 'META-INF/jpa-changelog-2.5.0.xml', '2020-03-21 23:15:20', 35, 'EXECUTED', '7:09a43c97e49bc626460480aa1379b522', 'modifyDataType columnName=DESCRIPTION, tableName=AUTHENTICATION_FLOW; modifyDataType columnName=DESCRIPTION, tableName=CLIENT_TEMPLATE; modifyDataType columnName=DESCRIPTION, tableName=RESOURCE_SERVER_POLICY; modifyDataType columnName=DESCRIPTION,...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('2.5.0-duplicate-email-support', 'slawomir@dabek.name', 'META-INF/jpa-changelog-2.5.0.xml', '2020-03-21 23:15:20', 36, 'EXECUTED', '7:26bfc7c74fefa9126f2ce702fb775553', 'addColumn tableName=REALM', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('2.5.0-unique-group-names', 'hmlnarik@redhat.com', 'META-INF/jpa-changelog-2.5.0.xml', '2020-03-21 23:15:20', 37, 'EXECUTED', '7:a161e2ae671a9020fff61e996a207377', 'addUniqueConstraint constraintName=SIBLING_NAMES, tableName=KEYCLOAK_GROUP', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('2.5.1', 'bburke@redhat.com', 'META-INF/jpa-changelog-2.5.1.xml', '2020-03-21 23:15:20', 38, 'EXECUTED', '7:37fc1781855ac5388c494f1442b3f717', 'addColumn tableName=FED_USER_CONSENT', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('3.0.0', 'bburke@redhat.com', 'META-INF/jpa-changelog-3.0.0.xml', '2020-03-21 23:15:21', 39, 'EXECUTED', '7:13a27db0dae6049541136adad7261d27', 'addColumn tableName=IDENTITY_PROVIDER', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('3.2.0-fix', 'keycloak', 'META-INF/jpa-changelog-3.2.0.xml', '2020-03-21 23:15:21', 40, 'MARK_RAN', '7:550300617e3b59e8af3a6294df8248a3', 'addNotNullConstraint columnName=REALM_ID, tableName=CLIENT_INITIAL_ACCESS', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('3.2.0-fix-with-keycloak-5416', 'keycloak', 'META-INF/jpa-changelog-3.2.0.xml', '2020-03-21 23:15:21', 41, 'MARK_RAN', '7:e3a9482b8931481dc2772a5c07c44f17', 'dropIndex indexName=IDX_CLIENT_INIT_ACC_REALM, tableName=CLIENT_INITIAL_ACCESS; addNotNullConstraint columnName=REALM_ID, tableName=CLIENT_INITIAL_ACCESS; createIndex indexName=IDX_CLIENT_INIT_ACC_REALM, tableName=CLIENT_INITIAL_ACCESS', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('3.2.0-fix-offline-sessions', 'hmlnarik', 'META-INF/jpa-changelog-3.2.0.xml', '2020-03-21 23:15:21', 42, 'EXECUTED', '7:72b07d85a2677cb257edb02b408f332d', 'customChange', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('3.2.0-fixed', 'keycloak', 'META-INF/jpa-changelog-3.2.0.xml', '2020-03-21 23:15:25', 43, 'EXECUTED', '7:a72a7858967bd414835d19e04d880312', 'addColumn tableName=REALM; dropPrimaryKey constraintName=CONSTRAINT_OFFL_CL_SES_PK2, tableName=OFFLINE_CLIENT_SESSION; dropColumn columnName=CLIENT_SESSION_ID, tableName=OFFLINE_CLIENT_SESSION; addPrimaryKey constraintName=CONSTRAINT_OFFL_CL_SES_P...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('3.3.0', 'keycloak', 'META-INF/jpa-changelog-3.3.0.xml', '2020-03-21 23:15:25', 44, 'EXECUTED', '7:94edff7cf9ce179e7e85f0cd78a3cf2c', 'addColumn tableName=USER_ENTITY', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('authz-3.4.0.CR1-resource-server-pk-change-part1', 'glavoie@gmail.com', 'META-INF/jpa-changelog-authz-3.4.0.CR1.xml', '2020-03-21 23:15:26', 45, 'EXECUTED', '7:6a48ce645a3525488a90fbf76adf3bb3', 'addColumn tableName=RESOURCE_SERVER_POLICY; addColumn tableName=RESOURCE_SERVER_RESOURCE; addColumn tableName=RESOURCE_SERVER_SCOPE', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('authz-3.4.0.CR1-resource-server-pk-change-part2-KEYCLOAK-6095', 'hmlnarik@redhat.com', 'META-INF/jpa-changelog-authz-3.4.0.CR1.xml', '2020-03-21 23:15:26', 46, 'EXECUTED', '7:e64b5dcea7db06077c6e57d3b9e5ca14', 'customChange', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('authz-3.4.0.CR1-resource-server-pk-change-part3-fixed', 'glavoie@gmail.com', 'META-INF/jpa-changelog-authz-3.4.0.CR1.xml', '2020-03-21 23:15:26', 47, 'MARK_RAN', '7:fd8cf02498f8b1e72496a20afc75178c', 'dropIndex indexName=IDX_RES_SERV_POL_RES_SERV, tableName=RESOURCE_SERVER_POLICY; dropIndex indexName=IDX_RES_SRV_RES_RES_SRV, tableName=RESOURCE_SERVER_RESOURCE; dropIndex indexName=IDX_RES_SRV_SCOPE_RES_SRV, tableName=RESOURCE_SERVER_SCOPE', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('authz-3.4.0.CR1-resource-server-pk-change-part3-fixed-nodropindex', 'glavoie@gmail.com', 'META-INF/jpa-changelog-authz-3.4.0.CR1.xml', '2020-03-21 23:15:29', 48, 'EXECUTED', '7:542794f25aa2b1fbabb7e577d6646319', 'addNotNullConstraint columnName=RESOURCE_SERVER_CLIENT_ID, tableName=RESOURCE_SERVER_POLICY; addNotNullConstraint columnName=RESOURCE_SERVER_CLIENT_ID, tableName=RESOURCE_SERVER_RESOURCE; addNotNullConstraint columnName=RESOURCE_SERVER_CLIENT_ID, ...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('authn-3.4.0.CR1-refresh-token-max-reuse', 'glavoie@gmail.com', 'META-INF/jpa-changelog-authz-3.4.0.CR1.xml', '2020-03-21 23:15:29', 49, 'EXECUTED', '7:edad604c882df12f74941dac3cc6d650', 'addColumn tableName=REALM', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('3.4.0', 'keycloak', 'META-INF/jpa-changelog-3.4.0.xml', '2020-03-21 23:15:32', 50, 'EXECUTED', '7:0f88b78b7b46480eb92690cbf5e44900', 'addPrimaryKey constraintName=CONSTRAINT_REALM_DEFAULT_ROLES, tableName=REALM_DEFAULT_ROLES; addPrimaryKey constraintName=CONSTRAINT_COMPOSITE_ROLE, tableName=COMPOSITE_ROLE; addPrimaryKey constraintName=CONSTR_REALM_DEFAULT_GROUPS, tableName=REALM...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('3.4.0-KEYCLOAK-5230', 'hmlnarik@redhat.com', 'META-INF/jpa-changelog-3.4.0.xml', '2020-03-21 23:15:33', 51, 'EXECUTED', '7:d560e43982611d936457c327f872dd59', 'createIndex indexName=IDX_FU_ATTRIBUTE, tableName=FED_USER_ATTRIBUTE; createIndex indexName=IDX_FU_CONSENT, tableName=FED_USER_CONSENT; createIndex indexName=IDX_FU_CONSENT_RU, tableName=FED_USER_CONSENT; createIndex indexName=IDX_FU_CREDENTIAL, t...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('3.4.1', 'psilva@redhat.com', 'META-INF/jpa-changelog-3.4.1.xml', '2020-03-21 23:15:33', 52, 'EXECUTED', '7:c155566c42b4d14ef07059ec3b3bbd8e', 'modifyDataType columnName=VALUE, tableName=CLIENT_ATTRIBUTES', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('3.4.2', 'keycloak', 'META-INF/jpa-changelog-3.4.2.xml', '2020-03-21 23:15:33', 53, 'EXECUTED', '7:b40376581f12d70f3c89ba8ddf5b7dea', 'update tableName=REALM', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('3.4.2-KEYCLOAK-5172', 'mkanis@redhat.com', 'META-INF/jpa-changelog-3.4.2.xml', '2020-03-21 23:15:33', 54, 'EXECUTED', '7:a1132cc395f7b95b3646146c2e38f168', 'update tableName=CLIENT', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('4.0.0-KEYCLOAK-6335', 'bburke@redhat.com', 'META-INF/jpa-changelog-4.0.0.xml', '2020-03-21 23:15:33', 55, 'EXECUTED', '7:d8dc5d89c789105cfa7ca0e82cba60af', 'createTable tableName=CLIENT_AUTH_FLOW_BINDINGS; addPrimaryKey constraintName=C_CLI_FLOW_BIND, tableName=CLIENT_AUTH_FLOW_BINDINGS', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('4.0.0-CLEANUP-UNUSED-TABLE', 'bburke@redhat.com', 'META-INF/jpa-changelog-4.0.0.xml', '2020-03-21 23:15:33', 56, 'EXECUTED', '7:7822e0165097182e8f653c35517656a3', 'dropTable tableName=CLIENT_IDENTITY_PROV_MAPPING', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('4.0.0-KEYCLOAK-6228', 'bburke@redhat.com', 'META-INF/jpa-changelog-4.0.0.xml', '2020-03-21 23:15:34', 57, 'EXECUTED', '7:c6538c29b9c9a08f9e9ea2de5c2b6375', 'dropUniqueConstraint constraintName=UK_JKUWUVD56ONTGSUHOGM8UEWRT, tableName=USER_CONSENT; dropNotNullConstraint columnName=CLIENT_ID, tableName=USER_CONSENT; addColumn tableName=USER_CONSENT; addUniqueConstraint constraintName=UK_JKUWUVD56ONTGSUHO...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('4.0.0-KEYCLOAK-5579-fixed', 'mposolda@redhat.com', 'META-INF/jpa-changelog-4.0.0.xml', '2020-03-21 23:15:42', 58, 'EXECUTED', '7:6d4893e36de22369cf73bcb051ded875', 'dropForeignKeyConstraint baseTableName=CLIENT_TEMPLATE_ATTRIBUTES, constraintName=FK_CL_TEMPL_ATTR_TEMPL; renameTable newTableName=CLIENT_SCOPE_ATTRIBUTES, oldTableName=CLIENT_TEMPLATE_ATTRIBUTES; renameColumn newColumnName=SCOPE_ID, oldColumnName...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('authz-4.0.0.CR1', 'psilva@redhat.com', 'META-INF/jpa-changelog-authz-4.0.0.CR1.xml', '2020-03-21 23:15:43', 59, 'EXECUTED', '7:57960fc0b0f0dd0563ea6f8b2e4a1707', 'createTable tableName=RESOURCE_SERVER_PERM_TICKET; addPrimaryKey constraintName=CONSTRAINT_FAPMT, tableName=RESOURCE_SERVER_PERM_TICKET; addForeignKeyConstraint baseTableName=RESOURCE_SERVER_PERM_TICKET, constraintName=FK_FRSRHO213XCX4WNKOG82SSPMT...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('authz-4.0.0.Beta3', 'psilva@redhat.com', 'META-INF/jpa-changelog-authz-4.0.0.Beta3.xml', '2020-03-21 23:15:44', 60, 'EXECUTED', '7:2b4b8bff39944c7097977cc18dbceb3b', 'addColumn tableName=RESOURCE_SERVER_POLICY; addColumn tableName=RESOURCE_SERVER_PERM_TICKET; addForeignKeyConstraint baseTableName=RESOURCE_SERVER_PERM_TICKET, constraintName=FK_FRSRPO2128CX4WNKOG82SSRFY, referencedTableName=RESOURCE_SERVER_POLICY', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('authz-4.2.0.Final', 'mhajas@redhat.com', 'META-INF/jpa-changelog-authz-4.2.0.Final.xml', '2020-03-21 23:15:44', 61, 'EXECUTED', '7:2aa42a964c59cd5b8ca9822340ba33a8', 'createTable tableName=RESOURCE_URIS; addForeignKeyConstraint baseTableName=RESOURCE_URIS, constraintName=FK_RESOURCE_SERVER_URIS, referencedTableName=RESOURCE_SERVER_RESOURCE; customChange; dropColumn columnName=URI, tableName=RESOURCE_SERVER_RESO...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('authz-4.2.0.Final-KEYCLOAK-9944', 'hmlnarik@redhat.com', 'META-INF/jpa-changelog-authz-4.2.0.Final.xml', '2020-03-21 23:15:44', 62, 'EXECUTED', '7:9ac9e58545479929ba23f4a3087a0346', 'addPrimaryKey constraintName=CONSTRAINT_RESOUR_URIS_PK, tableName=RESOURCE_URIS', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('4.2.0-KEYCLOAK-6313', 'wadahiro@gmail.com', 'META-INF/jpa-changelog-4.2.0.xml', '2020-03-21 23:15:44', 63, 'EXECUTED', '7:14d407c35bc4fe1976867756bcea0c36', 'addColumn tableName=REQUIRED_ACTION_PROVIDER', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('4.3.0-KEYCLOAK-7984', 'wadahiro@gmail.com', 'META-INF/jpa-changelog-4.3.0.xml', '2020-03-21 23:15:44', 64, 'EXECUTED', '7:241a8030c748c8548e346adee548fa93', 'update tableName=REQUIRED_ACTION_PROVIDER', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('4.6.0-KEYCLOAK-7950', 'psilva@redhat.com', 'META-INF/jpa-changelog-4.6.0.xml', '2020-03-21 23:15:44', 65, 'EXECUTED', '7:7d3182f65a34fcc61e8d23def037dc3f', 'update tableName=RESOURCE_SERVER_RESOURCE', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('4.6.0-KEYCLOAK-8377', 'keycloak', 'META-INF/jpa-changelog-4.6.0.xml', '2020-03-21 23:15:45', 66, 'EXECUTED', '7:b30039e00a0b9715d430d1b0636728fa', 'createTable tableName=ROLE_ATTRIBUTE; addPrimaryKey constraintName=CONSTRAINT_ROLE_ATTRIBUTE_PK, tableName=ROLE_ATTRIBUTE; addForeignKeyConstraint baseTableName=ROLE_ATTRIBUTE, constraintName=FK_ROLE_ATTRIBUTE_ID, referencedTableName=KEYCLOAK_ROLE...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('4.6.0-KEYCLOAK-8555', 'gideonray@gmail.com', 'META-INF/jpa-changelog-4.6.0.xml', '2020-03-21 23:15:45', 67, 'EXECUTED', '7:3797315ca61d531780f8e6f82f258159', 'createIndex indexName=IDX_COMPONENT_PROVIDER_TYPE, tableName=COMPONENT', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('4.7.0-KEYCLOAK-1267', 'sguilhen@redhat.com', 'META-INF/jpa-changelog-4.7.0.xml', '2020-03-21 23:15:45', 68, 'EXECUTED', '7:c7aa4c8d9573500c2d347c1941ff0301', 'addColumn tableName=REALM', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('4.7.0-KEYCLOAK-7275', 'keycloak', 'META-INF/jpa-changelog-4.7.0.xml', '2020-03-21 23:15:45', 69, 'EXECUTED', '7:b207faee394fc074a442ecd42185a5dd', 'renameColumn newColumnName=CREATED_ON, oldColumnName=LAST_SESSION_REFRESH, tableName=OFFLINE_USER_SESSION; addNotNullConstraint columnName=CREATED_ON, tableName=OFFLINE_USER_SESSION; addColumn tableName=OFFLINE_USER_SESSION; customChange; createIn...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('4.8.0-KEYCLOAK-8835', 'sguilhen@redhat.com', 'META-INF/jpa-changelog-4.8.0.xml', '2020-03-21 23:15:46', 70, 'EXECUTED', '7:ab9a9762faaba4ddfa35514b212c4922', 'addNotNullConstraint columnName=SSO_MAX_LIFESPAN_REMEMBER_ME, tableName=REALM; addNotNullConstraint columnName=SSO_IDLE_TIMEOUT_REMEMBER_ME, tableName=REALM', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('authz-7.0.0-KEYCLOAK-10443', 'psilva@redhat.com', 'META-INF/jpa-changelog-authz-7.0.0.xml', '2020-03-21 23:15:46', 71, 'EXECUTED', '7:b9710f74515a6ccb51b72dc0d19df8c4', 'addColumn tableName=RESOURCE_SERVER', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('8.0.0-adding-credential-columns', 'keycloak', 'META-INF/jpa-changelog-8.0.0.xml', '2020-03-21 23:15:46', 72, 'EXECUTED', '7:ec9707ae4d4f0b7452fee20128083879', 'addColumn tableName=CREDENTIAL; addColumn tableName=FED_USER_CREDENTIAL', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('8.0.0-updating-credential-data-not-oracle', 'keycloak', 'META-INF/jpa-changelog-8.0.0.xml', '2020-03-21 23:15:46', 73, 'EXECUTED', '7:03b3f4b264c3c68ba082250a80b74216', 'update tableName=CREDENTIAL; update tableName=CREDENTIAL; update tableName=CREDENTIAL; update tableName=FED_USER_CREDENTIAL; update tableName=FED_USER_CREDENTIAL; update tableName=FED_USER_CREDENTIAL', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('8.0.0-updating-credential-data-oracle', 'keycloak', 'META-INF/jpa-changelog-8.0.0.xml', '2020-03-21 23:15:46', 74, 'MARK_RAN', '7:64c5728f5ca1f5aa4392217701c4fe23', 'update tableName=CREDENTIAL; update tableName=CREDENTIAL; update tableName=CREDENTIAL; update tableName=FED_USER_CREDENTIAL; update tableName=FED_USER_CREDENTIAL; update tableName=FED_USER_CREDENTIAL', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('8.0.0-credential-cleanup', 'keycloak', 'META-INF/jpa-changelog-8.0.0.xml', '2020-03-21 23:15:49', 75, 'EXECUTED', '7:41f3566ac5177459e1ed3ce8f0ad35d2', 'dropDefaultValue columnName=COUNTER, tableName=CREDENTIAL; dropDefaultValue columnName=DIGITS, tableName=CREDENTIAL; dropDefaultValue columnName=PERIOD, tableName=CREDENTIAL; dropDefaultValue columnName=ALGORITHM, tableName=CREDENTIAL; dropColumn ...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('8.0.0-resource-tag-support', 'keycloak', 'META-INF/jpa-changelog-8.0.0.xml', '2020-03-21 23:15:49', 76, 'EXECUTED', '7:a73379915c23bfad3e8f5c6d5c0aa4bd', 'addColumn tableName=MIGRATION_MODEL; createIndex indexName=IDX_UPDATE_TIME, tableName=MIGRATION_MODEL', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('9.0.0-always-display-client', 'keycloak', 'META-INF/jpa-changelog-9.0.0.xml', '2020-03-21 23:15:49', 77, 'EXECUTED', '7:39e0073779aba192646291aa2332493d', 'addColumn tableName=CLIENT', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('9.0.0-drop-constraints-for-column-increase', 'keycloak', 'META-INF/jpa-changelog-9.0.0.xml', '2020-03-21 23:15:49', 78, 'MARK_RAN', '7:81f87368f00450799b4bf42ea0b3ec34', 'dropUniqueConstraint constraintName=UK_FRSR6T700S9V50BU18WS5PMT, tableName=RESOURCE_SERVER_PERM_TICKET; dropUniqueConstraint constraintName=UK_FRSR6T700S9V50BU18WS5HA6, tableName=RESOURCE_SERVER_RESOURCE; dropPrimaryKey constraintName=CONSTRAINT_O...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('9.0.0-increase-column-size-federated-fk', 'keycloak', 'META-INF/jpa-changelog-9.0.0.xml', '2020-03-21 23:15:51', 79, 'EXECUTED', '7:20b37422abb9fb6571c618148f013a15', 'modifyDataType columnName=CLIENT_ID, tableName=FED_USER_CONSENT; modifyDataType columnName=CLIENT_REALM_CONSTRAINT, tableName=KEYCLOAK_ROLE; modifyDataType columnName=OWNER, tableName=RESOURCE_SERVER_POLICY; modifyDataType columnName=CLIENT_ID, ta...', '', NULL, '3.5.4', NULL, NULL, '4832466971'),
-('9.0.0-recreate-constraints-after-column-increase', 'keycloak', 'META-INF/jpa-changelog-9.0.0.xml', '2020-03-21 23:15:51', 80, 'MARK_RAN', '7:1970bb6cfb5ee800736b95ad3fb3c78a', 'addNotNullConstraint columnName=CLIENT_ID, tableName=OFFLINE_CLIENT_SESSION; addNotNullConstraint columnName=OWNER, tableName=RESOURCE_SERVER_PERM_TICKET; addNotNullConstraint columnName=REQUESTER, tableName=RESOURCE_SERVER_PERM_TICKET; addNotNull...', '', NULL, '3.5.4', NULL, NULL, '4832466971');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `databasechangeloglock`
---
-
-DROP TABLE IF EXISTS `databasechangeloglock`;
-CREATE TABLE IF NOT EXISTS `databasechangeloglock` (
-  `ID` int NOT NULL,
-  `LOCKED` bit(1) NOT NULL,
-  `LOCKGRANTED` datetime DEFAULT NULL,
-  `LOCKEDBY` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `databasechangeloglock`
---
-
-INSERT INTO `databasechangeloglock` (`ID`, `LOCKED`, `LOCKGRANTED`, `LOCKEDBY`) VALUES
-(1, b'0', NULL, NULL),
-(1000, b'0', NULL, NULL),
-(1001, b'0', NULL, NULL);
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `default_client_scope`
---
-
-DROP TABLE IF EXISTS `default_client_scope`;
-CREATE TABLE IF NOT EXISTS `default_client_scope` (
-  `REALM_ID` varchar(36) NOT NULL,
-  `SCOPE_ID` varchar(36) NOT NULL,
-  `DEFAULT_SCOPE` bit(1) NOT NULL DEFAULT b'0',
-  PRIMARY KEY (`REALM_ID`,`SCOPE_ID`),
-  KEY `IDX_DEFCLS_REALM` (`REALM_ID`),
-  KEY `IDX_DEFCLS_SCOPE` (`SCOPE_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `default_client_scope`
---
-
-INSERT INTO `default_client_scope` (`REALM_ID`, `SCOPE_ID`, `DEFAULT_SCOPE`) VALUES
-('jhipster', '021d9ac1-9650-401c-b2a2-efa2f3e6b70c', b'1'),
-('jhipster', '0d3b55db-e68b-4c83-91d4-7370a6810a24', b'0'),
-('jhipster', '1dc1e050-891a-4f5b-ac9d-5ea0c2e3c05e', b'0'),
-('jhipster', '391f1641-cb22-41a3-a0ed-752d9264aaf5', b'1'),
-('jhipster', '39e1693b-a924-4fbb-b98c-520869771f83', b'1'),
-('jhipster', '5253d2be-3116-4510-ac05-99619ce2494c', b'0'),
-('jhipster', '84fdcb72-668b-408e-aaea-110d594afe5e', b'1'),
-('jhipster', 'a72d436e-111b-445b-804a-967d249f6455', b'0'),
-('jhipster', 'd5de6a8a-8894-4e72-b6ef-f9bf3a7a6541', b'1'),
-('master', '1c9c1b4c-ccb9-4e8f-82b7-5b3a4ac06229', b'1'),
-('master', '386b2097-465b-4135-a057-62709870909e', b'0'),
-('master', '38793860-edb1-452f-b2e0-e5ad2041cb70', b'1'),
-('master', '55178e4f-7c18-4d0d-b010-f9e4079d5d48', b'1'),
-('master', '8dee153c-4e64-435f-8a7c-cd9de0eb653d', b'0'),
-('master', '8f9a1a9c-4bdf-41e2-a75b-544a12be1d67', b'0'),
-('master', 'a749b2db-a1ac-4e58-9fd3-1142e96b0445', b'0'),
-('master', 'bd76f66d-85f6-44a6-ad5a-133b3f32016a', b'1'),
-('master', 'e3279721-a5de-46c7-b463-8d076a1631ae', b'1');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `event_entity`
---
-
-DROP TABLE IF EXISTS `event_entity`;
-CREATE TABLE IF NOT EXISTS `event_entity` (
-  `ID` varchar(36) NOT NULL,
-  `CLIENT_ID` varchar(255) DEFAULT NULL,
-  `DETAILS_JSON` text,
-  `ERROR` varchar(255) DEFAULT NULL,
-  `IP_ADDRESS` varchar(255) DEFAULT NULL,
-  `REALM_ID` varchar(255) DEFAULT NULL,
-  `SESSION_ID` varchar(255) DEFAULT NULL,
-  `EVENT_TIME` bigint DEFAULT NULL,
-  `TYPE` varchar(255) DEFAULT NULL,
-  `USER_ID` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `federated_identity`
---
-
-DROP TABLE IF EXISTS `federated_identity`;
-CREATE TABLE IF NOT EXISTS `federated_identity` (
-  `IDENTITY_PROVIDER` varchar(255) NOT NULL,
-  `REALM_ID` varchar(36) DEFAULT NULL,
-  `FEDERATED_USER_ID` varchar(255) DEFAULT NULL,
-  `FEDERATED_USERNAME` varchar(255) DEFAULT NULL,
-  `TOKEN` text,
-  `USER_ID` varchar(36) NOT NULL,
-  PRIMARY KEY (`IDENTITY_PROVIDER`,`USER_ID`),
-  KEY `IDX_FEDIDENTITY_USER` (`USER_ID`),
-  KEY `IDX_FEDIDENTITY_FEDUSER` (`FEDERATED_USER_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `federated_user`
---
-
-DROP TABLE IF EXISTS `federated_user`;
-CREATE TABLE IF NOT EXISTS `federated_user` (
-  `ID` varchar(255) NOT NULL,
-  `STORAGE_PROVIDER_ID` varchar(255) DEFAULT NULL,
-  `REALM_ID` varchar(36) NOT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `fed_user_attribute`
---
-
-DROP TABLE IF EXISTS `fed_user_attribute`;
-CREATE TABLE IF NOT EXISTS `fed_user_attribute` (
-  `ID` varchar(36) NOT NULL,
-  `NAME` varchar(255) NOT NULL,
-  `USER_ID` varchar(255) NOT NULL,
-  `REALM_ID` varchar(36) NOT NULL,
-  `STORAGE_PROVIDER_ID` varchar(36) DEFAULT NULL,
-  `VALUE` text,
-  PRIMARY KEY (`ID`),
-  KEY `IDX_FU_ATTRIBUTE` (`USER_ID`,`REALM_ID`,`NAME`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `fed_user_consent`
---
-
-DROP TABLE IF EXISTS `fed_user_consent`;
-CREATE TABLE IF NOT EXISTS `fed_user_consent` (
-  `ID` varchar(36) NOT NULL,
-  `CLIENT_ID` varchar(255) DEFAULT NULL,
-  `USER_ID` varchar(255) NOT NULL,
-  `REALM_ID` varchar(36) NOT NULL,
-  `STORAGE_PROVIDER_ID` varchar(36) DEFAULT NULL,
-  `CREATED_DATE` bigint DEFAULT NULL,
-  `LAST_UPDATED_DATE` bigint DEFAULT NULL,
-  `CLIENT_STORAGE_PROVIDER` varchar(36) DEFAULT NULL,
-  `EXTERNAL_CLIENT_ID` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `IDX_FU_CONSENT` (`USER_ID`,`CLIENT_ID`),
-  KEY `IDX_FU_CONSENT_RU` (`REALM_ID`,`USER_ID`),
-  KEY `IDX_FU_CNSNT_EXT` (`USER_ID`,`CLIENT_STORAGE_PROVIDER`,`EXTERNAL_CLIENT_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `fed_user_consent_cl_scope`
---
-
-DROP TABLE IF EXISTS `fed_user_consent_cl_scope`;
-CREATE TABLE IF NOT EXISTS `fed_user_consent_cl_scope` (
-  `USER_CONSENT_ID` varchar(36) NOT NULL,
-  `SCOPE_ID` varchar(36) NOT NULL,
-  PRIMARY KEY (`USER_CONSENT_ID`,`SCOPE_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `fed_user_credential`
---
-
-DROP TABLE IF EXISTS `fed_user_credential`;
-CREATE TABLE IF NOT EXISTS `fed_user_credential` (
-  `ID` varchar(36) NOT NULL,
-  `SALT` tinyblob,
-  `TYPE` varchar(255) DEFAULT NULL,
-  `CREATED_DATE` bigint DEFAULT NULL,
-  `USER_ID` varchar(255) NOT NULL,
-  `REALM_ID` varchar(36) NOT NULL,
-  `STORAGE_PROVIDER_ID` varchar(36) DEFAULT NULL,
-  `USER_LABEL` varchar(255) DEFAULT NULL,
-  `SECRET_DATA` longtext,
-  `CREDENTIAL_DATA` longtext,
-  `PRIORITY` int DEFAULT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `IDX_FU_CREDENTIAL` (`USER_ID`,`TYPE`),
-  KEY `IDX_FU_CREDENTIAL_RU` (`REALM_ID`,`USER_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `fed_user_group_membership`
---
-
-DROP TABLE IF EXISTS `fed_user_group_membership`;
-CREATE TABLE IF NOT EXISTS `fed_user_group_membership` (
-  `GROUP_ID` varchar(36) NOT NULL,
-  `USER_ID` varchar(255) NOT NULL,
-  `REALM_ID` varchar(36) NOT NULL,
-  `STORAGE_PROVIDER_ID` varchar(36) DEFAULT NULL,
-  PRIMARY KEY (`GROUP_ID`,`USER_ID`),
-  KEY `IDX_FU_GROUP_MEMBERSHIP` (`USER_ID`,`GROUP_ID`),
-  KEY `IDX_FU_GROUP_MEMBERSHIP_RU` (`REALM_ID`,`USER_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `fed_user_required_action`
---
-
-DROP TABLE IF EXISTS `fed_user_required_action`;
-CREATE TABLE IF NOT EXISTS `fed_user_required_action` (
-  `REQUIRED_ACTION` varchar(255) NOT NULL DEFAULT ' ',
-  `USER_ID` varchar(255) NOT NULL,
-  `REALM_ID` varchar(36) NOT NULL,
-  `STORAGE_PROVIDER_ID` varchar(36) DEFAULT NULL,
-  PRIMARY KEY (`REQUIRED_ACTION`,`USER_ID`),
-  KEY `IDX_FU_REQUIRED_ACTION` (`USER_ID`,`REQUIRED_ACTION`),
-  KEY `IDX_FU_REQUIRED_ACTION_RU` (`REALM_ID`,`USER_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `fed_user_role_mapping`
---
-
-DROP TABLE IF EXISTS `fed_user_role_mapping`;
-CREATE TABLE IF NOT EXISTS `fed_user_role_mapping` (
-  `ROLE_ID` varchar(36) NOT NULL,
-  `USER_ID` varchar(255) NOT NULL,
-  `REALM_ID` varchar(36) NOT NULL,
-  `STORAGE_PROVIDER_ID` varchar(36) DEFAULT NULL,
-  PRIMARY KEY (`ROLE_ID`,`USER_ID`),
-  KEY `IDX_FU_ROLE_MAPPING` (`USER_ID`,`ROLE_ID`),
-  KEY `IDX_FU_ROLE_MAPPING_RU` (`REALM_ID`,`USER_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `group_attribute`
---
-
-DROP TABLE IF EXISTS `group_attribute`;
-CREATE TABLE IF NOT EXISTS `group_attribute` (
-  `ID` varchar(36) NOT NULL DEFAULT 'sybase-needs-something-here',
-  `NAME` varchar(255) NOT NULL,
-  `VALUE` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-  `GROUP_ID` varchar(36) NOT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `IDX_GROUP_ATTR_GROUP` (`GROUP_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `group_role_mapping`
---
-
-DROP TABLE IF EXISTS `group_role_mapping`;
-CREATE TABLE IF NOT EXISTS `group_role_mapping` (
-  `ROLE_ID` varchar(36) NOT NULL,
-  `GROUP_ID` varchar(36) NOT NULL,
-  PRIMARY KEY (`ROLE_ID`,`GROUP_ID`),
-  KEY `IDX_GROUP_ROLE_MAPP_GROUP` (`GROUP_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `group_role_mapping`
---
-
-INSERT INTO `group_role_mapping` (`ROLE_ID`, `GROUP_ID`) VALUES
-('76a4f31d-7149-4d92-bfba-654c2cb6c754', 'a9d6a304-5647-460d-9cb8-9ef4429204aa'),
-('5537c057-dd18-4349-871e-170ca3b0d8c1', 'ab0947d8-3b91-42a0-81e7-953a3c207316'),
-('2de49c9d-f49d-4740-9efe-60300788a4e7', 'bc2923fc-c800-444f-aae3-63a3a55c2bfe'),
-('0e81ebbb-f3d1-4fbd-bfef-72f9b987d6c3', 'c4255caa-6cf7-40fb-8d5a-1b8799a438b8'),
-('6c47d98c-a723-4053-8e87-762c04a3c72f', 'c4255caa-6cf7-40fb-8d5a-1b8799a438b8'),
-('a374e2d8-5a96-4f06-bdeb-87d2d1fd92f2', 'd1513a1f-a357-4a85-b039-21a116553130'),
-('21a2bc5f-a976-435d-bee4-48b69da694e0', 'f37ebe97-4ebe-4ab2-9582-1a4e61505a2d'),
-('8612f4fc-b1fd-43af-8ff8-193a62225bcf', 'f5225541-75da-474a-85b5-206168064336');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `identity_provider`
---
-
-DROP TABLE IF EXISTS `identity_provider`;
-CREATE TABLE IF NOT EXISTS `identity_provider` (
-  `INTERNAL_ID` varchar(36) NOT NULL,
-  `ENABLED` bit(1) NOT NULL DEFAULT b'0',
-  `PROVIDER_ALIAS` varchar(255) DEFAULT NULL,
-  `PROVIDER_ID` varchar(255) DEFAULT NULL,
-  `STORE_TOKEN` bit(1) NOT NULL DEFAULT b'0',
-  `AUTHENTICATE_BY_DEFAULT` bit(1) NOT NULL DEFAULT b'0',
-  `REALM_ID` varchar(36) DEFAULT NULL,
-  `ADD_TOKEN_ROLE` bit(1) NOT NULL DEFAULT b'1',
-  `TRUST_EMAIL` bit(1) NOT NULL DEFAULT b'0',
-  `FIRST_BROKER_LOGIN_FLOW_ID` varchar(36) DEFAULT NULL,
-  `POST_BROKER_LOGIN_FLOW_ID` varchar(36) DEFAULT NULL,
-  `PROVIDER_DISPLAY_NAME` varchar(255) DEFAULT NULL,
-  `LINK_ONLY` bit(1) NOT NULL DEFAULT b'0',
-  PRIMARY KEY (`INTERNAL_ID`),
-  UNIQUE KEY `UK_2DAELWNIBJI49AVXSRTUF6XJ33` (`PROVIDER_ALIAS`,`REALM_ID`),
-  KEY `IDX_IDENT_PROV_REALM` (`REALM_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `identity_provider_config`
---
-
-DROP TABLE IF EXISTS `identity_provider_config`;
-CREATE TABLE IF NOT EXISTS `identity_provider_config` (
-  `IDENTITY_PROVIDER_ID` varchar(36) NOT NULL,
-  `VALUE` longtext,
-  `NAME` varchar(255) NOT NULL,
-  PRIMARY KEY (`IDENTITY_PROVIDER_ID`,`NAME`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `identity_provider_mapper`
---
-
-DROP TABLE IF EXISTS `identity_provider_mapper`;
-CREATE TABLE IF NOT EXISTS `identity_provider_mapper` (
-  `ID` varchar(36) NOT NULL,
-  `NAME` varchar(255) NOT NULL,
-  `IDP_ALIAS` varchar(255) NOT NULL,
-  `IDP_MAPPER_NAME` varchar(255) NOT NULL,
-  `REALM_ID` varchar(36) NOT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `IDX_ID_PROV_MAPP_REALM` (`REALM_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `idp_mapper_config`
---
-
-DROP TABLE IF EXISTS `idp_mapper_config`;
-CREATE TABLE IF NOT EXISTS `idp_mapper_config` (
-  `IDP_MAPPER_ID` varchar(36) NOT NULL,
-  `VALUE` longtext,
-  `NAME` varchar(255) NOT NULL,
-  PRIMARY KEY (`IDP_MAPPER_ID`,`NAME`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `keycloak_group`
---
-
-DROP TABLE IF EXISTS `keycloak_group`;
-CREATE TABLE IF NOT EXISTS `keycloak_group` (
-  `ID` varchar(36) NOT NULL,
-  `NAME` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-  `PARENT_GROUP` varchar(36) DEFAULT NULL,
-  `REALM_ID` varchar(36) DEFAULT NULL,
-  PRIMARY KEY (`ID`),
-  UNIQUE KEY `SIBLING_NAMES` (`REALM_ID`,`PARENT_GROUP`,`NAME`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `keycloak_group`
---
-
-INSERT INTO `keycloak_group` (`ID`, `NAME`, `PARENT_GROUP`, `REALM_ID`) VALUES
-('c4255caa-6cf7-40fb-8d5a-1b8799a438b8', '01-SystemAdministratorsGroup', NULL, 'jhipster'),
-('bc2923fc-c800-444f-aae3-63a3a55c2bfe', '02-ApplicationManagersGroup', NULL, 'jhipster'),
-('a9d6a304-5647-460d-9cb8-9ef4429204aa', '03-ReviewersGroup', NULL, 'jhipster'),
-('f37ebe97-4ebe-4ab2-9582-1a4e61505a2d', '04-PublishersGroup', NULL, 'jhipster'),
-('ab0947d8-3b91-42a0-81e7-953a3c207316', '05-RegisteredUsersGroup', NULL, 'jhipster'),
-('d1513a1f-a357-4a85-b039-21a116553130', '06-MembersOfTheStreetGroup', NULL, 'jhipster'),
-('f5225541-75da-474a-85b5-206168064336', '99-APIConsumersAppsGroup', NULL, 'jhipster');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `keycloak_role`
---
-
-DROP TABLE IF EXISTS `keycloak_role`;
-CREATE TABLE IF NOT EXISTS `keycloak_role` (
-  `ID` varchar(36) NOT NULL,
-  `CLIENT_REALM_CONSTRAINT` varchar(255) DEFAULT NULL,
-  `CLIENT_ROLE` bit(1) DEFAULT NULL,
-  `DESCRIPTION` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-  `NAME` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-  `REALM_ID` varchar(255) DEFAULT NULL,
-  `CLIENT` varchar(36) DEFAULT NULL,
-  `REALM` varchar(36) DEFAULT NULL,
-  PRIMARY KEY (`ID`),
-  UNIQUE KEY `UK_J3RWUVD56ONTGSUHOGM184WW2-2` (`NAME`,`CLIENT_REALM_CONSTRAINT`),
-  KEY `IDX_KEYCLOAK_ROLE_CLIENT` (`CLIENT`),
-  KEY `IDX_KEYCLOAK_ROLE_REALM` (`REALM`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `keycloak_role`
---
-
-INSERT INTO `keycloak_role` (`ID`, `CLIENT_REALM_CONSTRAINT`, `CLIENT_ROLE`, `DESCRIPTION`, `NAME`, `REALM_ID`, `CLIENT`, `REALM`) VALUES
-('009e9136-3a22-481c-963f-1975f8752bdc', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', b'1', '${role_create-client}', 'create-client', 'master', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', NULL),
-('0712cdcc-c020-4adb-9666-e455b77f4803', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', b'1', '${role_manage-clients}', 'manage-clients', 'master', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', NULL),
-('083a848a-49cb-457f-9615-120be8c74d9e', '48fb7988-d909-445a-81db-fe825dca0db2', b'1', '${role_realm-admin}', 'realm-admin', 'jhipster', '48fb7988-d909-445a-81db-fe825dca0db2', NULL),
-('0e81ebbb-f3d1-4fbd-bfef-72f9b987d6c3', 'jhipster', b'0', 'Realm Global Role for System Administrators Profile.', 'ADMIN_GLOBAL_ROLE', 'jhipster', NULL, 'jhipster'),
-('1088e338-7373-46fb-aa87-886ed7c3907d', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', b'1', '${role_manage-identity-providers}', 'manage-identity-providers', 'master', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', NULL),
-('11bc32e5-55a6-431d-b6c7-32bd9504d070', '48fb7988-d909-445a-81db-fe825dca0db2', b'1', '${role_view-clients}', 'view-clients', 'jhipster', '48fb7988-d909-445a-81db-fe825dca0db2', NULL),
-('1235ad96-d5a3-4632-b9f7-367030b03962', 'f1cbf82e-a285-4a15-a172-ff97732a2648', b'1', '${role_view-authorization}', 'view-authorization', 'master', 'f1cbf82e-a285-4a15-a172-ff97732a2648', NULL),
-('1280edcf-1968-4cba-9a1f-a3ea2153ce1b', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', b'1', '${role_view-authorization}', 'view-authorization', 'master', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', NULL),
-('1720600c-859b-44a5-9c18-5e52dc2889c6', 'f7123f46-5de8-4c40-8cff-5c52b3e26a84', b'1', '${role_manage-consent}', 'manage-consent', 'master', 'f7123f46-5de8-4c40-8cff-5c52b3e26a84', NULL),
-('21a2bc5f-a976-435d-bee4-48b69da694e0', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', b'1', 'Client Role for Publishers Profile.', '04_PUBLISHER_CLIENT_ROLE', 'jhipster', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', NULL),
-('21b65e52-b4e3-453e-b0f0-10a44a4a887d', 'e07da50b-cddc-4524-b630-436a5a6ba8ab', b'1', '${role_manage-account}', 'manage-account', 'jhipster', 'e07da50b-cddc-4524-b630-436a5a6ba8ab', NULL),
-('225066d4-4a07-4550-a851-3d9359cbbac2', '274afcdb-7742-4a3a-acc5-17db61a4d200', b'1', '${role_read-token}', 'read-token', 'jhipster', '274afcdb-7742-4a3a-acc5-17db61a4d200', NULL),
-('23f08d10-bcf7-4247-b4c0-684e3e29c1bb', 'f1cbf82e-a285-4a15-a172-ff97732a2648', b'1', '${role_manage-realm}', 'manage-realm', 'master', 'f1cbf82e-a285-4a15-a172-ff97732a2648', NULL),
-('24493c26-5ea3-4e53-b949-ca27a06ff098', '48fb7988-d909-445a-81db-fe825dca0db2', b'1', '${role_manage-users}', 'manage-users', 'jhipster', '48fb7988-d909-445a-81db-fe825dca0db2', NULL),
-('24ba1589-1141-4836-91bb-ad1b10db4944', '48fb7988-d909-445a-81db-fe825dca0db2', b'1', '${role_create-client}', 'create-client', 'jhipster', '48fb7988-d909-445a-81db-fe825dca0db2', NULL),
-('25d085af-e999-4256-b07d-a2832be50fe6', 'f1cbf82e-a285-4a15-a172-ff97732a2648', b'1', '${role_view-events}', 'view-events', 'master', 'f1cbf82e-a285-4a15-a172-ff97732a2648', NULL),
-('26874e1f-65be-45c2-a6b4-ab133a85c169', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', b'1', '${role_query-users}', 'query-users', 'master', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', NULL),
-('2751187a-c709-4ac1-bada-8fd93cdbdcf4', 'f1cbf82e-a285-4a15-a172-ff97732a2648', b'1', '${role_manage-identity-providers}', 'manage-identity-providers', 'master', 'f1cbf82e-a285-4a15-a172-ff97732a2648', NULL),
-('2a54d26e-7a55-4fc9-92cb-45e613084562', '48fb7988-d909-445a-81db-fe825dca0db2', b'1', '${role_view-realm}', 'view-realm', 'jhipster', '48fb7988-d909-445a-81db-fe825dca0db2', NULL),
-('2c2938a2-8c99-4c66-bfd7-47331dd9d45c', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', b'1', '${role_view-events}', 'view-events', 'master', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', NULL),
-('2d8a0ec8-111b-41a2-bf49-7f1ae086c5b1', '48fb7988-d909-445a-81db-fe825dca0db2', b'1', '${role_manage-realm}', 'manage-realm', 'jhipster', '48fb7988-d909-445a-81db-fe825dca0db2', NULL),
-('2de49c9d-f49d-4740-9efe-60300788a4e7', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', b'1', 'Client Role for Application Managers Profile.', '02_APP_MANAGER_CLIENT_ROLE', 'jhipster', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', NULL),
-('2f58d746-0582-47fe-9b67-30809d5ad461', '48fb7988-d909-445a-81db-fe825dca0db2', b'1', '${role_query-users}', 'query-users', 'jhipster', '48fb7988-d909-445a-81db-fe825dca0db2', NULL),
-('33c455ac-906c-47c4-8bc1-135014aa8efc', 'master', b'0', '${role_uma_authorization}', 'uma_authorization', 'master', NULL, 'master'),
-('354b3a09-47a6-4051-957c-c6a3ee28a190', 'e07da50b-cddc-4524-b630-436a5a6ba8ab', b'1', '${role_view-profile}', 'view-profile', 'jhipster', 'e07da50b-cddc-4524-b630-436a5a6ba8ab', NULL),
-('3774414f-db0d-4928-b080-f22599622e97', '48fb7988-d909-445a-81db-fe825dca0db2', b'1', '${role_manage-clients}', 'manage-clients', 'jhipster', '48fb7988-d909-445a-81db-fe825dca0db2', NULL),
-('38cbec3e-9ca1-4292-a513-09e86fdcf6b1', '48fb7988-d909-445a-81db-fe825dca0db2', b'1', '${role_view-identity-providers}', 'view-identity-providers', 'jhipster', '48fb7988-d909-445a-81db-fe825dca0db2', NULL),
-('42abef51-b33b-4eb3-8515-3c6b16ca3849', '48fb7988-d909-445a-81db-fe825dca0db2', b'1', '${role_manage-identity-providers}', 'manage-identity-providers', 'jhipster', '48fb7988-d909-445a-81db-fe825dca0db2', NULL),
-('42dcf4f5-8f73-4907-bd90-669cccd66c23', 'e07da50b-cddc-4524-b630-436a5a6ba8ab', b'1', '${role_manage-consent}', 'manage-consent', 'jhipster', 'e07da50b-cddc-4524-b630-436a5a6ba8ab', NULL),
-('4873b8a8-8035-4b5e-bdd9-99ac74a4a43b', '48fb7988-d909-445a-81db-fe825dca0db2', b'1', '${role_query-clients}', 'query-clients', 'jhipster', '48fb7988-d909-445a-81db-fe825dca0db2', NULL),
-('4a092fac-6395-411d-96d7-89d44bd5f45b', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', b'1', '${role_view-clients}', 'view-clients', 'master', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', NULL),
-('4ee6ec5a-1aa5-4458-9575-8e3879b90575', 'f1cbf82e-a285-4a15-a172-ff97732a2648', b'1', '${role_query-users}', 'query-users', 'master', 'f1cbf82e-a285-4a15-a172-ff97732a2648', NULL),
-('4ee94804-bc06-4d02-8541-410768b88a49', '48fb7988-d909-445a-81db-fe825dca0db2', b'1', '${role_manage-authorization}', 'manage-authorization', 'jhipster', '48fb7988-d909-445a-81db-fe825dca0db2', NULL),
-('4f099d14-b60c-4389-9a7a-7c96e149f912', 'f1cbf82e-a285-4a15-a172-ff97732a2648', b'1', '${role_query-clients}', 'query-clients', 'master', 'f1cbf82e-a285-4a15-a172-ff97732a2648', NULL),
-('5328d093-e39c-4a2d-b664-01ed54505337', 'e07da50b-cddc-4524-b630-436a5a6ba8ab', b'1', '${role_view-applications}', 'view-applications', 'jhipster', 'e07da50b-cddc-4524-b630-436a5a6ba8ab', NULL),
-('5537c057-dd18-4349-871e-170ca3b0d8c1', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', b'1', 'Client Role for Common Registered Users Profile.', '05_REGISTERED_USERS_CLIENT_ROLE', 'jhipster', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', NULL),
-('5aa18f9b-2fb1-4edb-bdde-fb79273eee38', '48fb7988-d909-445a-81db-fe825dca0db2', b'1', '${role_view-events}', 'view-events', 'jhipster', '48fb7988-d909-445a-81db-fe825dca0db2', NULL),
-('5ea73aac-d0cf-4303-87a4-c9d7f5852734', '48fb7988-d909-445a-81db-fe825dca0db2', b'1', '${role_query-realms}', 'query-realms', 'jhipster', '48fb7988-d909-445a-81db-fe825dca0db2', NULL),
-('5f884970-9b9e-4d53-89b7-700d93dba404', 'f1cbf82e-a285-4a15-a172-ff97732a2648', b'1', '${role_create-client}', 'create-client', 'master', 'f1cbf82e-a285-4a15-a172-ff97732a2648', NULL),
-('62880c1c-3e64-48fa-902f-fa8354347ab8', 'jhipster', b'0', 'Realm Global Role for Comon Users Registered Profile.', 'BASIC_REGISTERED_GLOBAL_ROLE', 'jhipster', NULL, 'jhipster'),
-('631e9bda-5884-47b8-b0d6-838e2ce5002a', 'f1cbf82e-a285-4a15-a172-ff97732a2648', b'1', '${role_manage-authorization}', 'manage-authorization', 'master', 'f1cbf82e-a285-4a15-a172-ff97732a2648', NULL),
-('6a80905b-a478-4508-ad14-34cf340aca3e', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', b'1', '${role_view-identity-providers}', 'view-identity-providers', 'master', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', NULL),
-('6c47d98c-a723-4053-8e87-762c04a3c72f', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', b'1', 'Client Role for System Administrators Profile.', '01_SYSTEM_ADMINISTRATOR_CLIENT_ROLE', 'jhipster', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', NULL),
-('6c8abaad-5f92-4c96-843b-65fa9442893c', 'f1cbf82e-a285-4a15-a172-ff97732a2648', b'1', '${role_manage-clients}', 'manage-clients', 'master', 'f1cbf82e-a285-4a15-a172-ff97732a2648', NULL),
-('6ceaaca5-30a4-444b-9078-723b7cc13591', '98ae8603-4547-4218-8fb9-ebc550a0e10b', b'1', NULL, 'uma_protection', 'jhipster', '98ae8603-4547-4218-8fb9-ebc550a0e10b', NULL),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', 'master', b'0', '${role_admin}', 'admin', 'master', NULL, 'master'),
-('751e44ac-04c7-4a95-805c-f907f205c48a', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', b'1', '${role_manage-realm}', 'manage-realm', 'master', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', NULL),
-('76a4f31d-7149-4d92-bfba-654c2cb6c754', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', b'1', 'Client Role for Reviewers Profile.', '03_REVIEWER_CLIENT_ROLE', 'jhipster', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', NULL),
-('7d14203c-2cb4-4d49-8bb3-c56d425e9db1', 'f1cbf82e-a285-4a15-a172-ff97732a2648', b'1', '${role_query-realms}', 'query-realms', 'master', 'f1cbf82e-a285-4a15-a172-ff97732a2648', NULL),
-('8018bd1e-0b43-4b0c-8e5a-fbf31f8ee6db', '48fb7988-d909-445a-81db-fe825dca0db2', b'1', '${role_query-groups}', 'query-groups', 'jhipster', '48fb7988-d909-445a-81db-fe825dca0db2', NULL),
-('84752518-6f2f-451f-ab59-de3ce6674ba1', '48fb7988-d909-445a-81db-fe825dca0db2', b'1', '${role_view-users}', 'view-users', 'jhipster', '48fb7988-d909-445a-81db-fe825dca0db2', NULL),
-('8612f4fc-b1fd-43af-8ff8-193a62225bcf', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', b'1', 'Client Role for External Applications that consume the PhyCuS API\'s Profile.', '99_API_CONSUMERS_APP_CLIENT_ROLE', 'jhipster', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', NULL),
-('8b2aacae-a622-446c-9954-a8de983150f0', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', b'1', '${role_query-groups}', 'query-groups', 'master', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', NULL),
-('8d650dc2-d0e7-4ad7-8193-3ce1b7361b02', 'e07da50b-cddc-4524-b630-436a5a6ba8ab', b'1', '${role_manage-account-links}', 'manage-account-links', 'jhipster', 'e07da50b-cddc-4524-b630-436a5a6ba8ab', NULL),
-('8fdff21b-f46c-407c-b566-ce4fcc4c51d4', '48fb7988-d909-445a-81db-fe825dca0db2', b'1', '${role_view-authorization}', 'view-authorization', 'jhipster', '48fb7988-d909-445a-81db-fe825dca0db2', NULL),
-('91f398b2-23a0-4cd3-8bc0-c3097df0e1e5', 'e07da50b-cddc-4524-b630-436a5a6ba8ab', b'1', '${role_view-consent}', 'view-consent', 'jhipster', 'e07da50b-cddc-4524-b630-436a5a6ba8ab', NULL),
-('9315172c-6dc1-4d8c-973a-4309599cf07b', 'f1cbf82e-a285-4a15-a172-ff97732a2648', b'1', '${role_query-groups}', 'query-groups', 'master', 'f1cbf82e-a285-4a15-a172-ff97732a2648', NULL),
-('932ca70d-a311-42f9-9042-431cef835b9e', 'jhipster', b'0', '${role_offline-access}', 'offline_access', 'jhipster', NULL, 'jhipster'),
-('9398cf0f-6bd8-495b-b3e3-dea8e44872a9', 'bf8531b6-2a19-45e2-9a41-7a25d38ad69d', b'1', '${role_read-token}', 'read-token', 'master', 'bf8531b6-2a19-45e2-9a41-7a25d38ad69d', NULL),
-('944d3748-9707-4ff3-95a6-4a6b6d34243b', 'f1cbf82e-a285-4a15-a172-ff97732a2648', b'1', '${role_manage-events}', 'manage-events', 'master', 'f1cbf82e-a285-4a15-a172-ff97732a2648', NULL),
-('96c0124c-0f00-4769-8cd3-f7dfd74a0af3', 'jhipster', b'0', '${role_uma_authorization}', 'uma_authorization', 'jhipster', NULL, 'jhipster'),
-('9ce77c75-2e84-4d14-9655-706a2f3fc159', 'f7123f46-5de8-4c40-8cff-5c52b3e26a84', b'1', '${role_manage-account-links}', 'manage-account-links', 'master', 'f7123f46-5de8-4c40-8cff-5c52b3e26a84', NULL),
-('9d7cc7b1-217f-47bd-9347-a3f141638576', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', b'1', '${role_manage-users}', 'manage-users', 'master', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', NULL),
-('a1daea5c-dd4c-4528-bcfd-2922afc47cc0', 'f1cbf82e-a285-4a15-a172-ff97732a2648', b'1', '${role_view-realm}', 'view-realm', 'master', 'f1cbf82e-a285-4a15-a172-ff97732a2648', NULL),
-('a29864c1-5a10-4c4d-82f7-72b6becb4416', 'f1cbf82e-a285-4a15-a172-ff97732a2648', b'1', '${role_manage-users}', 'manage-users', 'master', 'f1cbf82e-a285-4a15-a172-ff97732a2648', NULL),
-('a2dae096-2824-42c2-854a-834d216991e7', 'f7123f46-5de8-4c40-8cff-5c52b3e26a84', b'1', '${role_view-applications}', 'view-applications', 'master', 'f7123f46-5de8-4c40-8cff-5c52b3e26a84', NULL),
-('a374e2d8-5a96-4f06-bdeb-87d2d1fd92f2', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', b'1', 'Client Role for MOTS Users Profile.', '06_MEMBERS_OF_THE_STREET_CLIENT_ROLE', 'jhipster', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', NULL),
-('a3f9ba91-6ed5-47ff-a1cc-384c00cc203d', '48fb7988-d909-445a-81db-fe825dca0db2', b'1', '${role_impersonation}', 'impersonation', 'jhipster', '48fb7988-d909-445a-81db-fe825dca0db2', NULL),
-('a6174657-cbd7-40a6-ae34-c83cabdd1791', 'master', b'0', '${role_create-realm}', 'create-realm', 'master', NULL, 'master'),
-('a91bfa14-c447-4159-9de1-64a51fbf2227', 'master', b'0', '${role_offline-access}', 'offline_access', 'master', NULL, 'master'),
-('aebcd69a-6a42-4790-9d80-6ad44be3f0e3', 'f7123f46-5de8-4c40-8cff-5c52b3e26a84', b'1', '${role_view-profile}', 'view-profile', 'master', 'f7123f46-5de8-4c40-8cff-5c52b3e26a84', NULL),
-('b6e3d2e0-ba1a-4420-84d1-2cf72096fd38', 'f7123f46-5de8-4c40-8cff-5c52b3e26a84', b'1', '${role_manage-account}', 'manage-account', 'master', 'f7123f46-5de8-4c40-8cff-5c52b3e26a84', NULL),
-('b8fb8449-0975-425e-abe9-edcf6bfcdc9a', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', b'1', '${role_manage-authorization}', 'manage-authorization', 'master', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', NULL),
-('c6ceaf7a-8a48-45d6-99b0-99665a2e4136', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', b'1', '${role_manage-events}', 'manage-events', 'master', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', NULL),
-('c9fb6965-e734-46b4-a174-fa9d1fb7e1cc', '48fb7988-d909-445a-81db-fe825dca0db2', b'1', '${role_manage-events}', 'manage-events', 'jhipster', '48fb7988-d909-445a-81db-fe825dca0db2', NULL),
-('caa9819c-d584-4d06-aeee-f0e6bcbc8f7c', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', b'1', NULL, 'uma_protection', 'jhipster', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', NULL),
-('d0e1cd3e-97c6-4d95-9e8e-82672d651bc3', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', b'1', '${role_query-clients}', 'query-clients', 'master', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', NULL),
-('d810cfe5-f254-4e37-8b9a-0922ebd84a27', 'f1cbf82e-a285-4a15-a172-ff97732a2648', b'1', '${role_view-clients}', 'view-clients', 'master', 'f1cbf82e-a285-4a15-a172-ff97732a2648', NULL),
-('dfb5d699-91ee-4938-8991-618fecf0aaba', 'f1cbf82e-a285-4a15-a172-ff97732a2648', b'1', '${role_impersonation}', 'impersonation', 'master', 'f1cbf82e-a285-4a15-a172-ff97732a2648', NULL),
-('dfebf1c8-3fb6-4b78-9b05-ae9dd4ff92be', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', b'1', '${role_view-realm}', 'view-realm', 'master', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', NULL),
-('e1481a47-36c4-42e2-b55c-fcf0e0395af2', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', b'1', '${role_impersonation}', 'impersonation', 'master', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', NULL),
-('e58b182a-9ca9-4135-9562-d5493bcf26cc', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', b'1', '${role_query-realms}', 'query-realms', 'master', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', NULL),
-('f6e211bd-443d-47fe-9888-ed50e6463eaa', 'f1cbf82e-a285-4a15-a172-ff97732a2648', b'1', '${role_view-identity-providers}', 'view-identity-providers', 'master', 'f1cbf82e-a285-4a15-a172-ff97732a2648', NULL),
-('f793ecc6-713f-4630-8777-90c5f45a504a', 'f1cbf82e-a285-4a15-a172-ff97732a2648', b'1', '${role_view-users}', 'view-users', 'master', 'f1cbf82e-a285-4a15-a172-ff97732a2648', NULL),
-('f909e7c2-1f7d-4dc4-b0ca-bdfc8d1f7b2c', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', b'1', '${role_view-users}', 'view-users', 'master', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', NULL),
-('fa28bdd3-33ed-4a5a-a09f-6561fce814e5', 'f7123f46-5de8-4c40-8cff-5c52b3e26a84', b'1', '${role_view-consent}', 'view-consent', 'master', 'f7123f46-5de8-4c40-8cff-5c52b3e26a84', NULL);
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `migration_model`
---
-
-DROP TABLE IF EXISTS `migration_model`;
-CREATE TABLE IF NOT EXISTS `migration_model` (
-  `ID` varchar(36) NOT NULL,
-  `VERSION` varchar(36) DEFAULT NULL,
-  `UPDATE_TIME` bigint NOT NULL DEFAULT '0',
-  PRIMARY KEY (`ID`),
-  KEY `IDX_UPDATE_TIME` (`UPDATE_TIME`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `migration_model`
---
-
-INSERT INTO `migration_model` (`ID`, `VERSION`, `UPDATE_TIME`) VALUES
-('ry3cm', '9.0.0', 1584832555);
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `offline_client_session`
---
-
-DROP TABLE IF EXISTS `offline_client_session`;
-CREATE TABLE IF NOT EXISTS `offline_client_session` (
-  `USER_SESSION_ID` varchar(36) NOT NULL,
-  `CLIENT_ID` varchar(255) NOT NULL,
-  `OFFLINE_FLAG` varchar(4) NOT NULL,
-  `TIMESTAMP` int DEFAULT NULL,
-  `DATA` longtext,
-  `CLIENT_STORAGE_PROVIDER` varchar(36) NOT NULL DEFAULT 'local',
-  `EXTERNAL_CLIENT_ID` varchar(255) NOT NULL DEFAULT 'local',
-  PRIMARY KEY (`USER_SESSION_ID`,`CLIENT_ID`,`CLIENT_STORAGE_PROVIDER`,`EXTERNAL_CLIENT_ID`,`OFFLINE_FLAG`),
-  KEY `IDX_US_SESS_ID_ON_CL_SESS` (`USER_SESSION_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `offline_client_session`
---
-
-INSERT INTO `offline_client_session` (`USER_SESSION_ID`, `CLIENT_ID`, `OFFLINE_FLAG`, `TIMESTAMP`, `DATA`, `CLIENT_STORAGE_PROVIDER`, `EXTERNAL_CLIENT_ID`) VALUES
-('0200c7a9-c637-4524-825a-d2ee22197df6', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', '1', 1585062949, '{\"authMethod\":\"openid-connect\",\"redirectUri\":\"http://localhost:8080/phycusApp/login/oauth2/code/oidc\",\"notes\":{\"scope\":\"openid address email microprofile-jwt offline_access phone PhycusSHFCClientScopeClaims01 profile roles web-origins\",\"iss\":\"http://localhost:9080/auth/realms/CIBMTR-BioInformatics-Realm\",\"response_type\":\"code\",\"redirect_uri\":\"http://localhost:8080/phycusApp/login/oauth2/code/oidc\",\"state\":\"CAO7GnsvZGchKGPuq-WLPuHqQGzxeajqzALbOEQp9xw=\",\"nonce\":\"aY_byk4GGFTV-cFobkK3EHvezWWpjCQMa4kQ5Zefm5U\"}}', 'local', 'local'),
-('1e495e8c-d347-4392-bdce-2d2816a64291', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', '1', 1585079866, '{\"authMethod\":\"openid-connect\",\"redirectUri\":\"http://172.17.0.1:8080/phycusApp/login/oauth2/code/oidc\",\"notes\":{\"scope\":\"openid address email microprofile-jwt offline_access phone PhycusSHFCClientScopeClaims01 profile roles web-origins\",\"iss\":\"http://localhost:9080/auth/realms/CIBMTR-BioInformatics-Realm\",\"response_type\":\"code\",\"redirect_uri\":\"http://172.17.0.1:8080/phycusApp/login/oauth2/code/oidc\",\"state\":\"FoCm8eYvNqQ8SPOU_LosHlKKwF7NORS-mUyAp9Keozg=\",\"nonce\":\"ojQb0iZGUXgrypVP5P-FtwNFE987rA4xTRCD4YsG1bM\"}}', 'local', 'local'),
-('293185d3-65ad-4f7b-b0a7-f2e5156fa08c', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', '1', 1585086919, '{\"authMethod\":\"openid-connect\",\"redirectUri\":\"http://172.17.0.1:8080/phycusApp/login/oauth2/code/oidc\",\"notes\":{\"scope\":\"openid address email microprofile-jwt offline_access phone PhycusSHFCClientScopeClaims01 profile roles web-origins\",\"iss\":\"http://localhost:9080/auth/realms/CIBMTR-BioInformatics-Realm\",\"response_type\":\"code\",\"redirect_uri\":\"http://172.17.0.1:8080/phycusApp/login/oauth2/code/oidc\",\"state\":\"iK6g9stekB4QSBRtuYNZigSqOe7KlXNm3KAR5usBBes=\",\"nonce\":\"cQpt9iGZekkf-FUSEJfz6VEXruEYxNqFfO5gjf9VCog\"}}', 'local', 'local'),
-('2a029388-f29a-449e-8376-5b3050777727', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', '1', 1585069091, '{\"authMethod\":\"openid-connect\",\"redirectUri\":\"http://172.17.0.1:8080/phycusApp/login/oauth2/code/oidc\",\"notes\":{\"scope\":\"openid address email microprofile-jwt offline_access phone PhycusSHFCClientScopeClaims01 profile roles web-origins\",\"iss\":\"http://localhost:9080/auth/realms/CIBMTR-BioInformatics-Realm\",\"response_type\":\"code\",\"redirect_uri\":\"http://172.17.0.1:8080/phycusApp/login/oauth2/code/oidc\",\"state\":\"w-7fStHXxt7zNI_bfidBBoBrvj3uKdVKf8hN31BqfsA=\",\"nonce\":\"A1dIrAlg0MX7TWdEq9dDyi0gs2Bu9aIIeQGaR3MBcfs\"}}', 'local', 'local'),
-('34015ca0-9c6d-4882-9d26-4b805f50395f', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', '1', 1585064547, '{\"authMethod\":\"openid-connect\",\"redirectUri\":\"http://localhost:8080/phycusApp/login/oauth2/code/oidc\",\"notes\":{\"scope\":\"openid address email microprofile-jwt offline_access phone PhycusSHFCClientScopeClaims01 profile roles web-origins\",\"iss\":\"http://localhost:9080/auth/realms/CIBMTR-BioInformatics-Realm\",\"response_type\":\"code\",\"redirect_uri\":\"http://localhost:8080/phycusApp/login/oauth2/code/oidc\",\"state\":\"0mXa5RhiuT7bDOI0XbV_DeJOoNrp71KY31tAOr_orEc=\",\"nonce\":\"_wqGYZjeQKxbg-az6ZYneX2Pu8pQyYeFO0loAKJe28g\"}}', 'local', 'local'),
-('390ddfd3-f63a-4020-9388-28de4cbe50e6', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', '1', 1585007169, '{\"authMethod\":\"openid-connect\",\"redirectUri\":\"http://localhost:8080/phycusApp/login/oauth2/code/oidc\",\"notes\":{\"scope\":\"openid address email microprofile-jwt offline_access phone PhycusSHFCClientScopeClaims01 profile roles web-origins\",\"iss\":\"http://localhost:9080/auth/realms/CIBMTR-BioInformatics-Realm\",\"response_type\":\"code\",\"redirect_uri\":\"http://localhost:8080/phycusApp/login/oauth2/code/oidc\",\"state\":\"WnbKRu0S_vXL78oWYaHIhE4NUHKxWdMjmklikN0Ta-U=\",\"nonce\":\"s4jkzBVXADqOKw61nzwt5AecZ90MnK3Zyh6utTDQRaY\"}}', 'local', 'local'),
-('3a44ee6a-ab54-444a-99a0-6dc847edbaaa', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', '1', 1585088765, '{\"authMethod\":\"openid-connect\",\"redirectUri\":\"http://172.17.0.1:8080/phycusApp/login/oauth2/code/oidc\",\"notes\":{\"scope\":\"openid address email microprofile-jwt offline_access phone PhycusSHFCClientScopeClaims01 profile roles web-origins\",\"SSO_AUTH\":\"true\",\"iss\":\"http://localhost:9080/auth/realms/CIBMTR-BioInformatics-Realm\",\"response_type\":\"code\",\"redirect_uri\":\"http://172.17.0.1:8080/phycusApp/login/oauth2/code/oidc\",\"state\":\"Pm4F5JbvVAIXrf6bdvoVahwpSwwAjVeq2XdKR8prnPI=\",\"nonce\":\"LuuR4jm1WPjnC2v0pUcRcqP2698lB6KdcPOBETmVIVk\"}}', 'local', 'local'),
-('4639c4c1-568c-4929-b789-7ae809e7490a', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', '1', 1585089121, '{\"authMethod\":\"openid-connect\",\"redirectUri\":\"http://172.17.0.1:8080/phycusApp/login/oauth2/code/oidc\",\"notes\":{\"scope\":\"openid address email microprofile-jwt offline_access phone PhycusSHFCClientScopeClaims01 profile roles web-origins\",\"iss\":\"http://localhost:9080/auth/realms/CIBMTR-BioInformatics-Realm\",\"response_type\":\"code\",\"redirect_uri\":\"http://172.17.0.1:8080/phycusApp/login/oauth2/code/oidc\",\"state\":\"yI9Q1kHPZpoR9vmTe0fj1y9FedM5yqzVeprjt4irw-Y=\",\"nonce\":\"COUHFVg06xaFhkJwQ7QArJG3rgaIfa2BYszkf_GcmLY\"}}', 'local', 'local'),
-('5fa4353e-df74-40bd-9a13-24398fe6a050', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', '1', 1585070265, '{\"authMethod\":\"openid-connect\",\"redirectUri\":\"http://172.17.0.1:8080/phycusApp/login/oauth2/code/oidc\",\"notes\":{\"scope\":\"openid address email microprofile-jwt offline_access phone PhycusSHFCClientScopeClaims01 profile roles web-origins\",\"iss\":\"http://localhost:9080/auth/realms/CIBMTR-BioInformatics-Realm\",\"response_type\":\"code\",\"redirect_uri\":\"http://172.17.0.1:8080/phycusApp/login/oauth2/code/oidc\",\"state\":\"Ou57BUtDC1SqJEcN23guOcg5DMadMukZ8uE2gaoWNsk=\",\"nonce\":\"6ffFqpggIgZDv2FfdeM3gBR5g94vTkDVL-t_EagO3iE\"}}', 'local', 'local'),
-('62a49c30-5974-4a53-9bbd-dcd8249009bc', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', '1', 1584999117, '{\"authMethod\":\"openid-connect\",\"redirectUri\":\"http://localhost:8080/phycusApp/login/oauth2/code/oidc\",\"notes\":{\"scope\":\"openid address email microprofile-jwt offline_access phone PhycusSHFCClientScopeClaims01 profile roles web-origins\",\"iss\":\"http://localhost:9080/auth/realms/CIBMTR-BioInformatics-Realm\",\"response_type\":\"code\",\"redirect_uri\":\"http://localhost:8080/phycusApp/login/oauth2/code/oidc\",\"state\":\"z0xkHCwRPFtacImxfk73FWMNmcosWAKkEJYkB2crN90=\",\"nonce\":\"5I780qAuDFK5jjIgienNbrT1XSeqqb7-MCDpbA0GJ2E\"}}', 'local', 'local'),
-('71698e35-ff14-448e-a313-ba47a4329927', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', '1', 1585086505, '{\"authMethod\":\"openid-connect\",\"redirectUri\":\"http://172.17.0.1:8080/phycusApp/login/oauth2/code/oidc\",\"notes\":{\"scope\":\"openid address email microprofile-jwt offline_access phone PhycusSHFCClientScopeClaims01 profile roles web-origins\",\"iss\":\"http://localhost:9080/auth/realms/CIBMTR-BioInformatics-Realm\",\"response_type\":\"code\",\"redirect_uri\":\"http://172.17.0.1:8080/phycusApp/login/oauth2/code/oidc\",\"state\":\"-ySOlYiSMG51hFf0PtvrdIAeXXHJDOsg5aFBpjUfp5w=\",\"nonce\":\"O4ldbCV2esf8JOXRQCfkzhTDPuE0iVy5EY7NcQv6qEY\"}}', 'local', 'local'),
-('73195a83-5593-4052-a47e-dc3c03ee31d0', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', '1', 1585084950, '{\"authMethod\":\"openid-connect\",\"redirectUri\":\"http://172.17.0.1:8080/phycusApp/login/oauth2/code/oidc\",\"notes\":{\"scope\":\"openid address email microprofile-jwt offline_access phone PhycusSHFCClientScopeClaims01 profile roles web-origins\",\"iss\":\"http://localhost:9080/auth/realms/CIBMTR-BioInformatics-Realm\",\"response_type\":\"code\",\"redirect_uri\":\"http://172.17.0.1:8080/phycusApp/login/oauth2/code/oidc\",\"state\":\"aMpwtfpZ9KbS5M4whm1gyCFbjWdYB9dw5ntKBGyUI7M=\",\"nonce\":\"dag_pM-pz_hPkH08YJKBu_Nsg79vUtqdMY52fWMH-RM\"}}', 'local', 'local'),
-('76277c4e-c122-4b83-b146-5fa07ce45f02', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', '1', 1585087553, '{\"authMethod\":\"openid-connect\",\"redirectUri\":\"http://172.17.0.1:8080/phycusApp/login/oauth2/code/oidc\",\"notes\":{\"scope\":\"openid address email microprofile-jwt offline_access phone PhycusSHFCClientScopeClaims01 profile roles web-origins\",\"iss\":\"http://localhost:9080/auth/realms/CIBMTR-BioInformatics-Realm\",\"response_type\":\"code\",\"redirect_uri\":\"http://172.17.0.1:8080/phycusApp/login/oauth2/code/oidc\",\"state\":\"xut7E6DFDECidbfgczcZDjxul08IFAc1V1Xvxxa3fMg=\",\"nonce\":\"jOPneuSRTDIgDCmgoCrDUDAQJtwojnsIFKmd8gGGwBo\"}}', 'local', 'local'),
-('7c0a4324-208a-4b34-8cc4-8584870761f4', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', '1', 1585087157, '{\"authMethod\":\"openid-connect\",\"redirectUri\":\"http://172.17.0.1:8080/phycusApp/login/oauth2/code/oidc\",\"notes\":{\"scope\":\"openid address email microprofile-jwt offline_access phone PhycusSHFCClientScopeClaims01 profile roles web-origins\",\"iss\":\"http://localhost:9080/auth/realms/CIBMTR-BioInformatics-Realm\",\"response_type\":\"code\",\"redirect_uri\":\"http://172.17.0.1:8080/phycusApp/login/oauth2/code/oidc\",\"state\":\"0iO5Q2eqIyYbkPXKSTbEdKQLmVLdrXgo5bPjUcEx6ts=\",\"nonce\":\"QZN_o1mxv3suSnypOtyLEZJ76Q0V8RIWzwP7FQwNCGk\"}}', 'local', 'local'),
-('7cb8acc3-1102-4418-87f3-a5ace6c19724', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', '1', 1584995019, '{\"authMethod\":\"openid-connect\",\"redirectUri\":\"http://localhost:8080/login/oauth2/code/oidc\",\"notes\":{\"scope\":\"openid address email microprofile-jwt offline_access phone PhycusSHFCClientScopeClaims01 profile roles web-origins\",\"iss\":\"http://localhost:9080/auth/realms/CIBMTR-BioInformatics-Realm\",\"response_type\":\"code\",\"redirect_uri\":\"http://localhost:8080/login/oauth2/code/oidc\",\"state\":\"lWWUFQIcMKJ5bkCKtJsNyzAJ6zh5HwwLw07whrXpSic=\",\"nonce\":\"uR5o64hXXarjKUN-XLxyysPEUDzSYf81NpzwImqL4hk\"}}', 'local', 'local'),
-('874da1bc-d669-4ac2-b453-495ed3ca52b8', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', '1', 1584995563, '{\"authMethod\":\"openid-connect\",\"redirectUri\":\"http://localhost:8080/login/oauth2/code/oidc\",\"notes\":{\"scope\":\"openid address email microprofile-jwt offline_access phone PhycusSHFCClientScopeClaims01 profile roles web-origins\",\"iss\":\"http://localhost:9080/auth/realms/CIBMTR-BioInformatics-Realm\",\"response_type\":\"code\",\"redirect_uri\":\"http://localhost:8080/login/oauth2/code/oidc\",\"state\":\"lbVt4ok9oYzIQYAF8Z4qjHH1HBBaCFR3B7SfvNjscj0=\",\"nonce\":\"xEHFMpExWADHpHbSjHa2V1eM7unEmNtQL1lhqTmeStY\"}}', 'local', 'local'),
-('8d1b4374-6bb8-4cbc-9fc7-e0c8dbf27973', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', '1', 1584997468, '{\"authMethod\":\"openid-connect\",\"redirectUri\":\"http://localhost:8080/phycusApp/login/oauth2/code/oidc\",\"notes\":{\"scope\":\"openid address email microprofile-jwt offline_access phone PhycusSHFCClientScopeClaims01 profile roles web-origins\",\"iss\":\"http://localhost:9080/auth/realms/CIBMTR-BioInformatics-Realm\",\"response_type\":\"code\",\"redirect_uri\":\"http://localhost:8080/phycusApp/login/oauth2/code/oidc\",\"state\":\"6cev2yml2LOMe12oe3eqdFAU_cEK3TNUC3yhqN9pg2g=\",\"nonce\":\"GGZhhxjrbXEVlRFuEvLeswCKSlclV0fe9tF8hX6IGOk\"}}', 'local', 'local'),
-('c501765a-cd82-4d54-8130-e9d529ed970c', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', '1', 1585089591, '{\"authMethod\":\"openid-connect\",\"redirectUri\":\"http://172.17.0.1:8080/phycusApp/login/oauth2/code/oidc\",\"notes\":{\"scope\":\"openid address email microprofile-jwt offline_access phone PhycusSHFCClientScopeClaims01 profile roles web-origins\",\"iss\":\"http://localhost:9080/auth/realms/CIBMTR-BioInformatics-Realm\",\"response_type\":\"code\",\"redirect_uri\":\"http://172.17.0.1:8080/phycusApp/login/oauth2/code/oidc\",\"state\":\"TFRQGaV5T4jZGhZEYRZ6mcpQCn7C4D_-qvj_iCLGLj4=\",\"nonce\":\"MHMrIaoeIel9tBi5QkaHhjmBQj5XT7YKPzvgSfyeDes\"}}', 'local', 'local'),
-('d010eb8f-ee55-4971-abc6-908f5e75526e', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', '1', 1585078987, '{\"authMethod\":\"openid-connect\",\"redirectUri\":\"http://172.17.0.1:8080/phycusApp/login/oauth2/code/oidc\",\"notes\":{\"scope\":\"openid address email microprofile-jwt offline_access phone PhycusSHFCClientScopeClaims01 profile roles web-origins\",\"iss\":\"http://localhost:9080/auth/realms/CIBMTR-BioInformatics-Realm\",\"response_type\":\"code\",\"redirect_uri\":\"http://172.17.0.1:8080/phycusApp/login/oauth2/code/oidc\",\"state\":\"nrkPDrqRkBea-3BqmtFIIIBs-r5cArHsZPtzCtDTALs=\",\"nonce\":\"fDCW8NdtaCS2AD8qXgZjddWqG4Pmv4VeyamI8Gb6zks\"}}', 'local', 'local'),
-('d1e14e9b-ba0c-45a0-af1e-a425a400681e', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', '1', 1585008742, '{\"authMethod\":\"openid-connect\",\"redirectUri\":\"http://localhost:8080/phycusApp/login/oauth2/code/oidc\",\"notes\":{\"scope\":\"openid address email microprofile-jwt offline_access phone PhycusSHFCClientScopeClaims01 profile roles web-origins\",\"iss\":\"http://localhost:9080/auth/realms/CIBMTR-BioInformatics-Realm\",\"response_type\":\"code\",\"redirect_uri\":\"http://localhost:8080/phycusApp/login/oauth2/code/oidc\",\"state\":\"R-CkQlaiNYypR-FOEe_xrcBS6kdtslAZup38Pe6DH_4=\",\"nonce\":\"VI8hc6j1UoHmSqK4XAAyYLepAcHIXUeQ25ZH4uXRbfI\"}}', 'local', 'local'),
-('d940acbc-dbe3-41b7-b925-1377d94178c9', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', '1', 1585077764, '{\"authMethod\":\"openid-connect\",\"redirectUri\":\"http://172.17.0.1:8080/phycusApp/login/oauth2/code/oidc\",\"notes\":{\"scope\":\"openid address email microprofile-jwt offline_access phone PhycusSHFCClientScopeClaims01 profile roles web-origins\",\"iss\":\"http://localhost:9080/auth/realms/CIBMTR-BioInformatics-Realm\",\"response_type\":\"code\",\"redirect_uri\":\"http://172.17.0.1:8080/phycusApp/login/oauth2/code/oidc\",\"state\":\"2A7QaAiw6V91bl_GSYtaI1Ky3y2FdnkbS2Gc5QmiLkM=\",\"nonce\":\"bxbZKDS6fD__vpvxmFRJZnFsq4MRcwOZ-NLsBFgifgk\"}}', 'local', 'local'),
-('f13dfe28-c671-47f4-a46b-c6f0af9a1ce6', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', '1', 1585081221, '{\"authMethod\":\"openid-connect\",\"redirectUri\":\"http://172.17.0.1:8080/phycusApp/login/oauth2/code/oidc\",\"notes\":{\"scope\":\"openid address email microprofile-jwt offline_access phone PhycusSHFCClientScopeClaims01 profile roles web-origins\",\"iss\":\"http://localhost:9080/auth/realms/CIBMTR-BioInformatics-Realm\",\"response_type\":\"code\",\"redirect_uri\":\"http://172.17.0.1:8080/phycusApp/login/oauth2/code/oidc\",\"state\":\"_RmUvkSpaLUzSH5cUp7C0QnaDRELXiu_igqMlzr0lEc=\",\"nonce\":\"VTCZpk0HlTBF82vCRp5D7lzTDJhRVPNXn_tegesCw_c\"}}', 'local', 'local'),
-('f3c319c0-d68d-45b8-a7bc-2517c6b68e71', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', '1', 1585086111, '{\"authMethod\":\"openid-connect\",\"redirectUri\":\"http://172.17.0.1:8080/phycusApp/login/oauth2/code/oidc\",\"notes\":{\"scope\":\"openid address email microprofile-jwt offline_access phone PhycusSHFCClientScopeClaims01 profile roles web-origins\",\"iss\":\"http://localhost:9080/auth/realms/CIBMTR-BioInformatics-Realm\",\"response_type\":\"code\",\"redirect_uri\":\"http://172.17.0.1:8080/phycusApp/login/oauth2/code/oidc\",\"state\":\"Ltm8O7FTfzyWLgoEE7nt23d7anhBkVFsHEjBm5_b_78=\",\"nonce\":\"qTDrUcBLa_toEfPp9GD8BMhAajLGuQguMvX9lpsJhuE\"}}', 'local', 'local');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `offline_user_session`
---
-
-DROP TABLE IF EXISTS `offline_user_session`;
-CREATE TABLE IF NOT EXISTS `offline_user_session` (
-  `USER_SESSION_ID` varchar(36) NOT NULL,
-  `USER_ID` varchar(255) DEFAULT NULL,
-  `REALM_ID` varchar(36) NOT NULL,
-  `CREATED_ON` int NOT NULL,
-  `OFFLINE_FLAG` varchar(4) NOT NULL,
-  `DATA` longtext,
-  `LAST_SESSION_REFRESH` int NOT NULL DEFAULT '0',
-  PRIMARY KEY (`USER_SESSION_ID`,`OFFLINE_FLAG`),
-  KEY `IDX_OFFLINE_USS_CREATEDON` (`CREATED_ON`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `offline_user_session`
---
-
-INSERT INTO `offline_user_session` (`USER_SESSION_ID`, `USER_ID`, `REALM_ID`, `CREATED_ON`, `OFFLINE_FLAG`, `DATA`, `LAST_SESSION_REFRESH`) VALUES
-('0200c7a9-c637-4524-825a-d2ee22197df6', '688171b4-638a-43df-87c4-c5e85751346f', 'jhipster', 1585062949, '1', '{\"ipAddress\":\"172.25.0.1\",\"authMethod\":\"openid-connect\",\"rememberMe\":false,\"started\":0,\"notes\":{\"KC_DEVICE_NOTE\":\"eyJpcEFkZHJlc3MiOiIxNzIuMjUuMC4xIiwib3MiOiJMaW51eCIsIm9zVmVyc2lvbiI6IlVua25vd24iLCJicm93c2VyIjoiQ2hyb21lLzgwLjAuMzk4NyIsImRldmljZSI6Ik90aGVyIiwibGFzdEFjY2VzcyI6MCwibW9iaWxlIjpmYWxzZX0=\",\"AUTH_TIME\":\"1585062949\"},\"state\":\"LOGGED_IN\"}', 1585063382),
-('1e495e8c-d347-4392-bdce-2d2816a64291', '688171b4-638a-43df-87c4-c5e85751346f', 'jhipster', 1585079866, '1', '{\"ipAddress\":\"172.25.0.1\",\"authMethod\":\"openid-connect\",\"rememberMe\":false,\"started\":0,\"notes\":{\"KC_DEVICE_NOTE\":\"eyJpcEFkZHJlc3MiOiIxNzIuMjUuMC4xIiwib3MiOiJMaW51eCIsIm9zVmVyc2lvbiI6IlVua25vd24iLCJicm93c2VyIjoiQ2hyb21lLzgwLjAuMzk4NyIsImRldmljZSI6Ik90aGVyIiwibGFzdEFjY2VzcyI6MCwibW9iaWxlIjpmYWxzZX0=\",\"AUTH_TIME\":\"1585079866\"},\"state\":\"LOGGED_IN\"}', 1585079859),
-('293185d3-65ad-4f7b-b0a7-f2e5156fa08c', 'b3c1bfae-0a77-48a2-8dba-7b6559b8959f', 'jhipster', 1585086919, '1', '{\"ipAddress\":\"172.25.0.1\",\"authMethod\":\"openid-connect\",\"rememberMe\":false,\"started\":0,\"notes\":{\"KC_DEVICE_NOTE\":\"eyJpcEFkZHJlc3MiOiIxNzIuMjUuMC4xIiwib3MiOiJMaW51eCIsIm9zVmVyc2lvbiI6IlVua25vd24iLCJicm93c2VyIjoiQ2hyb21lLzgwLjAuMzk4NyIsImRldmljZSI6Ik90aGVyIiwibGFzdEFjY2VzcyI6MCwibW9iaWxlIjpmYWxzZX0=\",\"AUTH_TIME\":\"1585086919\"},\"state\":\"LOGGED_IN\"}', 1585087060),
-('2a029388-f29a-449e-8376-5b3050777727', 'c96b54e0-8164-4004-aec8-025f7af0838c', 'jhipster', 1585069091, '1', '{\"ipAddress\":\"172.25.0.1\",\"authMethod\":\"openid-connect\",\"rememberMe\":false,\"started\":0,\"notes\":{\"KC_DEVICE_NOTE\":\"eyJpcEFkZHJlc3MiOiIxNzIuMjUuMC4xIiwib3MiOiJMaW51eCIsIm9zVmVyc2lvbiI6IlVua25vd24iLCJicm93c2VyIjoiQ2hyb21lLzgwLjAuMzk4NyIsImRldmljZSI6Ik90aGVyIiwibGFzdEFjY2VzcyI6MCwibW9iaWxlIjpmYWxzZX0=\",\"AUTH_TIME\":\"1585069091\"},\"state\":\"LOGGED_IN\"}', 1585069059),
-('34015ca0-9c6d-4882-9d26-4b805f50395f', '688171b4-638a-43df-87c4-c5e85751346f', 'jhipster', 1585064547, '1', '{\"ipAddress\":\"172.25.0.1\",\"authMethod\":\"openid-connect\",\"rememberMe\":false,\"started\":0,\"notes\":{\"KC_DEVICE_NOTE\":\"eyJpcEFkZHJlc3MiOiIxNzIuMjUuMC4xIiwib3MiOiJMaW51eCIsIm9zVmVyc2lvbiI6IlVua25vd24iLCJicm93c2VyIjoiQ2hyb21lLzgwLjAuMzk4NyIsImRldmljZSI6Ik90aGVyIiwibGFzdEFjY2VzcyI6MCwibW9iaWxlIjpmYWxzZX0=\",\"AUTH_TIME\":\"1585064547\"},\"state\":\"LOGGED_IN\"}', 1585064499),
-('390ddfd3-f63a-4020-9388-28de4cbe50e6', 'b3c1bfae-0a77-48a2-8dba-7b6559b8959f', 'jhipster', 1585007169, '1', '{\"ipAddress\":\"172.25.0.1\",\"authMethod\":\"openid-connect\",\"rememberMe\":false,\"started\":0,\"notes\":{\"KC_DEVICE_NOTE\":\"eyJpcEFkZHJlc3MiOiIxNzIuMjUuMC4xIiwib3MiOiJMaW51eCIsIm9zVmVyc2lvbiI6IlVua25vd24iLCJicm93c2VyIjoiQ2hyb21lLzgwLjAuMzk4NyIsImRldmljZSI6Ik90aGVyIiwibGFzdEFjY2VzcyI6MCwibW9iaWxlIjpmYWxzZX0=\",\"AUTH_TIME\":\"1585007169\"},\"state\":\"LOGGED_IN\"}', 1585007158),
-('3a44ee6a-ab54-444a-99a0-6dc847edbaaa', 'b3c1bfae-0a77-48a2-8dba-7b6559b8959f', 'jhipster', 1585088765, '1', '{\"ipAddress\":\"172.25.0.1\",\"authMethod\":\"openid-connect\",\"rememberMe\":false,\"started\":0,\"notes\":{\"KC_DEVICE_NOTE\":\"eyJpcEFkZHJlc3MiOiIxNzIuMjUuMC4xIiwib3MiOiJMaW51eCIsIm9zVmVyc2lvbiI6IlVua25vd24iLCJicm93c2VyIjoiQ2hyb21lLzgwLjAuMzk4NyIsImRldmljZSI6Ik90aGVyIiwibGFzdEFjY2VzcyI6MCwibW9iaWxlIjpmYWxzZX0=\",\"AUTH_TIME\":\"1585088752\"},\"state\":\"LOGGED_IN\"}', 1585088740),
-('4639c4c1-568c-4929-b789-7ae809e7490a', 'b3c1bfae-0a77-48a2-8dba-7b6559b8959f', 'jhipster', 1585089121, '1', '{\"ipAddress\":\"172.25.0.1\",\"authMethod\":\"openid-connect\",\"rememberMe\":false,\"started\":0,\"notes\":{\"KC_DEVICE_NOTE\":\"eyJpcEFkZHJlc3MiOiIxNzIuMjUuMC4xIiwib3MiOiJMaW51eCIsIm9zVmVyc2lvbiI6IlVua25vd24iLCJicm93c2VyIjoiQ2hyb21lLzgwLjAuMzk4NyIsImRldmljZSI6Ik90aGVyIiwibGFzdEFjY2VzcyI6MCwibW9iaWxlIjpmYWxzZX0=\",\"AUTH_TIME\":\"1585089121\"},\"state\":\"LOGGED_IN\"}', 1585089460),
-('5fa4353e-df74-40bd-9a13-24398fe6a050', '688171b4-638a-43df-87c4-c5e85751346f', 'jhipster', 1585070265, '1', '{\"ipAddress\":\"172.25.0.1\",\"authMethod\":\"openid-connect\",\"rememberMe\":false,\"started\":0,\"notes\":{\"KC_DEVICE_NOTE\":\"eyJpcEFkZHJlc3MiOiIxNzIuMjUuMC4xIiwib3MiOiJMaW51eCIsIm9zVmVyc2lvbiI6IlVua25vd24iLCJicm93c2VyIjoiQ2hyb21lLzgwLjAuMzk4NyIsImRldmljZSI6Ik90aGVyIiwibGFzdEFjY2VzcyI6MCwibW9iaWxlIjpmYWxzZX0=\",\"AUTH_TIME\":\"1585070265\"},\"state\":\"LOGGED_IN\"}', 1585070259),
-('62a49c30-5974-4a53-9bbd-dcd8249009bc', '688171b4-638a-43df-87c4-c5e85751346f', 'jhipster', 1584999117, '1', '{\"ipAddress\":\"172.25.0.1\",\"authMethod\":\"openid-connect\",\"rememberMe\":false,\"started\":0,\"notes\":{\"KC_DEVICE_NOTE\":\"eyJpcEFkZHJlc3MiOiIxNzIuMjUuMC4xIiwib3MiOiJMaW51eCIsIm9zVmVyc2lvbiI6IlVua25vd24iLCJicm93c2VyIjoiQ2hyb21lLzgwLjAuMzk4NyIsImRldmljZSI6Ik90aGVyIiwibGFzdEFjY2VzcyI6MCwibW9iaWxlIjpmYWxzZX0=\",\"AUTH_TIME\":\"1584999117\"},\"state\":\"LOGGED_IN\"}', 1584999178),
-('71698e35-ff14-448e-a313-ba47a4329927', 'b3c1bfae-0a77-48a2-8dba-7b6559b8959f', 'jhipster', 1585086505, '1', '{\"ipAddress\":\"172.25.0.1\",\"authMethod\":\"openid-connect\",\"rememberMe\":false,\"started\":0,\"notes\":{\"KC_DEVICE_NOTE\":\"eyJpcEFkZHJlc3MiOiIxNzIuMjUuMC4xIiwib3MiOiJMaW51eCIsIm9zVmVyc2lvbiI6IlVua25vd24iLCJicm93c2VyIjoiQ2hyb21lLzgwLjAuMzk4NyIsImRldmljZSI6Ik90aGVyIiwibGFzdEFjY2VzcyI6MCwibW9iaWxlIjpmYWxzZX0=\",\"AUTH_TIME\":\"1585086505\"},\"state\":\"LOGGED_IN\"}', 1585086520),
-('73195a83-5593-4052-a47e-dc3c03ee31d0', '688171b4-638a-43df-87c4-c5e85751346f', 'jhipster', 1585084950, '1', '{\"ipAddress\":\"172.25.0.1\",\"authMethod\":\"openid-connect\",\"rememberMe\":false,\"started\":0,\"notes\":{\"KC_DEVICE_NOTE\":\"eyJpcEFkZHJlc3MiOiIxNzIuMjUuMC4xIiwib3MiOiJMaW51eCIsIm9zVmVyc2lvbiI6IlVua25vd24iLCJicm93c2VyIjoiQ2hyb21lLzgwLjAuMzk4NyIsImRldmljZSI6Ik90aGVyIiwibGFzdEFjY2VzcyI6MCwibW9iaWxlIjpmYWxzZX0=\",\"AUTH_TIME\":\"1585084950\"},\"state\":\"LOGGED_IN\"}', 1585084900),
-('76277c4e-c122-4b83-b146-5fa07ce45f02', 'b3c1bfae-0a77-48a2-8dba-7b6559b8959f', 'jhipster', 1585087553, '1', '{\"ipAddress\":\"172.25.0.1\",\"authMethod\":\"openid-connect\",\"rememberMe\":false,\"started\":0,\"notes\":{\"KC_DEVICE_NOTE\":\"eyJpcEFkZHJlc3MiOiIxNzIuMjUuMC4xIiwib3MiOiJMaW51eCIsIm9zVmVyc2lvbiI6IlVua25vd24iLCJicm93c2VyIjoiQ2hyb21lLzgwLjAuMzk4NyIsImRldmljZSI6Ik90aGVyIiwibGFzdEFjY2VzcyI6MCwibW9iaWxlIjpmYWxzZX0=\",\"AUTH_TIME\":\"1585087553\"},\"state\":\"LOGGED_IN\"}', 1585087540),
-('7c0a4324-208a-4b34-8cc4-8584870761f4', 'b3c1bfae-0a77-48a2-8dba-7b6559b8959f', 'jhipster', 1585087157, '1', '{\"ipAddress\":\"172.25.0.1\",\"authMethod\":\"openid-connect\",\"rememberMe\":false,\"started\":0,\"notes\":{\"KC_DEVICE_NOTE\":\"eyJpcEFkZHJlc3MiOiIxNzIuMjUuMC4xIiwib3MiOiJMaW51eCIsIm9zVmVyc2lvbiI6IlVua25vd24iLCJicm93c2VyIjoiQ2hyb21lLzgwLjAuMzk4NyIsImRldmljZSI6Ik90aGVyIiwibGFzdEFjY2VzcyI6MCwibW9iaWxlIjpmYWxzZX0=\",\"AUTH_TIME\":\"1585087157\"},\"state\":\"LOGGED_IN\"}', 1585087300),
-('7cb8acc3-1102-4418-87f3-a5ace6c19724', 'c96b54e0-8164-4004-aec8-025f7af0838c', 'jhipster', 1584995019, '1', '{\"ipAddress\":\"172.25.0.1\",\"authMethod\":\"openid-connect\",\"rememberMe\":false,\"started\":0,\"notes\":{\"KC_DEVICE_NOTE\":\"eyJpcEFkZHJlc3MiOiIxNzIuMjUuMC4xIiwib3MiOiJMaW51eCIsIm9zVmVyc2lvbiI6IlVua25vd24iLCJicm93c2VyIjoiQ2hyb21lLzgwLjAuMzk4NyIsImRldmljZSI6Ik90aGVyIiwibGFzdEFjY2VzcyI6MCwibW9iaWxlIjpmYWxzZX0=\",\"AUTH_TIME\":\"1584995019\"},\"state\":\"LOGGED_IN\"}', 1584995277),
-('874da1bc-d669-4ac2-b453-495ed3ca52b8', '4c973896-5761-41fc-8217-07c5d13a004b', 'jhipster', 1584995563, '1', '{\"ipAddress\":\"172.25.0.1\",\"authMethod\":\"openid-connect\",\"rememberMe\":false,\"started\":0,\"notes\":{\"KC_DEVICE_NOTE\":\"eyJpcEFkZHJlc3MiOiIxNzIuMjUuMC4xIiwib3MiOiJMaW51eCIsIm9zVmVyc2lvbiI6IlVua25vd24iLCJicm93c2VyIjoiQ2hyb21lLzgwLjAuMzk4NyIsImRldmljZSI6Ik90aGVyIiwibGFzdEFjY2VzcyI6MCwibW9iaWxlIjpmYWxzZX0=\",\"AUTH_TIME\":\"1584995563\"},\"state\":\"LOGGED_IN\"}', 1584995517),
-('8d1b4374-6bb8-4cbc-9fc7-e0c8dbf27973', 'c96b54e0-8164-4004-aec8-025f7af0838c', 'jhipster', 1584997468, '1', '{\"ipAddress\":\"172.25.0.1\",\"authMethod\":\"openid-connect\",\"rememberMe\":false,\"started\":0,\"notes\":{\"KC_DEVICE_NOTE\":\"eyJpcEFkZHJlc3MiOiIxNzIuMjUuMC4xIiwib3MiOiJMaW51eCIsIm9zVmVyc2lvbiI6IlVua25vd24iLCJicm93c2VyIjoiQ2hyb21lLzgwLjAuMzk4NyIsImRldmljZSI6Ik90aGVyIiwibGFzdEFjY2VzcyI6MCwibW9iaWxlIjpmYWxzZX0=\",\"AUTH_TIME\":\"1584997468\"},\"state\":\"LOGGED_IN\"}', 1584998698),
-('c501765a-cd82-4d54-8130-e9d529ed970c', 'b3c1bfae-0a77-48a2-8dba-7b6559b8959f', 'jhipster', 1585089591, '1', '{\"ipAddress\":\"172.25.0.1\",\"authMethod\":\"openid-connect\",\"rememberMe\":false,\"started\":0,\"notes\":{\"KC_DEVICE_NOTE\":\"eyJpcEFkZHJlc3MiOiIxNzIuMjUuMC4xIiwib3MiOiJMaW51eCIsIm9zVmVyc2lvbiI6IlVua25vd24iLCJicm93c2VyIjoiQ2hyb21lLzgwLjAuMzk4NyIsImRldmljZSI6Ik90aGVyIiwibGFzdEFjY2VzcyI6MCwibW9iaWxlIjpmYWxzZX0=\",\"AUTH_TIME\":\"1585089591\"},\"state\":\"LOGGED_IN\"}', 1585089580),
-('d010eb8f-ee55-4971-abc6-908f5e75526e', '688171b4-638a-43df-87c4-c5e85751346f', 'jhipster', 1585078987, '1', '{\"ipAddress\":\"172.25.0.1\",\"authMethod\":\"openid-connect\",\"rememberMe\":false,\"started\":0,\"notes\":{\"KC_DEVICE_NOTE\":\"eyJpcEFkZHJlc3MiOiIxNzIuMjUuMC4xIiwib3MiOiJMaW51eCIsIm9zVmVyc2lvbiI6IlVua25vd24iLCJicm93c2VyIjoiQ2hyb21lLzgwLjAuMzk4NyIsImRldmljZSI6Ik90aGVyIiwibGFzdEFjY2VzcyI6MCwibW9iaWxlIjpmYWxzZX0=\",\"AUTH_TIME\":\"1585078987\"},\"state\":\"LOGGED_IN\"}', 1585078959),
-('d1e14e9b-ba0c-45a0-af1e-a425a400681e', '688171b4-638a-43df-87c4-c5e85751346f', 'jhipster', 1585008743, '1', '{\"ipAddress\":\"172.25.0.1\",\"authMethod\":\"openid-connect\",\"rememberMe\":false,\"started\":0,\"notes\":{\"KC_DEVICE_NOTE\":\"eyJpcEFkZHJlc3MiOiIxNzIuMjUuMC4xIiwib3MiOiJMaW51eCIsIm9zVmVyc2lvbiI6IlVua25vd24iLCJicm93c2VyIjoiQ2hyb21lLzgwLjAuMzk4NyIsImRldmljZSI6Ik90aGVyIiwibGFzdEFjY2VzcyI6MCwibW9iaWxlIjpmYWxzZX0=\",\"AUTH_TIME\":\"1585008742\"},\"state\":\"LOGGED_IN\"}', 1585009498),
-('d940acbc-dbe3-41b7-b925-1377d94178c9', '688171b4-638a-43df-87c4-c5e85751346f', 'jhipster', 1585077764, '1', '{\"ipAddress\":\"172.25.0.1\",\"authMethod\":\"openid-connect\",\"rememberMe\":false,\"started\":0,\"notes\":{\"KC_DEVICE_NOTE\":\"eyJpcEFkZHJlc3MiOiIxNzIuMjUuMC4xIiwib3MiOiJMaW51eCIsIm9zVmVyc2lvbiI6IlVua25vd24iLCJicm93c2VyIjoiQ2hyb21lLzgwLjAuMzk4NyIsImRldmljZSI6Ik90aGVyIiwibGFzdEFjY2VzcyI6MCwibW9iaWxlIjpmYWxzZX0=\",\"AUTH_TIME\":\"1585077764\"},\"state\":\"LOGGED_IN\"}', 1585077759),
-('f13dfe28-c671-47f4-a46b-c6f0af9a1ce6', '688171b4-638a-43df-87c4-c5e85751346f', 'jhipster', 1585081221, '1', '{\"ipAddress\":\"172.25.0.1\",\"authMethod\":\"openid-connect\",\"rememberMe\":false,\"started\":0,\"notes\":{\"KC_DEVICE_NOTE\":\"eyJpcEFkZHJlc3MiOiIxNzIuMjUuMC4xIiwib3MiOiJMaW51eCIsIm9zVmVyc2lvbiI6IlVua25vd24iLCJicm93c2VyIjoiQ2hyb21lLzgwLjAuMzk4NyIsImRldmljZSI6Ik90aGVyIiwibGFzdEFjY2VzcyI6MCwibW9iaWxlIjpmYWxzZX0=\",\"AUTH_TIME\":\"1585081221\"},\"state\":\"LOGGED_IN\"}', 1585084300),
-('f3c319c0-d68d-45b8-a7bc-2517c6b68e71', 'b3c1bfae-0a77-48a2-8dba-7b6559b8959f', 'jhipster', 1585086111, '1', '{\"ipAddress\":\"172.25.0.1\",\"authMethod\":\"openid-connect\",\"rememberMe\":false,\"started\":0,\"notes\":{\"KC_DEVICE_NOTE\":\"eyJpcEFkZHJlc3MiOiIxNzIuMjUuMC4xIiwib3MiOiJMaW51eCIsIm9zVmVyc2lvbiI6IlVua25vd24iLCJicm93c2VyIjoiQ2hyb21lLzgwLjAuMzk4NyIsImRldmljZSI6Ik90aGVyIiwibGFzdEFjY2VzcyI6MCwibW9iaWxlIjpmYWxzZX0=\",\"AUTH_TIME\":\"1585086111\"},\"state\":\"LOGGED_IN\"}', 1585086340);
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `policy_config`
---
-
-DROP TABLE IF EXISTS `policy_config`;
-CREATE TABLE IF NOT EXISTS `policy_config` (
-  `POLICY_ID` varchar(36) NOT NULL,
-  `NAME` varchar(255) NOT NULL,
-  `VALUE` longtext,
-  PRIMARY KEY (`POLICY_ID`,`NAME`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `policy_config`
---
-
-INSERT INTO `policy_config` (`POLICY_ID`, `NAME`, `VALUE`) VALUES
-('4b5c72cc-b8b8-4bfc-95ac-61815669f985', 'defaultResourceType', 'urn:internal:resources:default'),
-('ad943211-dd2c-4784-92a3-7ad1c524169b', 'code', '// by default, grants any permission associated with this policy\n$evaluation.grant();\n'),
-('d50a94d5-1756-434d-b110-4d53eece2e6d', 'defaultResourceType', 'urn:PhycusSHFCApp:resources:default'),
-('ff09b194-0615-4cfd-9851-74adf540dabd', 'code', '// by default, grants any permission associated with this policy\n$evaluation.grant();\n');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `protocol_mapper`
---
-
-DROP TABLE IF EXISTS `protocol_mapper`;
-CREATE TABLE IF NOT EXISTS `protocol_mapper` (
-  `ID` varchar(36) NOT NULL,
-  `NAME` varchar(255) NOT NULL,
-  `PROTOCOL` varchar(255) NOT NULL,
-  `PROTOCOL_MAPPER_NAME` varchar(255) NOT NULL,
-  `CLIENT_ID` varchar(36) DEFAULT NULL,
-  `CLIENT_SCOPE_ID` varchar(36) DEFAULT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `IDX_PROTOCOL_MAPPER_CLIENT` (`CLIENT_ID`),
-  KEY `IDX_CLSCOPE_PROTMAP` (`CLIENT_SCOPE_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `protocol_mapper`
---
-
-INSERT INTO `protocol_mapper` (`ID`, `NAME`, `PROTOCOL`, `PROTOCOL_MAPPER_NAME`, `CLIENT_ID`, `CLIENT_SCOPE_ID`) VALUES
-('013df1b5-9a5b-44f2-a0b6-5bf6d448556b', 'audience resolve', 'openid-connect', 'oidc-audience-resolve-mapper', '7b6ab455-242e-42aa-96d8-9c9e2b74da9d', NULL),
-('09836b63-f171-4bf4-8d56-2e255286cf89', 'phone number verified', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, '386b2097-465b-4135-a057-62709870909e'),
-('0edb6930-0754-40f8-89a4-d92197c7ebe5', 'profile', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, '38793860-edb1-452f-b2e0-e5ad2041cb70'),
-('13158f91-ecf3-4fc4-b5ce-26d57a307d56', 'locale', 'openid-connect', 'oidc-usermodel-attribute-mapper', 'ab9a50dd-ef39-46cf-add0-af8ce9a00e61', NULL),
-('134b3451-cf2d-4ead-8fce-bf24b32f014c', 'allowed web origins', 'openid-connect', 'oidc-allowed-origins-mapper', NULL, '84fdcb72-668b-408e-aaea-110d594afe5e'),
-('14631b9c-83eb-48ab-a224-29f047015e52', 'username', 'openid-connect', 'oidc-usermodel-property-mapper', NULL, 'd5de6a8a-8894-4e72-b6ef-f9bf3a7a6541'),
-('19551b04-fc0c-44c4-b2bf-966da87ba3c3', 'given name', 'openid-connect', 'oidc-usermodel-property-mapper', NULL, 'd5de6a8a-8894-4e72-b6ef-f9bf3a7a6541'),
-('1ac09ef6-ab67-4379-b15a-5e54e50783be', 'groups', 'openid-connect', 'oidc-usermodel-realm-role-mapper', NULL, 'a72d436e-111b-445b-804a-967d249f6455'),
-('1b1a1f44-66df-4670-badb-46a3d361ec7c', 'Client Host', 'openid-connect', 'oidc-usersessionmodel-note-mapper', '98ae8603-4547-4218-8fb9-ebc550a0e10b', NULL),
-('1d522df5-9e2f-4c99-8fb6-4cbbb15ddc6e', 'audience resolve', 'openid-connect', 'oidc-audience-resolve-mapper', '3deba736-cf6f-44b8-8022-31f82347cc96', NULL),
-('20b9eed0-fc6b-4c18-8ebc-87ea685a931e', 'website', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, '38793860-edb1-452f-b2e0-e5ad2041cb70'),
-('219532f1-3c5c-4b30-a018-ae99adb6fc87', 'birthdate', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, 'd5de6a8a-8894-4e72-b6ef-f9bf3a7a6541'),
-('2412ad07-0d21-4fe2-9ec1-256f43a6cd10', 'groups', 'openid-connect', 'oidc-usermodel-realm-role-mapper', NULL, 'a749b2db-a1ac-4e58-9fd3-1142e96b0445'),
-('26e5a3cc-095a-46b2-b56a-a5223e8f3789', 'picture', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, '38793860-edb1-452f-b2e0-e5ad2041cb70'),
-('2ccf435c-c255-4715-8dcd-15091f97c5a5', 'picture', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, 'd5de6a8a-8894-4e72-b6ef-f9bf3a7a6541'),
-('2e7a64f5-dd48-45f7-8623-c5ba976b0eb2', 'birthdate', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, '38793860-edb1-452f-b2e0-e5ad2041cb70'),
-('30763567-fd72-4d9b-bf3a-454c38cfd901', 'address', 'openid-connect', 'oidc-address-mapper', NULL, '8dee153c-4e64-435f-8a7c-cd9de0eb653d'),
-('3a1a19e1-bf24-4125-8c86-74b71050274b', 'locale', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, '38793860-edb1-452f-b2e0-e5ad2041cb70'),
-('3e1f0d91-a210-4dd7-af78-3b8d8cc2e244', 'Client ID', 'openid-connect', 'oidc-usersessionmodel-note-mapper', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', NULL),
-('408dc6b2-dc52-4ccf-814a-6639c95a7541', 'gender', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, '38793860-edb1-452f-b2e0-e5ad2041cb70'),
-('46513189-074c-4ba5-bfa7-29bae63faaaf', 'Client IP Address', 'openid-connect', 'oidc-usersessionmodel-note-mapper', '98ae8603-4547-4218-8fb9-ebc550a0e10b', NULL),
-('48e1a9a5-f6de-4966-a948-d5b485fd2b46', 'updated at', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, '38793860-edb1-452f-b2e0-e5ad2041cb70'),
-('4e57380d-0cf4-416e-93d4-33f27a6b794e', 'phone number', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, '386b2097-465b-4135-a057-62709870909e'),
-('5a33d5e4-e124-412e-be4d-b6b28b41382a', 'family name', 'openid-connect', 'oidc-usermodel-property-mapper', NULL, 'd5de6a8a-8894-4e72-b6ef-f9bf3a7a6541'),
-('646e3a98-5f0c-4192-91f0-9719c295b278', 'langKey', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, '3880d5d9-fced-4446-97fe-0434f2bb76ea'),
-('65061407-001a-4820-87a6-7169d19558a1', 'nickname', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, '38793860-edb1-452f-b2e0-e5ad2041cb70'),
-('68f16c75-9a89-4e13-8b6b-12476f0e49fd', 'zoneinfo', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, '38793860-edb1-452f-b2e0-e5ad2041cb70'),
-('74840763-9b35-4c9a-8789-4008fedc26c2', 'phone number verified', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, '0d3b55db-e68b-4c83-91d4-7370a6810a24'),
-('76f898bc-70e4-4e0a-a259-ae4cb58260f9', 'email verified', 'openid-connect', 'oidc-usermodel-property-mapper', NULL, '39e1693b-a924-4fbb-b98c-520869771f83'),
-('7b885963-e651-4b5d-94c7-4aa4aede723b', 'family name', 'openid-connect', 'oidc-usermodel-property-mapper', NULL, '38793860-edb1-452f-b2e0-e5ad2041cb70'),
-('7cbb4477-af0c-4394-a754-b72a1b4638e0', 'role list', 'saml', 'saml-role-list-mapper', NULL, '391f1641-cb22-41a3-a0ed-752d9264aaf5'),
-('90b1a715-e12e-4af8-89f6-82a370d57d1a', 'audience resolve', 'openid-connect', 'oidc-audience-resolve-mapper', NULL, '021d9ac1-9650-401c-b2a2-efa2f3e6b70c'),
-('9271d821-b803-406d-8574-2f5a2693f065', 'realm roles', 'openid-connect', 'oidc-usermodel-realm-role-mapper', NULL, '021d9ac1-9650-401c-b2a2-efa2f3e6b70c'),
-('974887a2-e14a-4afd-84fc-a848009079ae', 'Client ID', 'openid-connect', 'oidc-usersessionmodel-note-mapper', '98ae8603-4547-4218-8fb9-ebc550a0e10b', NULL),
-('9a9feffe-7e4f-427a-ab14-053bd29b7ba3', 'username', 'openid-connect', 'oidc-usermodel-property-mapper', NULL, '38793860-edb1-452f-b2e0-e5ad2041cb70'),
-('a91fbca6-9a49-4f64-a49a-608cc736608f', 'middle name', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, '38793860-edb1-452f-b2e0-e5ad2041cb70'),
-('a9d81dbc-06f1-491c-a4f9-4f2a70a696dd', 'client roles', 'openid-connect', 'oidc-usermodel-client-role-mapper', NULL, 'e3279721-a5de-46c7-b463-8d076a1631ae'),
-('abfaa4cd-4bc1-4223-be5d-c56c641369f2', 'locale', 'openid-connect', 'oidc-usermodel-attribute-mapper', '0aa176c1-8d28-4a8b-8e97-7e4b49a289ff', NULL),
-('ad47f393-3e6f-4516-9c20-5fd2e3b2b91f', 'given name', 'openid-connect', 'oidc-usermodel-property-mapper', NULL, '38793860-edb1-452f-b2e0-e5ad2041cb70'),
-('b19404f1-5139-4505-9278-139cc8d41ba5', 'email verified', 'openid-connect', 'oidc-usermodel-property-mapper', NULL, 'bd76f66d-85f6-44a6-ad5a-133b3f32016a'),
-('b46b8e5e-5fea-441e-94a5-159ae7434211', 'realmRolesViaPhycusSHFCClientScopeClaims', 'openid-connect', 'oidc-usermodel-realm-role-mapper', NULL, '3880d5d9-fced-4446-97fe-0434f2bb76ea'),
-('b60646cc-1344-47b1-86ad-d8b71e837edc', 'realm roles', 'openid-connect', 'oidc-usermodel-realm-role-mapper', NULL, 'e3279721-a5de-46c7-b463-8d076a1631ae'),
-('b9a92105-8ca5-45d1-8a99-626255ac174f', 'address', 'openid-connect', 'oidc-address-mapper', NULL, '1dc1e050-891a-4f5b-ac9d-5ea0c2e3c05e'),
-('bbbd7dc1-63d0-468f-9463-4772833ef2fa', 'client roles', 'openid-connect', 'oidc-usermodel-client-role-mapper', NULL, '021d9ac1-9650-401c-b2a2-efa2f3e6b70c'),
-('bbc582f4-4749-42b8-9c65-71f4edfd3979', 'phone number', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, '0d3b55db-e68b-4c83-91d4-7370a6810a24'),
-('c4122959-6738-4883-b50a-acd0033a477a', 'profile', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, 'd5de6a8a-8894-4e72-b6ef-f9bf3a7a6541'),
-('c422b63f-e809-41c2-854c-e801e8e25485', 'gender', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, 'd5de6a8a-8894-4e72-b6ef-f9bf3a7a6541'),
-('c443f4cd-1174-49a7-a2b3-65d5ccde5efa', 'nickname', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, 'd5de6a8a-8894-4e72-b6ef-f9bf3a7a6541'),
-('cedd1f1b-951a-4332-9fa1-2edf1a266283', 'middle name', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, 'd5de6a8a-8894-4e72-b6ef-f9bf3a7a6541'),
-('d0933863-01a2-4c0f-83d0-7a6f25169cc0', 'clientRolesViaPhycusSHFCClientScopeClaims', 'openid-connect', 'oidc-usermodel-client-role-mapper', NULL, '3880d5d9-fced-4446-97fe-0434f2bb76ea'),
-('d2a2e9a8-b105-4a8d-83bf-b9668ae0c1ce', 'audience resolve', 'openid-connect', 'oidc-audience-resolve-mapper', NULL, 'e3279721-a5de-46c7-b463-8d076a1631ae'),
-('d34872aa-4054-41b6-a3fd-59ff8e743a5c', 'email', 'openid-connect', 'oidc-usermodel-property-mapper', NULL, 'bd76f66d-85f6-44a6-ad5a-133b3f32016a'),
-('d7db1b88-2c3c-419a-91cf-19ad13355a56', 'zoneinfo', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, 'd5de6a8a-8894-4e72-b6ef-f9bf3a7a6541'),
-('db225b69-f493-47e7-bd59-2b5d0f9c5473', 'full name', 'openid-connect', 'oidc-full-name-mapper', NULL, '38793860-edb1-452f-b2e0-e5ad2041cb70'),
-('dc1097e0-226d-4915-9004-4b229a95a80b', 'role list', 'saml', 'saml-role-list-mapper', NULL, '1c9c1b4c-ccb9-4e8f-82b7-5b3a4ac06229'),
-('dec0c468-3c11-429b-844e-dfd632b20ba7', 'upn', 'openid-connect', 'oidc-usermodel-property-mapper', NULL, 'a72d436e-111b-445b-804a-967d249f6455'),
-('dfd19868-5c87-4a51-80e0-2a82dfabb16c', 'updated at', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, 'd5de6a8a-8894-4e72-b6ef-f9bf3a7a6541'),
-('e348c7f8-e835-4539-a80b-b588510a82a9', 'email', 'openid-connect', 'oidc-usermodel-property-mapper', NULL, '39e1693b-a924-4fbb-b98c-520869771f83'),
-('e7c536ca-1711-4ed5-9f21-20a25435f475', 'login', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, '3880d5d9-fced-4446-97fe-0434f2bb76ea'),
-('eb305ae4-1a75-4b4b-a803-b340f6e2cbf4', 'upn', 'openid-connect', 'oidc-usermodel-property-mapper', NULL, 'a749b2db-a1ac-4e58-9fd3-1142e96b0445'),
-('ecb34ff7-d27d-4696-b536-0512044b21a9', 'website', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, 'd5de6a8a-8894-4e72-b6ef-f9bf3a7a6541'),
-('f36243d4-ab37-46b4-bdb8-c5d2cede1af9', 'allowed web origins', 'openid-connect', 'oidc-allowed-origins-mapper', NULL, '55178e4f-7c18-4d0d-b010-f9e4079d5d48'),
-('f3cf3c8b-891a-48a1-97b3-1d10d55ddecd', 'locale', 'openid-connect', 'oidc-usermodel-attribute-mapper', NULL, 'd5de6a8a-8894-4e72-b6ef-f9bf3a7a6541'),
-('f4ae04c6-c23b-4ab7-991f-29f5337c2d20', 'Client Host', 'openid-connect', 'oidc-usersessionmodel-note-mapper', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', NULL),
-('f837ca4e-ad4b-4695-a199-ccc7800facfa', 'Client IP Address', 'openid-connect', 'oidc-usersessionmodel-note-mapper', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', NULL),
-('fa3b86c8-abaf-4261-b48d-41cd3cf2dc6a', 'full name', 'openid-connect', 'oidc-full-name-mapper', NULL, 'd5de6a8a-8894-4e72-b6ef-f9bf3a7a6541');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `protocol_mapper_config`
---
-
-DROP TABLE IF EXISTS `protocol_mapper_config`;
-CREATE TABLE IF NOT EXISTS `protocol_mapper_config` (
-  `PROTOCOL_MAPPER_ID` varchar(36) NOT NULL,
-  `VALUE` longtext,
-  `NAME` varchar(255) NOT NULL,
-  PRIMARY KEY (`PROTOCOL_MAPPER_ID`,`NAME`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `protocol_mapper_config`
---
-
-INSERT INTO `protocol_mapper_config` (`PROTOCOL_MAPPER_ID`, `VALUE`, `NAME`) VALUES
-('09836b63-f171-4bf4-8d56-2e255286cf89', 'true', 'access.token.claim'),
-('09836b63-f171-4bf4-8d56-2e255286cf89', 'phone_number_verified', 'claim.name'),
-('09836b63-f171-4bf4-8d56-2e255286cf89', 'true', 'id.token.claim'),
-('09836b63-f171-4bf4-8d56-2e255286cf89', 'boolean', 'jsonType.label'),
-('09836b63-f171-4bf4-8d56-2e255286cf89', 'phoneNumberVerified', 'user.attribute'),
-('09836b63-f171-4bf4-8d56-2e255286cf89', 'true', 'userinfo.token.claim'),
-('0edb6930-0754-40f8-89a4-d92197c7ebe5', 'true', 'access.token.claim'),
-('0edb6930-0754-40f8-89a4-d92197c7ebe5', 'profile', 'claim.name'),
-('0edb6930-0754-40f8-89a4-d92197c7ebe5', 'true', 'id.token.claim'),
-('0edb6930-0754-40f8-89a4-d92197c7ebe5', 'String', 'jsonType.label'),
-('0edb6930-0754-40f8-89a4-d92197c7ebe5', 'profile', 'user.attribute'),
-('0edb6930-0754-40f8-89a4-d92197c7ebe5', 'true', 'userinfo.token.claim'),
-('13158f91-ecf3-4fc4-b5ce-26d57a307d56', 'true', 'access.token.claim'),
-('13158f91-ecf3-4fc4-b5ce-26d57a307d56', 'locale', 'claim.name'),
-('13158f91-ecf3-4fc4-b5ce-26d57a307d56', 'true', 'id.token.claim'),
-('13158f91-ecf3-4fc4-b5ce-26d57a307d56', 'String', 'jsonType.label'),
-('13158f91-ecf3-4fc4-b5ce-26d57a307d56', 'locale', 'user.attribute'),
-('13158f91-ecf3-4fc4-b5ce-26d57a307d56', 'true', 'userinfo.token.claim'),
-('14631b9c-83eb-48ab-a224-29f047015e52', 'true', 'access.token.claim'),
-('14631b9c-83eb-48ab-a224-29f047015e52', 'preferred_username', 'claim.name'),
-('14631b9c-83eb-48ab-a224-29f047015e52', 'true', 'id.token.claim'),
-('14631b9c-83eb-48ab-a224-29f047015e52', 'String', 'jsonType.label'),
-('14631b9c-83eb-48ab-a224-29f047015e52', 'username', 'user.attribute'),
-('14631b9c-83eb-48ab-a224-29f047015e52', 'true', 'userinfo.token.claim'),
-('19551b04-fc0c-44c4-b2bf-966da87ba3c3', 'true', 'access.token.claim'),
-('19551b04-fc0c-44c4-b2bf-966da87ba3c3', 'given_name', 'claim.name'),
-('19551b04-fc0c-44c4-b2bf-966da87ba3c3', 'true', 'id.token.claim'),
-('19551b04-fc0c-44c4-b2bf-966da87ba3c3', 'String', 'jsonType.label'),
-('19551b04-fc0c-44c4-b2bf-966da87ba3c3', 'firstName', 'user.attribute'),
-('19551b04-fc0c-44c4-b2bf-966da87ba3c3', 'true', 'userinfo.token.claim'),
-('1ac09ef6-ab67-4379-b15a-5e54e50783be', 'true', 'access.token.claim'),
-('1ac09ef6-ab67-4379-b15a-5e54e50783be', 'groups', 'claim.name'),
-('1ac09ef6-ab67-4379-b15a-5e54e50783be', 'true', 'id.token.claim'),
-('1ac09ef6-ab67-4379-b15a-5e54e50783be', 'String', 'jsonType.label'),
-('1ac09ef6-ab67-4379-b15a-5e54e50783be', 'true', 'multivalued'),
-('1ac09ef6-ab67-4379-b15a-5e54e50783be', 'foo', 'user.attribute'),
-('1ac09ef6-ab67-4379-b15a-5e54e50783be', 'true', 'userinfo.token.claim'),
-('1b1a1f44-66df-4670-badb-46a3d361ec7c', 'true', 'access.token.claim'),
-('1b1a1f44-66df-4670-badb-46a3d361ec7c', 'clientHost', 'claim.name'),
-('1b1a1f44-66df-4670-badb-46a3d361ec7c', 'true', 'id.token.claim'),
-('1b1a1f44-66df-4670-badb-46a3d361ec7c', 'String', 'jsonType.label'),
-('1b1a1f44-66df-4670-badb-46a3d361ec7c', 'clientHost', 'user.session.note'),
-('1b1a1f44-66df-4670-badb-46a3d361ec7c', 'true', 'userinfo.token.claim'),
-('20b9eed0-fc6b-4c18-8ebc-87ea685a931e', 'true', 'access.token.claim'),
-('20b9eed0-fc6b-4c18-8ebc-87ea685a931e', 'website', 'claim.name'),
-('20b9eed0-fc6b-4c18-8ebc-87ea685a931e', 'true', 'id.token.claim'),
-('20b9eed0-fc6b-4c18-8ebc-87ea685a931e', 'String', 'jsonType.label'),
-('20b9eed0-fc6b-4c18-8ebc-87ea685a931e', 'website', 'user.attribute'),
-('20b9eed0-fc6b-4c18-8ebc-87ea685a931e', 'true', 'userinfo.token.claim'),
-('219532f1-3c5c-4b30-a018-ae99adb6fc87', 'true', 'access.token.claim'),
-('219532f1-3c5c-4b30-a018-ae99adb6fc87', 'birthdate', 'claim.name'),
-('219532f1-3c5c-4b30-a018-ae99adb6fc87', 'true', 'id.token.claim'),
-('219532f1-3c5c-4b30-a018-ae99adb6fc87', 'String', 'jsonType.label'),
-('219532f1-3c5c-4b30-a018-ae99adb6fc87', 'birthdate', 'user.attribute'),
-('219532f1-3c5c-4b30-a018-ae99adb6fc87', 'true', 'userinfo.token.claim'),
-('2412ad07-0d21-4fe2-9ec1-256f43a6cd10', 'true', 'access.token.claim'),
-('2412ad07-0d21-4fe2-9ec1-256f43a6cd10', 'groups', 'claim.name'),
-('2412ad07-0d21-4fe2-9ec1-256f43a6cd10', 'true', 'id.token.claim'),
-('2412ad07-0d21-4fe2-9ec1-256f43a6cd10', 'String', 'jsonType.label'),
-('2412ad07-0d21-4fe2-9ec1-256f43a6cd10', 'true', 'multivalued'),
-('2412ad07-0d21-4fe2-9ec1-256f43a6cd10', 'foo', 'user.attribute'),
-('26e5a3cc-095a-46b2-b56a-a5223e8f3789', 'true', 'access.token.claim'),
-('26e5a3cc-095a-46b2-b56a-a5223e8f3789', 'picture', 'claim.name'),
-('26e5a3cc-095a-46b2-b56a-a5223e8f3789', 'true', 'id.token.claim'),
-('26e5a3cc-095a-46b2-b56a-a5223e8f3789', 'String', 'jsonType.label'),
-('26e5a3cc-095a-46b2-b56a-a5223e8f3789', 'picture', 'user.attribute'),
-('26e5a3cc-095a-46b2-b56a-a5223e8f3789', 'true', 'userinfo.token.claim'),
-('2ccf435c-c255-4715-8dcd-15091f97c5a5', 'true', 'access.token.claim'),
-('2ccf435c-c255-4715-8dcd-15091f97c5a5', 'picture', 'claim.name'),
-('2ccf435c-c255-4715-8dcd-15091f97c5a5', 'true', 'id.token.claim'),
-('2ccf435c-c255-4715-8dcd-15091f97c5a5', 'String', 'jsonType.label'),
-('2ccf435c-c255-4715-8dcd-15091f97c5a5', 'picture', 'user.attribute'),
-('2ccf435c-c255-4715-8dcd-15091f97c5a5', 'true', 'userinfo.token.claim'),
-('2e7a64f5-dd48-45f7-8623-c5ba976b0eb2', 'true', 'access.token.claim'),
-('2e7a64f5-dd48-45f7-8623-c5ba976b0eb2', 'birthdate', 'claim.name'),
-('2e7a64f5-dd48-45f7-8623-c5ba976b0eb2', 'true', 'id.token.claim'),
-('2e7a64f5-dd48-45f7-8623-c5ba976b0eb2', 'String', 'jsonType.label'),
-('2e7a64f5-dd48-45f7-8623-c5ba976b0eb2', 'birthdate', 'user.attribute'),
-('2e7a64f5-dd48-45f7-8623-c5ba976b0eb2', 'true', 'userinfo.token.claim'),
-('30763567-fd72-4d9b-bf3a-454c38cfd901', 'true', 'access.token.claim'),
-('30763567-fd72-4d9b-bf3a-454c38cfd901', 'true', 'id.token.claim'),
-('30763567-fd72-4d9b-bf3a-454c38cfd901', 'country', 'user.attribute.country'),
-('30763567-fd72-4d9b-bf3a-454c38cfd901', 'formatted', 'user.attribute.formatted'),
-('30763567-fd72-4d9b-bf3a-454c38cfd901', 'locality', 'user.attribute.locality'),
-('30763567-fd72-4d9b-bf3a-454c38cfd901', 'postal_code', 'user.attribute.postal_code'),
-('30763567-fd72-4d9b-bf3a-454c38cfd901', 'region', 'user.attribute.region'),
-('30763567-fd72-4d9b-bf3a-454c38cfd901', 'street', 'user.attribute.street'),
-('30763567-fd72-4d9b-bf3a-454c38cfd901', 'true', 'userinfo.token.claim'),
-('3a1a19e1-bf24-4125-8c86-74b71050274b', 'true', 'access.token.claim'),
-('3a1a19e1-bf24-4125-8c86-74b71050274b', 'locale', 'claim.name'),
-('3a1a19e1-bf24-4125-8c86-74b71050274b', 'true', 'id.token.claim'),
-('3a1a19e1-bf24-4125-8c86-74b71050274b', 'String', 'jsonType.label'),
-('3a1a19e1-bf24-4125-8c86-74b71050274b', 'locale', 'user.attribute'),
-('3a1a19e1-bf24-4125-8c86-74b71050274b', 'true', 'userinfo.token.claim'),
-('3e1f0d91-a210-4dd7-af78-3b8d8cc2e244', 'true', 'access.token.claim'),
-('3e1f0d91-a210-4dd7-af78-3b8d8cc2e244', 'clientId', 'claim.name'),
-('3e1f0d91-a210-4dd7-af78-3b8d8cc2e244', 'true', 'id.token.claim'),
-('3e1f0d91-a210-4dd7-af78-3b8d8cc2e244', 'String', 'jsonType.label'),
-('3e1f0d91-a210-4dd7-af78-3b8d8cc2e244', 'clientId', 'user.session.note'),
-('408dc6b2-dc52-4ccf-814a-6639c95a7541', 'true', 'access.token.claim'),
-('408dc6b2-dc52-4ccf-814a-6639c95a7541', 'gender', 'claim.name'),
-('408dc6b2-dc52-4ccf-814a-6639c95a7541', 'true', 'id.token.claim'),
-('408dc6b2-dc52-4ccf-814a-6639c95a7541', 'String', 'jsonType.label'),
-('408dc6b2-dc52-4ccf-814a-6639c95a7541', 'gender', 'user.attribute'),
-('408dc6b2-dc52-4ccf-814a-6639c95a7541', 'true', 'userinfo.token.claim'),
-('46513189-074c-4ba5-bfa7-29bae63faaaf', 'true', 'access.token.claim'),
-('46513189-074c-4ba5-bfa7-29bae63faaaf', 'clientAddress', 'claim.name'),
-('46513189-074c-4ba5-bfa7-29bae63faaaf', 'true', 'id.token.claim'),
-('46513189-074c-4ba5-bfa7-29bae63faaaf', 'String', 'jsonType.label'),
-('46513189-074c-4ba5-bfa7-29bae63faaaf', 'clientAddress', 'user.session.note'),
-('46513189-074c-4ba5-bfa7-29bae63faaaf', 'true', 'userinfo.token.claim'),
-('48e1a9a5-f6de-4966-a948-d5b485fd2b46', 'true', 'access.token.claim'),
-('48e1a9a5-f6de-4966-a948-d5b485fd2b46', 'updated_at', 'claim.name'),
-('48e1a9a5-f6de-4966-a948-d5b485fd2b46', 'true', 'id.token.claim'),
-('48e1a9a5-f6de-4966-a948-d5b485fd2b46', 'String', 'jsonType.label'),
-('48e1a9a5-f6de-4966-a948-d5b485fd2b46', 'updatedAt', 'user.attribute'),
-('48e1a9a5-f6de-4966-a948-d5b485fd2b46', 'true', 'userinfo.token.claim'),
-('4e57380d-0cf4-416e-93d4-33f27a6b794e', 'true', 'access.token.claim'),
-('4e57380d-0cf4-416e-93d4-33f27a6b794e', 'phone_number', 'claim.name'),
-('4e57380d-0cf4-416e-93d4-33f27a6b794e', 'true', 'id.token.claim'),
-('4e57380d-0cf4-416e-93d4-33f27a6b794e', 'String', 'jsonType.label'),
-('4e57380d-0cf4-416e-93d4-33f27a6b794e', 'phoneNumber', 'user.attribute'),
-('4e57380d-0cf4-416e-93d4-33f27a6b794e', 'true', 'userinfo.token.claim'),
-('5a33d5e4-e124-412e-be4d-b6b28b41382a', 'true', 'access.token.claim'),
-('5a33d5e4-e124-412e-be4d-b6b28b41382a', 'family_name', 'claim.name'),
-('5a33d5e4-e124-412e-be4d-b6b28b41382a', 'true', 'id.token.claim'),
-('5a33d5e4-e124-412e-be4d-b6b28b41382a', 'String', 'jsonType.label'),
-('5a33d5e4-e124-412e-be4d-b6b28b41382a', 'lastName', 'user.attribute'),
-('5a33d5e4-e124-412e-be4d-b6b28b41382a', 'true', 'userinfo.token.claim'),
-('646e3a98-5f0c-4192-91f0-9719c295b278', 'langKey', 'claim.name'),
-('646e3a98-5f0c-4192-91f0-9719c295b278', 'String', 'jsonType.label'),
-('646e3a98-5f0c-4192-91f0-9719c295b278', 'langKey', 'user.attribute'),
-('646e3a98-5f0c-4192-91f0-9719c295b278', 'true', 'userinfo.token.claim'),
-('65061407-001a-4820-87a6-7169d19558a1', 'true', 'access.token.claim'),
-('65061407-001a-4820-87a6-7169d19558a1', 'nickname', 'claim.name'),
-('65061407-001a-4820-87a6-7169d19558a1', 'true', 'id.token.claim'),
-('65061407-001a-4820-87a6-7169d19558a1', 'String', 'jsonType.label'),
-('65061407-001a-4820-87a6-7169d19558a1', 'nickname', 'user.attribute'),
-('65061407-001a-4820-87a6-7169d19558a1', 'true', 'userinfo.token.claim'),
-('68f16c75-9a89-4e13-8b6b-12476f0e49fd', 'true', 'access.token.claim'),
-('68f16c75-9a89-4e13-8b6b-12476f0e49fd', 'zoneinfo', 'claim.name'),
-('68f16c75-9a89-4e13-8b6b-12476f0e49fd', 'true', 'id.token.claim'),
-('68f16c75-9a89-4e13-8b6b-12476f0e49fd', 'String', 'jsonType.label'),
-('68f16c75-9a89-4e13-8b6b-12476f0e49fd', 'zoneinfo', 'user.attribute'),
-('68f16c75-9a89-4e13-8b6b-12476f0e49fd', 'true', 'userinfo.token.claim'),
-('74840763-9b35-4c9a-8789-4008fedc26c2', 'true', 'access.token.claim'),
-('74840763-9b35-4c9a-8789-4008fedc26c2', 'phone_number_verified', 'claim.name'),
-('74840763-9b35-4c9a-8789-4008fedc26c2', 'true', 'id.token.claim'),
-('74840763-9b35-4c9a-8789-4008fedc26c2', 'boolean', 'jsonType.label'),
-('74840763-9b35-4c9a-8789-4008fedc26c2', 'phoneNumberVerified', 'user.attribute'),
-('74840763-9b35-4c9a-8789-4008fedc26c2', 'true', 'userinfo.token.claim'),
-('76f898bc-70e4-4e0a-a259-ae4cb58260f9', 'true', 'access.token.claim'),
-('76f898bc-70e4-4e0a-a259-ae4cb58260f9', 'email_verified', 'claim.name'),
-('76f898bc-70e4-4e0a-a259-ae4cb58260f9', 'true', 'id.token.claim'),
-('76f898bc-70e4-4e0a-a259-ae4cb58260f9', 'boolean', 'jsonType.label'),
-('76f898bc-70e4-4e0a-a259-ae4cb58260f9', 'emailVerified', 'user.attribute'),
-('76f898bc-70e4-4e0a-a259-ae4cb58260f9', 'true', 'userinfo.token.claim'),
-('7b885963-e651-4b5d-94c7-4aa4aede723b', 'true', 'access.token.claim'),
-('7b885963-e651-4b5d-94c7-4aa4aede723b', 'family_name', 'claim.name'),
-('7b885963-e651-4b5d-94c7-4aa4aede723b', 'true', 'id.token.claim'),
-('7b885963-e651-4b5d-94c7-4aa4aede723b', 'String', 'jsonType.label'),
-('7b885963-e651-4b5d-94c7-4aa4aede723b', 'lastName', 'user.attribute'),
-('7b885963-e651-4b5d-94c7-4aa4aede723b', 'true', 'userinfo.token.claim'),
-('7cbb4477-af0c-4394-a754-b72a1b4638e0', 'Role', 'attribute.name'),
-('7cbb4477-af0c-4394-a754-b72a1b4638e0', 'Basic', 'attribute.nameformat'),
-('7cbb4477-af0c-4394-a754-b72a1b4638e0', 'false', 'single'),
-('9271d821-b803-406d-8574-2f5a2693f065', 'true', 'access.token.claim'),
-('9271d821-b803-406d-8574-2f5a2693f065', 'realm_access.roles', 'claim.name'),
-('9271d821-b803-406d-8574-2f5a2693f065', 'String', 'jsonType.label'),
-('9271d821-b803-406d-8574-2f5a2693f065', 'true', 'multivalued'),
-('9271d821-b803-406d-8574-2f5a2693f065', 'foo', 'user.attribute'),
-('974887a2-e14a-4afd-84fc-a848009079ae', 'true', 'access.token.claim'),
-('974887a2-e14a-4afd-84fc-a848009079ae', 'clientId', 'claim.name'),
-('974887a2-e14a-4afd-84fc-a848009079ae', 'true', 'id.token.claim'),
-('974887a2-e14a-4afd-84fc-a848009079ae', 'String', 'jsonType.label'),
-('974887a2-e14a-4afd-84fc-a848009079ae', 'clientId', 'user.session.note'),
-('974887a2-e14a-4afd-84fc-a848009079ae', 'true', 'userinfo.token.claim'),
-('9a9feffe-7e4f-427a-ab14-053bd29b7ba3', 'true', 'access.token.claim'),
-('9a9feffe-7e4f-427a-ab14-053bd29b7ba3', 'preferred_username', 'claim.name'),
-('9a9feffe-7e4f-427a-ab14-053bd29b7ba3', 'true', 'id.token.claim'),
-('9a9feffe-7e4f-427a-ab14-053bd29b7ba3', 'String', 'jsonType.label'),
-('9a9feffe-7e4f-427a-ab14-053bd29b7ba3', 'username', 'user.attribute'),
-('9a9feffe-7e4f-427a-ab14-053bd29b7ba3', 'true', 'userinfo.token.claim'),
-('a91fbca6-9a49-4f64-a49a-608cc736608f', 'true', 'access.token.claim'),
-('a91fbca6-9a49-4f64-a49a-608cc736608f', 'middle_name', 'claim.name'),
-('a91fbca6-9a49-4f64-a49a-608cc736608f', 'true', 'id.token.claim'),
-('a91fbca6-9a49-4f64-a49a-608cc736608f', 'String', 'jsonType.label'),
-('a91fbca6-9a49-4f64-a49a-608cc736608f', 'middleName', 'user.attribute'),
-('a91fbca6-9a49-4f64-a49a-608cc736608f', 'true', 'userinfo.token.claim'),
-('a9d81dbc-06f1-491c-a4f9-4f2a70a696dd', 'true', 'access.token.claim'),
-('a9d81dbc-06f1-491c-a4f9-4f2a70a696dd', 'resource_access.${client_id}.roles', 'claim.name'),
-('a9d81dbc-06f1-491c-a4f9-4f2a70a696dd', 'String', 'jsonType.label'),
-('a9d81dbc-06f1-491c-a4f9-4f2a70a696dd', 'true', 'multivalued'),
-('a9d81dbc-06f1-491c-a4f9-4f2a70a696dd', 'foo', 'user.attribute'),
-('abfaa4cd-4bc1-4223-be5d-c56c641369f2', 'true', 'access.token.claim'),
-('abfaa4cd-4bc1-4223-be5d-c56c641369f2', 'locale', 'claim.name'),
-('abfaa4cd-4bc1-4223-be5d-c56c641369f2', 'true', 'id.token.claim'),
-('abfaa4cd-4bc1-4223-be5d-c56c641369f2', 'String', 'jsonType.label'),
-('abfaa4cd-4bc1-4223-be5d-c56c641369f2', 'locale', 'user.attribute'),
-('abfaa4cd-4bc1-4223-be5d-c56c641369f2', 'true', 'userinfo.token.claim'),
-('ad47f393-3e6f-4516-9c20-5fd2e3b2b91f', 'true', 'access.token.claim'),
-('ad47f393-3e6f-4516-9c20-5fd2e3b2b91f', 'given_name', 'claim.name'),
-('ad47f393-3e6f-4516-9c20-5fd2e3b2b91f', 'true', 'id.token.claim'),
-('ad47f393-3e6f-4516-9c20-5fd2e3b2b91f', 'String', 'jsonType.label'),
-('ad47f393-3e6f-4516-9c20-5fd2e3b2b91f', 'firstName', 'user.attribute'),
-('ad47f393-3e6f-4516-9c20-5fd2e3b2b91f', 'true', 'userinfo.token.claim'),
-('b19404f1-5139-4505-9278-139cc8d41ba5', 'true', 'access.token.claim'),
-('b19404f1-5139-4505-9278-139cc8d41ba5', 'email_verified', 'claim.name'),
-('b19404f1-5139-4505-9278-139cc8d41ba5', 'true', 'id.token.claim'),
-('b19404f1-5139-4505-9278-139cc8d41ba5', 'boolean', 'jsonType.label'),
-('b19404f1-5139-4505-9278-139cc8d41ba5', 'emailVerified', 'user.attribute'),
-('b19404f1-5139-4505-9278-139cc8d41ba5', 'true', 'userinfo.token.claim'),
-('b46b8e5e-5fea-441e-94a5-159ae7434211', 'true', 'access.token.claim'),
-('b46b8e5e-5fea-441e-94a5-159ae7434211', 'realmRolesViaPhycusSHFCClientScopeClaims', 'claim.name'),
-('b46b8e5e-5fea-441e-94a5-159ae7434211', 'false', 'id.token.claim'),
-('b46b8e5e-5fea-441e-94a5-159ae7434211', 'String', 'jsonType.label'),
-('b46b8e5e-5fea-441e-94a5-159ae7434211', 'true', 'multivalued'),
-('b46b8e5e-5fea-441e-94a5-159ae7434211', 'true', 'userinfo.token.claim'),
-('b60646cc-1344-47b1-86ad-d8b71e837edc', 'true', 'access.token.claim'),
-('b60646cc-1344-47b1-86ad-d8b71e837edc', 'realm_access.roles', 'claim.name'),
-('b60646cc-1344-47b1-86ad-d8b71e837edc', 'String', 'jsonType.label'),
-('b60646cc-1344-47b1-86ad-d8b71e837edc', 'true', 'multivalued'),
-('b60646cc-1344-47b1-86ad-d8b71e837edc', 'foo', 'user.attribute'),
-('b9a92105-8ca5-45d1-8a99-626255ac174f', 'true', 'access.token.claim'),
-('b9a92105-8ca5-45d1-8a99-626255ac174f', 'true', 'id.token.claim'),
-('b9a92105-8ca5-45d1-8a99-626255ac174f', 'country', 'user.attribute.country'),
-('b9a92105-8ca5-45d1-8a99-626255ac174f', 'formatted', 'user.attribute.formatted'),
-('b9a92105-8ca5-45d1-8a99-626255ac174f', 'locality', 'user.attribute.locality'),
-('b9a92105-8ca5-45d1-8a99-626255ac174f', 'postal_code', 'user.attribute.postal_code'),
-('b9a92105-8ca5-45d1-8a99-626255ac174f', 'region', 'user.attribute.region'),
-('b9a92105-8ca5-45d1-8a99-626255ac174f', 'street', 'user.attribute.street'),
-('b9a92105-8ca5-45d1-8a99-626255ac174f', 'true', 'userinfo.token.claim'),
-('bbbd7dc1-63d0-468f-9463-4772833ef2fa', 'true', 'access.token.claim'),
-('bbbd7dc1-63d0-468f-9463-4772833ef2fa', 'resource_access.${client_id}.roles', 'claim.name'),
-('bbbd7dc1-63d0-468f-9463-4772833ef2fa', 'String', 'jsonType.label'),
-('bbbd7dc1-63d0-468f-9463-4772833ef2fa', 'true', 'multivalued'),
-('bbbd7dc1-63d0-468f-9463-4772833ef2fa', 'foo', 'user.attribute'),
-('bbc582f4-4749-42b8-9c65-71f4edfd3979', 'true', 'access.token.claim'),
-('bbc582f4-4749-42b8-9c65-71f4edfd3979', 'phone_number', 'claim.name'),
-('bbc582f4-4749-42b8-9c65-71f4edfd3979', 'true', 'id.token.claim'),
-('bbc582f4-4749-42b8-9c65-71f4edfd3979', 'String', 'jsonType.label'),
-('bbc582f4-4749-42b8-9c65-71f4edfd3979', 'phoneNumber', 'user.attribute'),
-('bbc582f4-4749-42b8-9c65-71f4edfd3979', 'true', 'userinfo.token.claim'),
-('c4122959-6738-4883-b50a-acd0033a477a', 'true', 'access.token.claim'),
-('c4122959-6738-4883-b50a-acd0033a477a', 'profile', 'claim.name'),
-('c4122959-6738-4883-b50a-acd0033a477a', 'true', 'id.token.claim'),
-('c4122959-6738-4883-b50a-acd0033a477a', 'String', 'jsonType.label'),
-('c4122959-6738-4883-b50a-acd0033a477a', 'profile', 'user.attribute'),
-('c4122959-6738-4883-b50a-acd0033a477a', 'true', 'userinfo.token.claim'),
-('c422b63f-e809-41c2-854c-e801e8e25485', 'true', 'access.token.claim'),
-('c422b63f-e809-41c2-854c-e801e8e25485', 'gender', 'claim.name'),
-('c422b63f-e809-41c2-854c-e801e8e25485', 'true', 'id.token.claim'),
-('c422b63f-e809-41c2-854c-e801e8e25485', 'String', 'jsonType.label'),
-('c422b63f-e809-41c2-854c-e801e8e25485', 'gender', 'user.attribute'),
-('c422b63f-e809-41c2-854c-e801e8e25485', 'true', 'userinfo.token.claim'),
-('c443f4cd-1174-49a7-a2b3-65d5ccde5efa', 'true', 'access.token.claim'),
-('c443f4cd-1174-49a7-a2b3-65d5ccde5efa', 'nickname', 'claim.name'),
-('c443f4cd-1174-49a7-a2b3-65d5ccde5efa', 'true', 'id.token.claim'),
-('c443f4cd-1174-49a7-a2b3-65d5ccde5efa', 'String', 'jsonType.label'),
-('c443f4cd-1174-49a7-a2b3-65d5ccde5efa', 'nickname', 'user.attribute'),
-('c443f4cd-1174-49a7-a2b3-65d5ccde5efa', 'true', 'userinfo.token.claim'),
-('cedd1f1b-951a-4332-9fa1-2edf1a266283', 'true', 'access.token.claim'),
-('cedd1f1b-951a-4332-9fa1-2edf1a266283', 'middle_name', 'claim.name'),
-('cedd1f1b-951a-4332-9fa1-2edf1a266283', 'true', 'id.token.claim'),
-('cedd1f1b-951a-4332-9fa1-2edf1a266283', 'String', 'jsonType.label'),
-('cedd1f1b-951a-4332-9fa1-2edf1a266283', 'middleName', 'user.attribute'),
-('cedd1f1b-951a-4332-9fa1-2edf1a266283', 'true', 'userinfo.token.claim'),
-('d0933863-01a2-4c0f-83d0-7a6f25169cc0', 'true', 'access.token.claim'),
-('d0933863-01a2-4c0f-83d0-7a6f25169cc0', 'clientRolesViaPhycusSHFCClientScopeClaims', 'claim.name'),
-('d0933863-01a2-4c0f-83d0-7a6f25169cc0', 'false', 'id.token.claim'),
-('d0933863-01a2-4c0f-83d0-7a6f25169cc0', 'String', 'jsonType.label'),
-('d0933863-01a2-4c0f-83d0-7a6f25169cc0', 'true', 'multivalued'),
-('d0933863-01a2-4c0f-83d0-7a6f25169cc0', 'true', 'userinfo.token.claim'),
-('d0933863-01a2-4c0f-83d0-7a6f25169cc0', 'PhycusSHFCApp', 'usermodel.clientRoleMapping.clientId'),
-('d34872aa-4054-41b6-a3fd-59ff8e743a5c', 'true', 'access.token.claim'),
-('d34872aa-4054-41b6-a3fd-59ff8e743a5c', 'email', 'claim.name'),
-('d34872aa-4054-41b6-a3fd-59ff8e743a5c', 'true', 'id.token.claim'),
-('d34872aa-4054-41b6-a3fd-59ff8e743a5c', 'String', 'jsonType.label'),
-('d34872aa-4054-41b6-a3fd-59ff8e743a5c', 'email', 'user.attribute'),
-('d34872aa-4054-41b6-a3fd-59ff8e743a5c', 'true', 'userinfo.token.claim'),
-('d7db1b88-2c3c-419a-91cf-19ad13355a56', 'true', 'access.token.claim'),
-('d7db1b88-2c3c-419a-91cf-19ad13355a56', 'zoneinfo', 'claim.name'),
-('d7db1b88-2c3c-419a-91cf-19ad13355a56', 'true', 'id.token.claim'),
-('d7db1b88-2c3c-419a-91cf-19ad13355a56', 'String', 'jsonType.label'),
-('d7db1b88-2c3c-419a-91cf-19ad13355a56', 'zoneinfo', 'user.attribute'),
-('d7db1b88-2c3c-419a-91cf-19ad13355a56', 'true', 'userinfo.token.claim'),
-('db225b69-f493-47e7-bd59-2b5d0f9c5473', 'true', 'access.token.claim'),
-('db225b69-f493-47e7-bd59-2b5d0f9c5473', 'true', 'id.token.claim'),
-('db225b69-f493-47e7-bd59-2b5d0f9c5473', 'true', 'userinfo.token.claim'),
-('dc1097e0-226d-4915-9004-4b229a95a80b', 'Role', 'attribute.name'),
-('dc1097e0-226d-4915-9004-4b229a95a80b', 'Basic', 'attribute.nameformat'),
-('dc1097e0-226d-4915-9004-4b229a95a80b', 'false', 'single'),
-('dec0c468-3c11-429b-844e-dfd632b20ba7', 'true', 'access.token.claim'),
-('dec0c468-3c11-429b-844e-dfd632b20ba7', 'upn', 'claim.name'),
-('dec0c468-3c11-429b-844e-dfd632b20ba7', 'true', 'id.token.claim'),
-('dec0c468-3c11-429b-844e-dfd632b20ba7', 'String', 'jsonType.label'),
-('dec0c468-3c11-429b-844e-dfd632b20ba7', 'username', 'user.attribute'),
-('dec0c468-3c11-429b-844e-dfd632b20ba7', 'true', 'userinfo.token.claim'),
-('dfd19868-5c87-4a51-80e0-2a82dfabb16c', 'true', 'access.token.claim'),
-('dfd19868-5c87-4a51-80e0-2a82dfabb16c', 'updated_at', 'claim.name'),
-('dfd19868-5c87-4a51-80e0-2a82dfabb16c', 'true', 'id.token.claim'),
-('dfd19868-5c87-4a51-80e0-2a82dfabb16c', 'String', 'jsonType.label'),
-('dfd19868-5c87-4a51-80e0-2a82dfabb16c', 'updatedAt', 'user.attribute'),
-('dfd19868-5c87-4a51-80e0-2a82dfabb16c', 'true', 'userinfo.token.claim'),
-('e348c7f8-e835-4539-a80b-b588510a82a9', 'true', 'access.token.claim'),
-('e348c7f8-e835-4539-a80b-b588510a82a9', 'email', 'claim.name'),
-('e348c7f8-e835-4539-a80b-b588510a82a9', 'true', 'id.token.claim'),
-('e348c7f8-e835-4539-a80b-b588510a82a9', 'String', 'jsonType.label'),
-('e348c7f8-e835-4539-a80b-b588510a82a9', 'email', 'user.attribute'),
-('e348c7f8-e835-4539-a80b-b588510a82a9', 'true', 'userinfo.token.claim'),
-('e7c536ca-1711-4ed5-9f21-20a25435f475', 'login', 'claim.name'),
-('e7c536ca-1711-4ed5-9f21-20a25435f475', 'String', 'jsonType.label'),
-('e7c536ca-1711-4ed5-9f21-20a25435f475', 'preferred_username', 'user.attribute'),
-('e7c536ca-1711-4ed5-9f21-20a25435f475', 'true', 'userinfo.token.claim'),
-('eb305ae4-1a75-4b4b-a803-b340f6e2cbf4', 'true', 'access.token.claim'),
-('eb305ae4-1a75-4b4b-a803-b340f6e2cbf4', 'upn', 'claim.name'),
-('eb305ae4-1a75-4b4b-a803-b340f6e2cbf4', 'true', 'id.token.claim'),
-('eb305ae4-1a75-4b4b-a803-b340f6e2cbf4', 'String', 'jsonType.label'),
-('eb305ae4-1a75-4b4b-a803-b340f6e2cbf4', 'username', 'user.attribute'),
-('eb305ae4-1a75-4b4b-a803-b340f6e2cbf4', 'true', 'userinfo.token.claim'),
-('ecb34ff7-d27d-4696-b536-0512044b21a9', 'true', 'access.token.claim'),
-('ecb34ff7-d27d-4696-b536-0512044b21a9', 'website', 'claim.name'),
-('ecb34ff7-d27d-4696-b536-0512044b21a9', 'true', 'id.token.claim'),
-('ecb34ff7-d27d-4696-b536-0512044b21a9', 'String', 'jsonType.label'),
-('ecb34ff7-d27d-4696-b536-0512044b21a9', 'website', 'user.attribute'),
-('ecb34ff7-d27d-4696-b536-0512044b21a9', 'true', 'userinfo.token.claim'),
-('f3cf3c8b-891a-48a1-97b3-1d10d55ddecd', 'true', 'access.token.claim'),
-('f3cf3c8b-891a-48a1-97b3-1d10d55ddecd', 'locale', 'claim.name'),
-('f3cf3c8b-891a-48a1-97b3-1d10d55ddecd', 'true', 'id.token.claim'),
-('f3cf3c8b-891a-48a1-97b3-1d10d55ddecd', 'String', 'jsonType.label'),
-('f3cf3c8b-891a-48a1-97b3-1d10d55ddecd', 'locale', 'user.attribute'),
-('f3cf3c8b-891a-48a1-97b3-1d10d55ddecd', 'true', 'userinfo.token.claim'),
-('f4ae04c6-c23b-4ab7-991f-29f5337c2d20', 'true', 'access.token.claim'),
-('f4ae04c6-c23b-4ab7-991f-29f5337c2d20', 'clientHost', 'claim.name'),
-('f4ae04c6-c23b-4ab7-991f-29f5337c2d20', 'true', 'id.token.claim'),
-('f4ae04c6-c23b-4ab7-991f-29f5337c2d20', 'String', 'jsonType.label'),
-('f4ae04c6-c23b-4ab7-991f-29f5337c2d20', 'clientHost', 'user.session.note'),
-('f837ca4e-ad4b-4695-a199-ccc7800facfa', 'true', 'access.token.claim'),
-('f837ca4e-ad4b-4695-a199-ccc7800facfa', 'clientAddress', 'claim.name'),
-('f837ca4e-ad4b-4695-a199-ccc7800facfa', 'true', 'id.token.claim'),
-('f837ca4e-ad4b-4695-a199-ccc7800facfa', 'String', 'jsonType.label'),
-('f837ca4e-ad4b-4695-a199-ccc7800facfa', 'clientAddress', 'user.session.note'),
-('fa3b86c8-abaf-4261-b48d-41cd3cf2dc6a', 'true', 'access.token.claim'),
-('fa3b86c8-abaf-4261-b48d-41cd3cf2dc6a', 'true', 'id.token.claim'),
-('fa3b86c8-abaf-4261-b48d-41cd3cf2dc6a', 'true', 'userinfo.token.claim');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `realm`
---
-
-DROP TABLE IF EXISTS `realm`;
-CREATE TABLE IF NOT EXISTS `realm` (
-  `ID` varchar(36) NOT NULL,
-  `ACCESS_CODE_LIFESPAN` int DEFAULT NULL,
-  `USER_ACTION_LIFESPAN` int DEFAULT NULL,
-  `ACCESS_TOKEN_LIFESPAN` int DEFAULT NULL,
-  `ACCOUNT_THEME` varchar(255) DEFAULT NULL,
-  `ADMIN_THEME` varchar(255) DEFAULT NULL,
-  `EMAIL_THEME` varchar(255) DEFAULT NULL,
-  `ENABLED` bit(1) NOT NULL DEFAULT b'0',
-  `EVENTS_ENABLED` bit(1) NOT NULL DEFAULT b'0',
-  `EVENTS_EXPIRATION` bigint DEFAULT NULL,
-  `LOGIN_THEME` varchar(255) DEFAULT NULL,
-  `NAME` varchar(255) DEFAULT NULL,
-  `NOT_BEFORE` int DEFAULT NULL,
-  `PASSWORD_POLICY` text,
-  `REGISTRATION_ALLOWED` bit(1) NOT NULL DEFAULT b'0',
-  `REMEMBER_ME` bit(1) NOT NULL DEFAULT b'0',
-  `RESET_PASSWORD_ALLOWED` bit(1) NOT NULL DEFAULT b'0',
-  `SOCIAL` bit(1) NOT NULL DEFAULT b'0',
-  `SSL_REQUIRED` varchar(255) DEFAULT NULL,
-  `SSO_IDLE_TIMEOUT` int DEFAULT NULL,
-  `SSO_MAX_LIFESPAN` int DEFAULT NULL,
-  `UPDATE_PROFILE_ON_SOC_LOGIN` bit(1) NOT NULL DEFAULT b'0',
-  `VERIFY_EMAIL` bit(1) NOT NULL DEFAULT b'0',
-  `MASTER_ADMIN_CLIENT` varchar(36) DEFAULT NULL,
-  `LOGIN_LIFESPAN` int DEFAULT NULL,
-  `INTERNATIONALIZATION_ENABLED` bit(1) NOT NULL DEFAULT b'0',
-  `DEFAULT_LOCALE` varchar(255) DEFAULT NULL,
-  `REG_EMAIL_AS_USERNAME` bit(1) NOT NULL DEFAULT b'0',
-  `ADMIN_EVENTS_ENABLED` bit(1) NOT NULL DEFAULT b'0',
-  `ADMIN_EVENTS_DETAILS_ENABLED` bit(1) NOT NULL DEFAULT b'0',
-  `EDIT_USERNAME_ALLOWED` bit(1) NOT NULL DEFAULT b'0',
-  `OTP_POLICY_COUNTER` int DEFAULT '0',
-  `OTP_POLICY_WINDOW` int DEFAULT '1',
-  `OTP_POLICY_PERIOD` int DEFAULT '30',
-  `OTP_POLICY_DIGITS` int DEFAULT '6',
-  `OTP_POLICY_ALG` varchar(36) DEFAULT 'HmacSHA1',
-  `OTP_POLICY_TYPE` varchar(36) DEFAULT 'totp',
-  `BROWSER_FLOW` varchar(36) DEFAULT NULL,
-  `REGISTRATION_FLOW` varchar(36) DEFAULT NULL,
-  `DIRECT_GRANT_FLOW` varchar(36) DEFAULT NULL,
-  `RESET_CREDENTIALS_FLOW` varchar(36) DEFAULT NULL,
-  `CLIENT_AUTH_FLOW` varchar(36) DEFAULT NULL,
-  `OFFLINE_SESSION_IDLE_TIMEOUT` int DEFAULT '0',
-  `REVOKE_REFRESH_TOKEN` bit(1) NOT NULL DEFAULT b'0',
-  `ACCESS_TOKEN_LIFE_IMPLICIT` int DEFAULT '0',
-  `LOGIN_WITH_EMAIL_ALLOWED` bit(1) NOT NULL DEFAULT b'1',
-  `DUPLICATE_EMAILS_ALLOWED` bit(1) NOT NULL DEFAULT b'0',
-  `DOCKER_AUTH_FLOW` varchar(36) DEFAULT NULL,
-  `REFRESH_TOKEN_MAX_REUSE` int DEFAULT '0',
-  `ALLOW_USER_MANAGED_ACCESS` bit(1) NOT NULL DEFAULT b'0',
-  `SSO_MAX_LIFESPAN_REMEMBER_ME` int NOT NULL,
-  `SSO_IDLE_TIMEOUT_REMEMBER_ME` int NOT NULL,
-  PRIMARY KEY (`ID`),
-  UNIQUE KEY `UK_ORVSDMLA56612EAEFIQ6WL5OI` (`NAME`),
-  KEY `IDX_REALM_MASTER_ADM_CLI` (`MASTER_ADMIN_CLIENT`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `realm`
---
-
-INSERT INTO `realm` (`ID`, `ACCESS_CODE_LIFESPAN`, `USER_ACTION_LIFESPAN`, `ACCESS_TOKEN_LIFESPAN`, `ACCOUNT_THEME`, `ADMIN_THEME`, `EMAIL_THEME`, `ENABLED`, `EVENTS_ENABLED`, `EVENTS_EXPIRATION`, `LOGIN_THEME`, `NAME`, `NOT_BEFORE`, `PASSWORD_POLICY`, `REGISTRATION_ALLOWED`, `REMEMBER_ME`, `RESET_PASSWORD_ALLOWED`, `SOCIAL`, `SSL_REQUIRED`, `SSO_IDLE_TIMEOUT`, `SSO_MAX_LIFESPAN`, `UPDATE_PROFILE_ON_SOC_LOGIN`, `VERIFY_EMAIL`, `MASTER_ADMIN_CLIENT`, `LOGIN_LIFESPAN`, `INTERNATIONALIZATION_ENABLED`, `DEFAULT_LOCALE`, `REG_EMAIL_AS_USERNAME`, `ADMIN_EVENTS_ENABLED`, `ADMIN_EVENTS_DETAILS_ENABLED`, `EDIT_USERNAME_ALLOWED`, `OTP_POLICY_COUNTER`, `OTP_POLICY_WINDOW`, `OTP_POLICY_PERIOD`, `OTP_POLICY_DIGITS`, `OTP_POLICY_ALG`, `OTP_POLICY_TYPE`, `BROWSER_FLOW`, `REGISTRATION_FLOW`, `DIRECT_GRANT_FLOW`, `RESET_CREDENTIALS_FLOW`, `CLIENT_AUTH_FLOW`, `OFFLINE_SESSION_IDLE_TIMEOUT`, `REVOKE_REFRESH_TOKEN`, `ACCESS_TOKEN_LIFE_IMPLICIT`, `LOGIN_WITH_EMAIL_ALLOWED`, `DUPLICATE_EMAILS_ALLOWED`, `DOCKER_AUTH_FLOW`, `REFRESH_TOKEN_MAX_REUSE`, `ALLOW_USER_MANAGED_ACCESS`, `SSO_MAX_LIFESPAN_REMEMBER_ME`, `SSO_IDLE_TIMEOUT_REMEMBER_ME`) VALUES
-('jhipster', 60, 300, 300, NULL, NULL, NULL, b'1', b'0', 0, NULL, 'CIBMTR-BioInformatics-Realm', 1585089550, NULL, b'1', b'1', b'1', b'0', 'NONE', 1800, 36000, b'0', b'1', '1cdadc8e-1773-47bc-9c01-875f84ea25ec', 1800, b'0', NULL, b'1', b'0', b'0', b'1', 0, 1, 30, 6, 'HmacSHA1', 'totp', '03019b44-fb0a-42bb-ab7f-b109f9118d62', '4c6da64c-81dd-4680-afc5-744c93cd8286', '4792c881-7800-47a7-9264-c2f50d602ee9', '9fcbb697-dadf-4079-9b02-f489c7394182', 'b2104493-52a1-4627-869b-a65b057b8147', 2592000, b'0', 900, b'1', b'0', 'e77f88e4-c597-4e89-8db8-7cba747d9601', 0, b'1', 0, 0),
-('master', 60, 300, 60, NULL, NULL, NULL, b'1', b'0', 0, NULL, 'master', 0, NULL, b'0', b'0', b'0', b'0', 'EXTERNAL', 1800, 36000, b'0', b'0', 'f1cbf82e-a285-4a15-a172-ff97732a2648', 1800, b'0', NULL, b'0', b'0', b'0', b'0', 0, 1, 30, 6, 'HmacSHA1', 'totp', 'd6f21945-0811-4745-9491-4d06f6891f04', '15ffed78-3316-425a-9649-11107e54c743', '084f926f-6967-4bcb-b80e-31207678cf2c', '02dbcfec-7c6a-4a98-81df-8839f710c4a8', 'c486d764-c8c6-416e-98cf-45a19bb6746d', 2592000, b'0', 900, b'1', b'0', '09a729e8-7ede-4d69-822c-59ea50e9c4eb', 0, b'0', 0, 0);
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `realm_attribute`
---
-
-DROP TABLE IF EXISTS `realm_attribute`;
-CREATE TABLE IF NOT EXISTS `realm_attribute` (
-  `NAME` varchar(255) NOT NULL,
-  `VALUE` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-  `REALM_ID` varchar(36) NOT NULL,
-  PRIMARY KEY (`NAME`,`REALM_ID`),
-  KEY `IDX_REALM_ATTR_REALM` (`REALM_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `realm_attribute`
---
-
-INSERT INTO `realm_attribute` (`NAME`, `VALUE`, `REALM_ID`) VALUES
-('_browser_header.contentSecurityPolicy', 'frame-src \'self\'; frame-ancestors \'self\'; object-src \'none\';', 'jhipster'),
-('_browser_header.contentSecurityPolicy', 'frame-src \'self\'; frame-ancestors \'self\'; object-src \'none\';', 'master'),
-('_browser_header.contentSecurityPolicyReportOnly', '', 'jhipster'),
-('_browser_header.contentSecurityPolicyReportOnly', '', 'master'),
-('_browser_header.strictTransportSecurity', 'max-age=31536000; includeSubDomains', 'jhipster'),
-('_browser_header.strictTransportSecurity', 'max-age=31536000; includeSubDomains', 'master'),
-('_browser_header.xContentTypeOptions', 'nosniff', 'jhipster'),
-('_browser_header.xContentTypeOptions', 'nosniff', 'master'),
-('_browser_header.xFrameOptions', 'SAMEORIGIN', 'jhipster'),
-('_browser_header.xFrameOptions', 'SAMEORIGIN', 'master'),
-('_browser_header.xRobotsTag', 'none', 'jhipster'),
-('_browser_header.xRobotsTag', 'none', 'master'),
-('_browser_header.xXSSProtection', '1; mode=block', 'jhipster'),
-('_browser_header.xXSSProtection', '1; mode=block', 'master'),
-('actionTokenGeneratedByAdminLifespan', '43200', 'jhipster'),
-('actionTokenGeneratedByAdminLifespan', '43200', 'master'),
-('actionTokenGeneratedByUserLifespan', '300', 'jhipster'),
-('actionTokenGeneratedByUserLifespan', '300', 'master'),
-('bruteForceProtected', 'false', 'jhipster'),
-('bruteForceProtected', 'false', 'master'),
-('defaultSignatureAlgorithm', NULL, 'jhipster'),
-('displayName', 'CIBMTR / NMDP BioInformatics Realm', 'jhipster'),
-('displayName', 'CIBMTR BioInformatics - Access Management :: KeyCloak', 'master'),
-('displayNameHtml', 'CIBMTR / NMDP BioInformatics Realm', 'jhipster'),
-('displayNameHtml', '<div class=\"kc-logo-text\"><span>Keycloak</span></div>', 'master'),
-('failureFactor', '30', 'jhipster'),
-('failureFactor', '30', 'master'),
-('maxDeltaTimeSeconds', '43200', 'jhipster'),
-('maxDeltaTimeSeconds', '43200', 'master'),
-('maxFailureWaitSeconds', '900', 'jhipster'),
-('maxFailureWaitSeconds', '900', 'master'),
-('minimumQuickLoginWaitSeconds', '60', 'jhipster'),
-('minimumQuickLoginWaitSeconds', '60', 'master'),
-('offlineSessionMaxLifespan', '5184000', 'jhipster'),
-('offlineSessionMaxLifespan', '5184000', 'master'),
-('offlineSessionMaxLifespanEnabled', 'false', 'jhipster'),
-('offlineSessionMaxLifespanEnabled', 'false', 'master'),
-('permanentLockout', 'false', 'jhipster'),
-('permanentLockout', 'false', 'master'),
-('quickLoginCheckMilliSeconds', '1000', 'jhipster'),
-('quickLoginCheckMilliSeconds', '1000', 'master'),
-('waitIncrementSeconds', '60', 'jhipster'),
-('waitIncrementSeconds', '60', 'master'),
-('webAuthnPolicyAttestationConveyancePreference', 'not specified', 'jhipster'),
-('webAuthnPolicyAttestationConveyancePreference', 'not specified', 'master'),
-('webAuthnPolicyAttestationConveyancePreferencePasswordless', 'not specified', 'jhipster'),
-('webAuthnPolicyAttestationConveyancePreferencePasswordless', 'not specified', 'master'),
-('webAuthnPolicyAuthenticatorAttachment', 'not specified', 'jhipster'),
-('webAuthnPolicyAuthenticatorAttachment', 'not specified', 'master'),
-('webAuthnPolicyAuthenticatorAttachmentPasswordless', 'not specified', 'jhipster'),
-('webAuthnPolicyAuthenticatorAttachmentPasswordless', 'not specified', 'master'),
-('webAuthnPolicyAvoidSameAuthenticatorRegister', 'false', 'jhipster'),
-('webAuthnPolicyAvoidSameAuthenticatorRegister', 'false', 'master'),
-('webAuthnPolicyAvoidSameAuthenticatorRegisterPasswordless', 'false', 'jhipster'),
-('webAuthnPolicyAvoidSameAuthenticatorRegisterPasswordless', 'false', 'master'),
-('webAuthnPolicyCreateTimeout', '0', 'jhipster'),
-('webAuthnPolicyCreateTimeout', '0', 'master'),
-('webAuthnPolicyCreateTimeoutPasswordless', '0', 'jhipster'),
-('webAuthnPolicyCreateTimeoutPasswordless', '0', 'master'),
-('webAuthnPolicyRequireResidentKey', 'not specified', 'jhipster'),
-('webAuthnPolicyRequireResidentKey', 'not specified', 'master'),
-('webAuthnPolicyRequireResidentKeyPasswordless', 'not specified', 'jhipster'),
-('webAuthnPolicyRequireResidentKeyPasswordless', 'not specified', 'master'),
-('webAuthnPolicyRpEntityName', 'keycloak', 'jhipster'),
-('webAuthnPolicyRpEntityName', 'keycloak', 'master'),
-('webAuthnPolicyRpEntityNamePasswordless', 'keycloak', 'jhipster'),
-('webAuthnPolicyRpEntityNamePasswordless', 'keycloak', 'master'),
-('webAuthnPolicyRpId', '', 'jhipster'),
-('webAuthnPolicyRpId', '', 'master'),
-('webAuthnPolicyRpIdPasswordless', '', 'jhipster'),
-('webAuthnPolicyRpIdPasswordless', '', 'master'),
-('webAuthnPolicySignatureAlgorithms', 'ES256', 'jhipster'),
-('webAuthnPolicySignatureAlgorithms', 'ES256', 'master'),
-('webAuthnPolicySignatureAlgorithmsPasswordless', 'ES256', 'jhipster'),
-('webAuthnPolicySignatureAlgorithmsPasswordless', 'ES256', 'master'),
-('webAuthnPolicyUserVerificationRequirement', 'not specified', 'jhipster'),
-('webAuthnPolicyUserVerificationRequirement', 'not specified', 'master'),
-('webAuthnPolicyUserVerificationRequirementPasswordless', 'not specified', 'jhipster'),
-('webAuthnPolicyUserVerificationRequirementPasswordless', 'not specified', 'master');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `realm_default_groups`
---
-
-DROP TABLE IF EXISTS `realm_default_groups`;
-CREATE TABLE IF NOT EXISTS `realm_default_groups` (
-  `REALM_ID` varchar(36) NOT NULL,
-  `GROUP_ID` varchar(36) NOT NULL,
-  PRIMARY KEY (`REALM_ID`,`GROUP_ID`),
-  UNIQUE KEY `CON_GROUP_ID_DEF_GROUPS` (`GROUP_ID`),
-  KEY `IDX_REALM_DEF_GRP_REALM` (`REALM_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `realm_default_roles`
---
-
-DROP TABLE IF EXISTS `realm_default_roles`;
-CREATE TABLE IF NOT EXISTS `realm_default_roles` (
-  `REALM_ID` varchar(36) NOT NULL,
-  `ROLE_ID` varchar(36) NOT NULL,
-  PRIMARY KEY (`REALM_ID`,`ROLE_ID`),
-  UNIQUE KEY `UK_H4WPD7W4HSOOLNI3H0SW7BTJE` (`ROLE_ID`),
-  KEY `IDX_REALM_DEF_ROLES_REALM` (`REALM_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `realm_default_roles`
---
-
-INSERT INTO `realm_default_roles` (`REALM_ID`, `ROLE_ID`) VALUES
-('master', '33c455ac-906c-47c4-8bc1-135014aa8efc'),
-('jhipster', '62880c1c-3e64-48fa-902f-fa8354347ab8'),
-('jhipster', '932ca70d-a311-42f9-9042-431cef835b9e'),
-('jhipster', '96c0124c-0f00-4769-8cd3-f7dfd74a0af3'),
-('master', 'a91bfa14-c447-4159-9de1-64a51fbf2227');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `realm_enabled_event_types`
---
-
-DROP TABLE IF EXISTS `realm_enabled_event_types`;
-CREATE TABLE IF NOT EXISTS `realm_enabled_event_types` (
-  `REALM_ID` varchar(36) NOT NULL,
-  `VALUE` varchar(255) NOT NULL,
-  PRIMARY KEY (`REALM_ID`,`VALUE`),
-  KEY `IDX_REALM_EVT_TYPES_REALM` (`REALM_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `realm_events_listeners`
---
-
-DROP TABLE IF EXISTS `realm_events_listeners`;
-CREATE TABLE IF NOT EXISTS `realm_events_listeners` (
-  `REALM_ID` varchar(36) NOT NULL,
-  `VALUE` varchar(255) NOT NULL,
-  PRIMARY KEY (`REALM_ID`,`VALUE`),
-  KEY `IDX_REALM_EVT_LIST_REALM` (`REALM_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `realm_events_listeners`
---
-
-INSERT INTO `realm_events_listeners` (`REALM_ID`, `VALUE`) VALUES
-('jhipster', 'jboss-logging'),
-('master', 'jboss-logging');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `realm_required_credential`
---
-
-DROP TABLE IF EXISTS `realm_required_credential`;
-CREATE TABLE IF NOT EXISTS `realm_required_credential` (
-  `TYPE` varchar(255) NOT NULL,
-  `FORM_LABEL` varchar(255) DEFAULT NULL,
-  `INPUT` bit(1) NOT NULL DEFAULT b'0',
-  `SECRET` bit(1) NOT NULL DEFAULT b'0',
-  `REALM_ID` varchar(36) NOT NULL,
-  PRIMARY KEY (`REALM_ID`,`TYPE`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `realm_required_credential`
---
-
-INSERT INTO `realm_required_credential` (`TYPE`, `FORM_LABEL`, `INPUT`, `SECRET`, `REALM_ID`) VALUES
-('password', 'password', b'1', b'1', 'jhipster'),
-('password', 'password', b'1', b'1', 'master');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `realm_smtp_config`
---
-
-DROP TABLE IF EXISTS `realm_smtp_config`;
-CREATE TABLE IF NOT EXISTS `realm_smtp_config` (
-  `REALM_ID` varchar(36) NOT NULL,
-  `VALUE` varchar(255) DEFAULT NULL,
-  `NAME` varchar(255) NOT NULL,
-  PRIMARY KEY (`REALM_ID`,`NAME`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `realm_smtp_config`
---
-
-INSERT INTO `realm_smtp_config` (`REALM_ID`, `VALUE`, `NAME`) VALUES
-('jhipster', '', 'auth'),
-('jhipster', 'phycus-keycloak-sender@phycusapp.com', 'from'),
-('jhipster', 'PhyCuS-KeyCloak Sender', 'fromDisplayName'),
-('jhipster', 'app-infra-mailserver', 'host'),
-('jhipster', '25', 'port'),
-('jhipster', 'phycus-keycloak-reply@phycusapp.com', 'replyTo'),
-('jhipster', 'PhyCuS-KeyCloak Reply', 'replyToDisplayName'),
-('jhipster', '', 'ssl'),
-('jhipster', '', 'starttls');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `realm_supported_locales`
---
-
-DROP TABLE IF EXISTS `realm_supported_locales`;
-CREATE TABLE IF NOT EXISTS `realm_supported_locales` (
-  `REALM_ID` varchar(36) NOT NULL,
-  `VALUE` varchar(255) NOT NULL,
-  PRIMARY KEY (`REALM_ID`,`VALUE`),
-  KEY `IDX_REALM_SUPP_LOCAL_REALM` (`REALM_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `redirect_uris`
---
-
-DROP TABLE IF EXISTS `redirect_uris`;
-CREATE TABLE IF NOT EXISTS `redirect_uris` (
-  `CLIENT_ID` varchar(36) NOT NULL,
-  `VALUE` varchar(255) NOT NULL,
-  PRIMARY KEY (`CLIENT_ID`,`VALUE`),
-  KEY `IDX_REDIR_URI_CLIENT` (`CLIENT_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `redirect_uris`
---
-
-INSERT INTO `redirect_uris` (`CLIENT_ID`, `VALUE`) VALUES
-('0aa176c1-8d28-4a8b-8e97-7e4b49a289ff', '/admin/CIBMTR-BioInformatics-Realm/console/*'),
-('1eabef67-6473-4ba8-b07c-14bdbae4aaed', 'dev.localhost.ionic:*'),
-('1eabef67-6473-4ba8-b07c-14bdbae4aaed', 'http://172.17.0.1:8080/phycusApp/*'),
-('1eabef67-6473-4ba8-b07c-14bdbae4aaed', 'https://172.17.0.1:443/phycusApp/*'),
-('3deba736-cf6f-44b8-8022-31f82347cc96', '/realms/master/account/*'),
-('7b6ab455-242e-42aa-96d8-9c9e2b74da9d', '/realms/cibmtr-bioinformatics-realm/account/*'),
-('ab9a50dd-ef39-46cf-add0-af8ce9a00e61', '/admin/master/console/*'),
-('e07da50b-cddc-4524-b630-436a5a6ba8ab', '/realms/CIBMTR-BioInformatics-Realm/account/*'),
-('f7123f46-5de8-4c40-8cff-5c52b3e26a84', '/realms/master/account/*');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `required_action_config`
---
-
-DROP TABLE IF EXISTS `required_action_config`;
-CREATE TABLE IF NOT EXISTS `required_action_config` (
-  `REQUIRED_ACTION_ID` varchar(36) NOT NULL,
-  `VALUE` longtext,
-  `NAME` varchar(255) NOT NULL,
-  PRIMARY KEY (`REQUIRED_ACTION_ID`,`NAME`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `required_action_provider`
---
-
-DROP TABLE IF EXISTS `required_action_provider`;
-CREATE TABLE IF NOT EXISTS `required_action_provider` (
-  `ID` varchar(36) NOT NULL,
-  `ALIAS` varchar(255) DEFAULT NULL,
-  `NAME` varchar(255) DEFAULT NULL,
-  `REALM_ID` varchar(36) DEFAULT NULL,
-  `ENABLED` bit(1) NOT NULL DEFAULT b'0',
-  `DEFAULT_ACTION` bit(1) NOT NULL DEFAULT b'0',
-  `PROVIDER_ID` varchar(255) DEFAULT NULL,
-  `PRIORITY` int DEFAULT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `IDX_REQ_ACT_PROV_REALM` (`REALM_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `required_action_provider`
---
-
-INSERT INTO `required_action_provider` (`ID`, `ALIAS`, `NAME`, `REALM_ID`, `ENABLED`, `DEFAULT_ACTION`, `PROVIDER_ID`, `PRIORITY`) VALUES
-('010129ab-92b6-4ca6-be5b-dd4c2d8de094', 'update_user_locale', 'Update User Locale', 'master', b'1', b'0', 'update_user_locale', 1000),
-('11df53d6-db4b-431b-b98b-597b2b2a1683', 'UPDATE_PROFILE', 'Update Profile', 'jhipster', b'1', b'0', 'UPDATE_PROFILE', 40),
-('48580ad7-0872-4219-9fc7-f58f779618ef', 'VERIFY_EMAIL', 'Verify Email', 'jhipster', b'1', b'0', 'VERIFY_EMAIL', 50),
-('56ade86d-cf97-4480-bcfe-1b6a663ed81b', 'VERIFY_EMAIL', 'Verify Email', 'master', b'1', b'0', 'VERIFY_EMAIL', 50),
-('5df55ff2-cabb-4ee7-beaa-42a772f0591e', 'update_user_locale', 'Update User Locale', 'jhipster', b'1', b'0', 'update_user_locale', 1000),
-('868f0c75-ad4b-4596-b6ad-33d0332fc819', 'CONFIGURE_TOTP', 'Configure OTP', 'jhipster', b'1', b'0', 'CONFIGURE_TOTP', 10),
-('b0258c22-732b-4dcc-a34a-55bf8c29d5ee', 'UPDATE_PROFILE', 'Update Profile', 'master', b'1', b'0', 'UPDATE_PROFILE', 40),
-('b14d365d-53c5-42bb-8fa9-87bc4feda55a', 'terms_and_conditions', 'Terms and Conditions', 'jhipster', b'0', b'0', 'terms_and_conditions', 20),
-('d36253b3-a135-4627-ad58-ed1294f09475', 'terms_and_conditions', 'Terms and Conditions', 'master', b'0', b'0', 'terms_and_conditions', 20),
-('d4cb9a35-3abc-45bd-8661-f4aa70cbeccb', 'UPDATE_PASSWORD', 'Update Password', 'jhipster', b'1', b'0', 'UPDATE_PASSWORD', 30),
-('e3369e51-3969-466f-83d4-c0ac2856505d', 'CONFIGURE_TOTP', 'Configure OTP', 'master', b'1', b'0', 'CONFIGURE_TOTP', 10),
-('f640cfed-177b-4ecc-b349-66810d8b6ce8', 'UPDATE_PASSWORD', 'Update Password', 'master', b'1', b'0', 'UPDATE_PASSWORD', 30);
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `resource_attribute`
---
-
-DROP TABLE IF EXISTS `resource_attribute`;
-CREATE TABLE IF NOT EXISTS `resource_attribute` (
-  `ID` varchar(36) NOT NULL DEFAULT 'sybase-needs-something-here',
-  `NAME` varchar(255) NOT NULL,
-  `VALUE` varchar(255) DEFAULT NULL,
-  `RESOURCE_ID` varchar(36) NOT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `FK_5HRM2VLF9QL5FU022KQEPOVBR` (`RESOURCE_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `resource_policy`
---
-
-DROP TABLE IF EXISTS `resource_policy`;
-CREATE TABLE IF NOT EXISTS `resource_policy` (
-  `RESOURCE_ID` varchar(36) NOT NULL,
-  `POLICY_ID` varchar(36) NOT NULL,
-  PRIMARY KEY (`RESOURCE_ID`,`POLICY_ID`),
-  KEY `IDX_RES_POLICY_POLICY` (`POLICY_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `resource_scope`
---
-
-DROP TABLE IF EXISTS `resource_scope`;
-CREATE TABLE IF NOT EXISTS `resource_scope` (
-  `RESOURCE_ID` varchar(36) NOT NULL,
-  `SCOPE_ID` varchar(36) NOT NULL,
-  PRIMARY KEY (`RESOURCE_ID`,`SCOPE_ID`),
-  KEY `IDX_RES_SCOPE_SCOPE` (`SCOPE_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `resource_server`
---
-
-DROP TABLE IF EXISTS `resource_server`;
-CREATE TABLE IF NOT EXISTS `resource_server` (
-  `ID` varchar(36) NOT NULL,
-  `ALLOW_RS_REMOTE_MGMT` bit(1) NOT NULL DEFAULT b'0',
-  `POLICY_ENFORCE_MODE` varchar(15) NOT NULL,
-  `DECISION_STRATEGY` tinyint NOT NULL DEFAULT '1',
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `resource_server`
---
-
-INSERT INTO `resource_server` (`ID`, `ALLOW_RS_REMOTE_MGMT`, `POLICY_ENFORCE_MODE`, `DECISION_STRATEGY`) VALUES
-('1eabef67-6473-4ba8-b07c-14bdbae4aaed', b'1', '2', 1),
-('98ae8603-4547-4218-8fb9-ebc550a0e10b', b'0', '0', 1);
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `resource_server_perm_ticket`
---
-
-DROP TABLE IF EXISTS `resource_server_perm_ticket`;
-CREATE TABLE IF NOT EXISTS `resource_server_perm_ticket` (
-  `ID` varchar(36) NOT NULL,
-  `OWNER` varchar(255) DEFAULT NULL,
-  `REQUESTER` varchar(255) DEFAULT NULL,
-  `CREATED_TIMESTAMP` bigint NOT NULL,
-  `GRANTED_TIMESTAMP` bigint DEFAULT NULL,
-  `RESOURCE_ID` varchar(36) NOT NULL,
-  `SCOPE_ID` varchar(36) DEFAULT NULL,
-  `RESOURCE_SERVER_ID` varchar(36) NOT NULL,
-  `POLICY_ID` varchar(36) DEFAULT NULL,
-  PRIMARY KEY (`ID`),
-  UNIQUE KEY `UK_FRSR6T700S9V50BU18WS5PMT` (`OWNER`,`REQUESTER`,`RESOURCE_SERVER_ID`,`RESOURCE_ID`,`SCOPE_ID`),
-  KEY `FK_FRSRHO213XCX4WNKOG82SSPMT` (`RESOURCE_SERVER_ID`),
-  KEY `FK_FRSRHO213XCX4WNKOG83SSPMT` (`RESOURCE_ID`),
-  KEY `FK_FRSRHO213XCX4WNKOG84SSPMT` (`SCOPE_ID`),
-  KEY `FK_FRSRPO2128CX4WNKOG82SSRFY` (`POLICY_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `resource_server_policy`
---
-
-DROP TABLE IF EXISTS `resource_server_policy`;
-CREATE TABLE IF NOT EXISTS `resource_server_policy` (
-  `ID` varchar(36) NOT NULL,
-  `NAME` varchar(255) NOT NULL,
-  `DESCRIPTION` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-  `TYPE` varchar(255) NOT NULL,
-  `DECISION_STRATEGY` varchar(20) DEFAULT NULL,
-  `LOGIC` varchar(20) DEFAULT NULL,
-  `RESOURCE_SERVER_ID` varchar(36) DEFAULT NULL,
-  `OWNER` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`ID`),
-  UNIQUE KEY `UK_FRSRPT700S9V50BU18WS5HA6` (`NAME`,`RESOURCE_SERVER_ID`),
-  KEY `IDX_RES_SERV_POL_RES_SERV` (`RESOURCE_SERVER_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `resource_server_policy`
---
-
-INSERT INTO `resource_server_policy` (`ID`, `NAME`, `DESCRIPTION`, `TYPE`, `DECISION_STRATEGY`, `LOGIC`, `RESOURCE_SERVER_ID`, `OWNER`) VALUES
-('4b5c72cc-b8b8-4bfc-95ac-61815669f985', 'Default Permission', 'A permission that applies to the default resource type', 'resource', '1', '0', '98ae8603-4547-4218-8fb9-ebc550a0e10b', NULL),
-('ad943211-dd2c-4784-92a3-7ad1c524169b', 'Default Policy', 'A policy that grants access only for users within this realm', 'js', '0', '0', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', NULL),
-('d50a94d5-1756-434d-b110-4d53eece2e6d', 'Default Permission', 'A permission that applies to the default resource type', 'resource', '1', '0', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', NULL),
-('ff09b194-0615-4cfd-9851-74adf540dabd', 'Default Policy', 'A policy that grants access only for users within this realm', 'js', '0', '0', '98ae8603-4547-4218-8fb9-ebc550a0e10b', NULL);
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `resource_server_resource`
---
-
-DROP TABLE IF EXISTS `resource_server_resource`;
-CREATE TABLE IF NOT EXISTS `resource_server_resource` (
-  `ID` varchar(36) NOT NULL,
-  `NAME` varchar(255) NOT NULL,
-  `TYPE` varchar(255) DEFAULT NULL,
-  `ICON_URI` varchar(255) DEFAULT NULL,
-  `OWNER` varchar(255) DEFAULT NULL,
-  `RESOURCE_SERVER_ID` varchar(36) DEFAULT NULL,
-  `OWNER_MANAGED_ACCESS` bit(1) NOT NULL DEFAULT b'0',
-  `DISPLAY_NAME` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`ID`),
-  UNIQUE KEY `UK_FRSR6T700S9V50BU18WS5HA6` (`NAME`,`OWNER`,`RESOURCE_SERVER_ID`),
-  KEY `IDX_RES_SRV_RES_RES_SRV` (`RESOURCE_SERVER_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `resource_server_resource`
---
-
-INSERT INTO `resource_server_resource` (`ID`, `NAME`, `TYPE`, `ICON_URI`, `OWNER`, `RESOURCE_SERVER_ID`, `OWNER_MANAGED_ACCESS`, `DISPLAY_NAME`) VALUES
-('8134fb27-1541-40b0-bcc2-b17676bdc0d7', 'Default Resource', 'urn:PhycusSHFCApp:resources:default', NULL, '1eabef67-6473-4ba8-b07c-14bdbae4aaed', '1eabef67-6473-4ba8-b07c-14bdbae4aaed', b'0', NULL),
-('9e347a4d-ab6b-4075-9d24-23d20dfd30bc', 'Default Resource', 'urn:internal:resources:default', NULL, '98ae8603-4547-4218-8fb9-ebc550a0e10b', '98ae8603-4547-4218-8fb9-ebc550a0e10b', b'0', NULL);
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `resource_server_scope`
---
-
-DROP TABLE IF EXISTS `resource_server_scope`;
-CREATE TABLE IF NOT EXISTS `resource_server_scope` (
-  `ID` varchar(36) NOT NULL,
-  `NAME` varchar(255) NOT NULL,
-  `ICON_URI` varchar(255) DEFAULT NULL,
-  `RESOURCE_SERVER_ID` varchar(36) DEFAULT NULL,
-  `DISPLAY_NAME` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`ID`),
-  UNIQUE KEY `UK_FRSRST700S9V50BU18WS5HA6` (`NAME`,`RESOURCE_SERVER_ID`),
-  KEY `IDX_RES_SRV_SCOPE_RES_SRV` (`RESOURCE_SERVER_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `resource_uris`
---
-
-DROP TABLE IF EXISTS `resource_uris`;
-CREATE TABLE IF NOT EXISTS `resource_uris` (
-  `RESOURCE_ID` varchar(36) NOT NULL,
-  `VALUE` varchar(255) NOT NULL,
-  PRIMARY KEY (`RESOURCE_ID`,`VALUE`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `resource_uris`
---
-
-INSERT INTO `resource_uris` (`RESOURCE_ID`, `VALUE`) VALUES
-('8134fb27-1541-40b0-bcc2-b17676bdc0d7', '/*'),
-('9e347a4d-ab6b-4075-9d24-23d20dfd30bc', '/*');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `role_attribute`
---
-
-DROP TABLE IF EXISTS `role_attribute`;
-CREATE TABLE IF NOT EXISTS `role_attribute` (
-  `ID` varchar(36) NOT NULL,
-  `ROLE_ID` varchar(36) NOT NULL,
-  `NAME` varchar(255) NOT NULL,
-  `VALUE` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `IDX_ROLE_ATTRIBUTE` (`ROLE_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `scope_mapping`
---
-
-DROP TABLE IF EXISTS `scope_mapping`;
-CREATE TABLE IF NOT EXISTS `scope_mapping` (
-  `CLIENT_ID` varchar(36) NOT NULL,
-  `ROLE_ID` varchar(36) NOT NULL,
-  PRIMARY KEY (`CLIENT_ID`,`ROLE_ID`),
-  KEY `IDX_SCOPE_MAPPING_ROLE` (`ROLE_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `scope_mapping`
---
-
-INSERT INTO `scope_mapping` (`CLIENT_ID`, `ROLE_ID`) VALUES
-('7b6ab455-242e-42aa-96d8-9c9e2b74da9d', '21b65e52-b4e3-453e-b0f0-10a44a4a887d'),
-('3deba736-cf6f-44b8-8022-31f82347cc96', 'b6e3d2e0-ba1a-4420-84d1-2cf72096fd38');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `scope_policy`
---
-
-DROP TABLE IF EXISTS `scope_policy`;
-CREATE TABLE IF NOT EXISTS `scope_policy` (
-  `SCOPE_ID` varchar(36) NOT NULL,
-  `POLICY_ID` varchar(36) NOT NULL,
-  PRIMARY KEY (`SCOPE_ID`,`POLICY_ID`),
-  KEY `IDX_SCOPE_POLICY_POLICY` (`POLICY_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `username_login_failure`
---
-
-DROP TABLE IF EXISTS `username_login_failure`;
-CREATE TABLE IF NOT EXISTS `username_login_failure` (
-  `REALM_ID` varchar(36) NOT NULL,
-  `USERNAME` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `FAILED_LOGIN_NOT_BEFORE` int DEFAULT NULL,
-  `LAST_FAILURE` bigint DEFAULT NULL,
-  `LAST_IP_FAILURE` varchar(255) DEFAULT NULL,
-  `NUM_FAILURES` int DEFAULT NULL,
-  PRIMARY KEY (`REALM_ID`,`USERNAME`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `user_attribute`
---
-
-DROP TABLE IF EXISTS `user_attribute`;
-CREATE TABLE IF NOT EXISTS `user_attribute` (
-  `NAME` varchar(255) NOT NULL,
-  `VALUE` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-  `USER_ID` varchar(36) NOT NULL,
-  `ID` varchar(36) NOT NULL DEFAULT 'sybase-needs-something-here',
-  PRIMARY KEY (`ID`),
-  KEY `IDX_USER_ATTRIBUTE` (`USER_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `user_consent`
---
-
-DROP TABLE IF EXISTS `user_consent`;
-CREATE TABLE IF NOT EXISTS `user_consent` (
-  `ID` varchar(36) NOT NULL,
-  `CLIENT_ID` varchar(255) DEFAULT NULL,
-  `USER_ID` varchar(36) NOT NULL,
-  `CREATED_DATE` bigint DEFAULT NULL,
-  `LAST_UPDATED_DATE` bigint DEFAULT NULL,
-  `CLIENT_STORAGE_PROVIDER` varchar(36) DEFAULT NULL,
-  `EXTERNAL_CLIENT_ID` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`ID`),
-  UNIQUE KEY `UK_JKUWUVD56ONTGSUHOGM8UEWRT` (`CLIENT_ID`,`CLIENT_STORAGE_PROVIDER`,`EXTERNAL_CLIENT_ID`,`USER_ID`),
-  KEY `IDX_USER_CONSENT` (`USER_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `user_consent_client_scope`
---
-
-DROP TABLE IF EXISTS `user_consent_client_scope`;
-CREATE TABLE IF NOT EXISTS `user_consent_client_scope` (
-  `USER_CONSENT_ID` varchar(36) NOT NULL,
-  `SCOPE_ID` varchar(36) NOT NULL,
-  PRIMARY KEY (`USER_CONSENT_ID`,`SCOPE_ID`),
-  KEY `IDX_USCONSENT_CLSCOPE` (`USER_CONSENT_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `user_entity`
---
-
-DROP TABLE IF EXISTS `user_entity`;
-CREATE TABLE IF NOT EXISTS `user_entity` (
-  `ID` varchar(36) NOT NULL,
-  `EMAIL` varchar(255) DEFAULT NULL,
-  `EMAIL_CONSTRAINT` varchar(255) DEFAULT NULL,
-  `EMAIL_VERIFIED` bit(1) NOT NULL DEFAULT b'0',
-  `ENABLED` bit(1) NOT NULL DEFAULT b'0',
-  `FEDERATION_LINK` varchar(255) DEFAULT NULL,
-  `FIRST_NAME` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-  `LAST_NAME` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-  `REALM_ID` varchar(255) DEFAULT NULL,
-  `USERNAME` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-  `CREATED_TIMESTAMP` bigint DEFAULT NULL,
-  `SERVICE_ACCOUNT_CLIENT_LINK` varchar(255) DEFAULT NULL,
-  `NOT_BEFORE` int NOT NULL DEFAULT '0',
-  PRIMARY KEY (`ID`),
-  UNIQUE KEY `UK_DYKN684SL8UP1CRFEI6ECKHD7` (`REALM_ID`,`EMAIL_CONSTRAINT`),
-  UNIQUE KEY `UK_RU8TT6T700S9V50BU18WS5HA6` (`REALM_ID`,`USERNAME`),
-  KEY `IDX_USER_EMAIL` (`EMAIL`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `user_entity`
---
-
-INSERT INTO `user_entity` (`ID`, `EMAIL`, `EMAIL_CONSTRAINT`, `EMAIL_VERIFIED`, `ENABLED`, `FEDERATION_LINK`, `FIRST_NAME`, `LAST_NAME`, `REALM_ID`, `USERNAME`, `CREATED_TIMESTAMP`, `SERVICE_ACCOUNT_CLIENT_LINK`, `NOT_BEFORE`) VALUES
-('1a038ff7-3be2-4d48-98c8-02dd11750cb0', 'ybolon@nmdp.org', 'ybolon@nmdp.org', b'1', b'1', NULL, 'Yung-Tsi', 'Bolon', 'master', 'yung-tsi.bolon', 1584890579139, NULL, 0),
-('2286609b-e45f-49d0-a0de-3194d2e98d6d', 'pbashyal@nmdp.org', 'pbashyal@nmdp.org', b'1', b'1', NULL, 'Pradeep', 'Bashyal', 'master', 'pradeep.bashyal', 1584890661601, NULL, 0),
-('4c973896-5761-41fc-8217-07c5d13a004b', 'admin.master@phycusapp.com', 'admin.master@phycusapp.com', b'1', b'1', NULL, 'Super Administrator', 'Master Realm', 'jhipster', 'admin.master', 1505479415590, NULL, 1584995660),
-('54384ff2-4758-49f5-be96-9a944eafa60f', NULL, 'd498297c-a386-492a-9c0b-af5e044ecaaa', b'0', b'1', NULL, NULL, NULL, 'master', 'admin', 1584832560448, NULL, 0),
-('600c76dd-7e28-4067-83a8-8afd8acdadaa', 'reviewer.phycus@phycusapp.com', 'reviewer.phycus@phycusapp.com', b'1', b'1', NULL, 'Reviewer 01', 'Phycus App', 'jhipster', 'reviewer.phycus', 1584887928142, NULL, 0),
-('688171b4-638a-43df-87c4-c5e85751346f', 'user01.phycus@phycusapp.com', 'user01.phycus@phycusapp.com', b'1', b'1', NULL, 'Registered User 01', 'Phycus App', 'jhipster', 'user01.phycus', 1584888389973, NULL, 1585079160),
-('70bb6673-d928-4320-87b8-e7b8af6c5a27', 'ext-consumer-api.phycus@phycusapp.com', 'ext-consumer-api.phycus@phycusapp.com', b'1', b'1', NULL, 'External Consumer API', 'Phycus App', 'jhipster', 'ext-consumer-api.phycus', 1584888734724, NULL, 0),
-('8f57c0d4-2f03-4f33-b3b3-837ed2a147f1', 'scout23df@gmail.com', 'scout23df@gmail.com', b'1', b'1', NULL, 'Andre Luiz', 'Do Nascimento Sousa', 'master', 'andre.nascimento', 1584890439304, NULL, 0),
-('a98e7feb-831d-4274-89ba-e5b161165109', NULL, '8e1e22bd-4684-4c59-9512-8dba2c70c824', b'0', b'1', NULL, NULL, NULL, 'jhipster', 'service-account-phycusshfcapp', 1584889361885, '1eabef67-6473-4ba8-b07c-14bdbae4aaed', 0),
-('b3c1bfae-0a77-48a2-8dba-7b6559b8959f', 'publisher.phycus@phycusapp.com', 'publisher.phycus@phycusapp.com', b'1', b'1', NULL, 'Publisher 01', 'Phycus App', 'jhipster', 'publisher.phycus', 1584888054642, NULL, 1585008164),
-('c4af4e2f-b432-4c3b-8405-cca86cd5b97b', 'sysadmin.phycus@phycusapp.com', 'sysadmin.phycus@phycusapp.com', b'1', b'1', NULL, 'System Administrator 01', 'Phycus App', 'jhipster', 'sysadmin.phycus', 1505479373742, NULL, 0),
-('c96b54e0-8164-4004-aec8-025f7af0838c', 'manager.phycus@phycusapp.com', 'manager.phycus@phycusapp.com', b'1', b'1', NULL, 'Manager 01', 'Phycus App', 'jhipster', 'manager.phycus', 1584887727848, NULL, 1584998840),
-('ed89871e-0db3-4277-8db0-eecec826ad4e', NULL, '9ae8683b-ac54-49d9-8275-8de9cc557612', b'0', b'1', NULL, NULL, NULL, 'jhipster', 'service-account-internal', 1584832559671, '98ae8603-4547-4218-8fb9-ebc550a0e10b', 0);
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `user_federation_config`
---
-
-DROP TABLE IF EXISTS `user_federation_config`;
-CREATE TABLE IF NOT EXISTS `user_federation_config` (
-  `USER_FEDERATION_PROVIDER_ID` varchar(36) NOT NULL,
-  `VALUE` varchar(255) DEFAULT NULL,
-  `NAME` varchar(255) NOT NULL,
-  PRIMARY KEY (`USER_FEDERATION_PROVIDER_ID`,`NAME`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `user_federation_mapper`
---
-
-DROP TABLE IF EXISTS `user_federation_mapper`;
-CREATE TABLE IF NOT EXISTS `user_federation_mapper` (
-  `ID` varchar(36) NOT NULL,
-  `NAME` varchar(255) NOT NULL,
-  `FEDERATION_PROVIDER_ID` varchar(36) NOT NULL,
-  `FEDERATION_MAPPER_TYPE` varchar(255) NOT NULL,
-  `REALM_ID` varchar(36) NOT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `IDX_USR_FED_MAP_FED_PRV` (`FEDERATION_PROVIDER_ID`),
-  KEY `IDX_USR_FED_MAP_REALM` (`REALM_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `user_federation_mapper_config`
---
-
-DROP TABLE IF EXISTS `user_federation_mapper_config`;
-CREATE TABLE IF NOT EXISTS `user_federation_mapper_config` (
-  `USER_FEDERATION_MAPPER_ID` varchar(36) NOT NULL,
-  `VALUE` varchar(255) DEFAULT NULL,
-  `NAME` varchar(255) NOT NULL,
-  PRIMARY KEY (`USER_FEDERATION_MAPPER_ID`,`NAME`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `user_federation_provider`
---
-
-DROP TABLE IF EXISTS `user_federation_provider`;
-CREATE TABLE IF NOT EXISTS `user_federation_provider` (
-  `ID` varchar(36) NOT NULL,
-  `CHANGED_SYNC_PERIOD` int DEFAULT NULL,
-  `DISPLAY_NAME` varchar(255) DEFAULT NULL,
-  `FULL_SYNC_PERIOD` int DEFAULT NULL,
-  `LAST_SYNC` int DEFAULT NULL,
-  `PRIORITY` int DEFAULT NULL,
-  `PROVIDER_NAME` varchar(255) DEFAULT NULL,
-  `REALM_ID` varchar(36) DEFAULT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `IDX_USR_FED_PRV_REALM` (`REALM_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `user_group_membership`
---
-
-DROP TABLE IF EXISTS `user_group_membership`;
-CREATE TABLE IF NOT EXISTS `user_group_membership` (
-  `GROUP_ID` varchar(36) NOT NULL,
-  `USER_ID` varchar(36) NOT NULL,
-  PRIMARY KEY (`GROUP_ID`,`USER_ID`),
-  KEY `IDX_USER_GROUP_MAPPING` (`USER_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `user_group_membership`
---
-
-INSERT INTO `user_group_membership` (`GROUP_ID`, `USER_ID`) VALUES
-('ab0947d8-3b91-42a0-81e7-953a3c207316', '4c973896-5761-41fc-8217-07c5d13a004b'),
-('c4255caa-6cf7-40fb-8d5a-1b8799a438b8', '4c973896-5761-41fc-8217-07c5d13a004b'),
-('a9d6a304-5647-460d-9cb8-9ef4429204aa', '600c76dd-7e28-4067-83a8-8afd8acdadaa'),
-('ab0947d8-3b91-42a0-81e7-953a3c207316', '688171b4-638a-43df-87c4-c5e85751346f'),
-('f5225541-75da-474a-85b5-206168064336', '70bb6673-d928-4320-87b8-e7b8af6c5a27'),
-('f37ebe97-4ebe-4ab2-9582-1a4e61505a2d', 'b3c1bfae-0a77-48a2-8dba-7b6559b8959f'),
-('c4255caa-6cf7-40fb-8d5a-1b8799a438b8', 'c4af4e2f-b432-4c3b-8405-cca86cd5b97b'),
-('bc2923fc-c800-444f-aae3-63a3a55c2bfe', 'c96b54e0-8164-4004-aec8-025f7af0838c');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `user_required_action`
---
-
-DROP TABLE IF EXISTS `user_required_action`;
-CREATE TABLE IF NOT EXISTS `user_required_action` (
-  `USER_ID` varchar(36) NOT NULL,
-  `REQUIRED_ACTION` varchar(255) NOT NULL DEFAULT ' ',
-  PRIMARY KEY (`REQUIRED_ACTION`,`USER_ID`),
-  KEY `IDX_USER_REQACTIONS` (`USER_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `user_role_mapping`
---
-
-DROP TABLE IF EXISTS `user_role_mapping`;
-CREATE TABLE IF NOT EXISTS `user_role_mapping` (
-  `ROLE_ID` varchar(255) NOT NULL,
-  `USER_ID` varchar(36) NOT NULL,
-  PRIMARY KEY (`ROLE_ID`,`USER_ID`),
-  KEY `IDX_USER_ROLE_MAPPING` (`USER_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `user_role_mapping`
---
-
-INSERT INTO `user_role_mapping` (`ROLE_ID`, `USER_ID`) VALUES
-('33c455ac-906c-47c4-8bc1-135014aa8efc', '1a038ff7-3be2-4d48-98c8-02dd11750cb0'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', '1a038ff7-3be2-4d48-98c8-02dd11750cb0'),
-('a91bfa14-c447-4159-9de1-64a51fbf2227', '1a038ff7-3be2-4d48-98c8-02dd11750cb0'),
-('aebcd69a-6a42-4790-9d80-6ad44be3f0e3', '1a038ff7-3be2-4d48-98c8-02dd11750cb0'),
-('b6e3d2e0-ba1a-4420-84d1-2cf72096fd38', '1a038ff7-3be2-4d48-98c8-02dd11750cb0'),
-('33c455ac-906c-47c4-8bc1-135014aa8efc', '2286609b-e45f-49d0-a0de-3194d2e98d6d'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', '2286609b-e45f-49d0-a0de-3194d2e98d6d'),
-('a91bfa14-c447-4159-9de1-64a51fbf2227', '2286609b-e45f-49d0-a0de-3194d2e98d6d'),
-('aebcd69a-6a42-4790-9d80-6ad44be3f0e3', '2286609b-e45f-49d0-a0de-3194d2e98d6d'),
-('b6e3d2e0-ba1a-4420-84d1-2cf72096fd38', '2286609b-e45f-49d0-a0de-3194d2e98d6d'),
-('21b65e52-b4e3-453e-b0f0-10a44a4a887d', '4c973896-5761-41fc-8217-07c5d13a004b'),
-('354b3a09-47a6-4051-957c-c6a3ee28a190', '4c973896-5761-41fc-8217-07c5d13a004b'),
-('932ca70d-a311-42f9-9042-431cef835b9e', '4c973896-5761-41fc-8217-07c5d13a004b'),
-('96c0124c-0f00-4769-8cd3-f7dfd74a0af3', '4c973896-5761-41fc-8217-07c5d13a004b'),
-('33c455ac-906c-47c4-8bc1-135014aa8efc', '54384ff2-4758-49f5-be96-9a944eafa60f'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', '54384ff2-4758-49f5-be96-9a944eafa60f'),
-('a91bfa14-c447-4159-9de1-64a51fbf2227', '54384ff2-4758-49f5-be96-9a944eafa60f'),
-('aebcd69a-6a42-4790-9d80-6ad44be3f0e3', '54384ff2-4758-49f5-be96-9a944eafa60f'),
-('b6e3d2e0-ba1a-4420-84d1-2cf72096fd38', '54384ff2-4758-49f5-be96-9a944eafa60f'),
-('21b65e52-b4e3-453e-b0f0-10a44a4a887d', '600c76dd-7e28-4067-83a8-8afd8acdadaa'),
-('354b3a09-47a6-4051-957c-c6a3ee28a190', '600c76dd-7e28-4067-83a8-8afd8acdadaa'),
-('62880c1c-3e64-48fa-902f-fa8354347ab8', '600c76dd-7e28-4067-83a8-8afd8acdadaa'),
-('76a4f31d-7149-4d92-bfba-654c2cb6c754', '600c76dd-7e28-4067-83a8-8afd8acdadaa'),
-('932ca70d-a311-42f9-9042-431cef835b9e', '600c76dd-7e28-4067-83a8-8afd8acdadaa'),
-('96c0124c-0f00-4769-8cd3-f7dfd74a0af3', '600c76dd-7e28-4067-83a8-8afd8acdadaa'),
-('21b65e52-b4e3-453e-b0f0-10a44a4a887d', '688171b4-638a-43df-87c4-c5e85751346f'),
-('354b3a09-47a6-4051-957c-c6a3ee28a190', '688171b4-638a-43df-87c4-c5e85751346f'),
-('5537c057-dd18-4349-871e-170ca3b0d8c1', '688171b4-638a-43df-87c4-c5e85751346f'),
-('62880c1c-3e64-48fa-902f-fa8354347ab8', '688171b4-638a-43df-87c4-c5e85751346f'),
-('932ca70d-a311-42f9-9042-431cef835b9e', '688171b4-638a-43df-87c4-c5e85751346f'),
-('96c0124c-0f00-4769-8cd3-f7dfd74a0af3', '688171b4-638a-43df-87c4-c5e85751346f'),
-('21b65e52-b4e3-453e-b0f0-10a44a4a887d', '70bb6673-d928-4320-87b8-e7b8af6c5a27'),
-('354b3a09-47a6-4051-957c-c6a3ee28a190', '70bb6673-d928-4320-87b8-e7b8af6c5a27'),
-('62880c1c-3e64-48fa-902f-fa8354347ab8', '70bb6673-d928-4320-87b8-e7b8af6c5a27'),
-('8612f4fc-b1fd-43af-8ff8-193a62225bcf', '70bb6673-d928-4320-87b8-e7b8af6c5a27'),
-('932ca70d-a311-42f9-9042-431cef835b9e', '70bb6673-d928-4320-87b8-e7b8af6c5a27'),
-('96c0124c-0f00-4769-8cd3-f7dfd74a0af3', '70bb6673-d928-4320-87b8-e7b8af6c5a27'),
-('33c455ac-906c-47c4-8bc1-135014aa8efc', '8f57c0d4-2f03-4f33-b3b3-837ed2a147f1'),
-('6e9c2f6c-209f-407f-b3ca-514fe7f823a8', '8f57c0d4-2f03-4f33-b3b3-837ed2a147f1'),
-('a91bfa14-c447-4159-9de1-64a51fbf2227', '8f57c0d4-2f03-4f33-b3b3-837ed2a147f1'),
-('aebcd69a-6a42-4790-9d80-6ad44be3f0e3', '8f57c0d4-2f03-4f33-b3b3-837ed2a147f1'),
-('b6e3d2e0-ba1a-4420-84d1-2cf72096fd38', '8f57c0d4-2f03-4f33-b3b3-837ed2a147f1'),
-('21b65e52-b4e3-453e-b0f0-10a44a4a887d', 'a98e7feb-831d-4274-89ba-e5b161165109'),
-('354b3a09-47a6-4051-957c-c6a3ee28a190', 'a98e7feb-831d-4274-89ba-e5b161165109'),
-('62880c1c-3e64-48fa-902f-fa8354347ab8', 'a98e7feb-831d-4274-89ba-e5b161165109'),
-('932ca70d-a311-42f9-9042-431cef835b9e', 'a98e7feb-831d-4274-89ba-e5b161165109'),
-('96c0124c-0f00-4769-8cd3-f7dfd74a0af3', 'a98e7feb-831d-4274-89ba-e5b161165109'),
-('caa9819c-d584-4d06-aeee-f0e6bcbc8f7c', 'a98e7feb-831d-4274-89ba-e5b161165109'),
-('21a2bc5f-a976-435d-bee4-48b69da694e0', 'b3c1bfae-0a77-48a2-8dba-7b6559b8959f'),
-('21b65e52-b4e3-453e-b0f0-10a44a4a887d', 'b3c1bfae-0a77-48a2-8dba-7b6559b8959f'),
-('354b3a09-47a6-4051-957c-c6a3ee28a190', 'b3c1bfae-0a77-48a2-8dba-7b6559b8959f'),
-('62880c1c-3e64-48fa-902f-fa8354347ab8', 'b3c1bfae-0a77-48a2-8dba-7b6559b8959f'),
-('932ca70d-a311-42f9-9042-431cef835b9e', 'b3c1bfae-0a77-48a2-8dba-7b6559b8959f'),
-('96c0124c-0f00-4769-8cd3-f7dfd74a0af3', 'b3c1bfae-0a77-48a2-8dba-7b6559b8959f'),
-('0e81ebbb-f3d1-4fbd-bfef-72f9b987d6c3', 'c4af4e2f-b432-4c3b-8405-cca86cd5b97b'),
-('21b65e52-b4e3-453e-b0f0-10a44a4a887d', 'c4af4e2f-b432-4c3b-8405-cca86cd5b97b'),
-('354b3a09-47a6-4051-957c-c6a3ee28a190', 'c4af4e2f-b432-4c3b-8405-cca86cd5b97b'),
-('6c47d98c-a723-4053-8e87-762c04a3c72f', 'c4af4e2f-b432-4c3b-8405-cca86cd5b97b'),
-('932ca70d-a311-42f9-9042-431cef835b9e', 'c4af4e2f-b432-4c3b-8405-cca86cd5b97b'),
-('96c0124c-0f00-4769-8cd3-f7dfd74a0af3', 'c4af4e2f-b432-4c3b-8405-cca86cd5b97b'),
-('21b65e52-b4e3-453e-b0f0-10a44a4a887d', 'c96b54e0-8164-4004-aec8-025f7af0838c'),
-('2de49c9d-f49d-4740-9efe-60300788a4e7', 'c96b54e0-8164-4004-aec8-025f7af0838c'),
-('354b3a09-47a6-4051-957c-c6a3ee28a190', 'c96b54e0-8164-4004-aec8-025f7af0838c'),
-('62880c1c-3e64-48fa-902f-fa8354347ab8', 'c96b54e0-8164-4004-aec8-025f7af0838c'),
-('932ca70d-a311-42f9-9042-431cef835b9e', 'c96b54e0-8164-4004-aec8-025f7af0838c'),
-('96c0124c-0f00-4769-8cd3-f7dfd74a0af3', 'c96b54e0-8164-4004-aec8-025f7af0838c'),
-('21b65e52-b4e3-453e-b0f0-10a44a4a887d', 'ed89871e-0db3-4277-8db0-eecec826ad4e'),
-('354b3a09-47a6-4051-957c-c6a3ee28a190', 'ed89871e-0db3-4277-8db0-eecec826ad4e'),
-('6ceaaca5-30a4-444b-9078-723b7cc13591', 'ed89871e-0db3-4277-8db0-eecec826ad4e'),
-('932ca70d-a311-42f9-9042-431cef835b9e', 'ed89871e-0db3-4277-8db0-eecec826ad4e'),
-('96c0124c-0f00-4769-8cd3-f7dfd74a0af3', 'ed89871e-0db3-4277-8db0-eecec826ad4e');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `user_session`
---
-
-DROP TABLE IF EXISTS `user_session`;
-CREATE TABLE IF NOT EXISTS `user_session` (
-  `ID` varchar(36) NOT NULL,
-  `AUTH_METHOD` varchar(255) DEFAULT NULL,
-  `IP_ADDRESS` varchar(255) DEFAULT NULL,
-  `LAST_SESSION_REFRESH` int DEFAULT NULL,
-  `LOGIN_USERNAME` varchar(255) DEFAULT NULL,
-  `REALM_ID` varchar(255) DEFAULT NULL,
-  `REMEMBER_ME` bit(1) NOT NULL DEFAULT b'0',
-  `STARTED` int DEFAULT NULL,
-  `USER_ID` varchar(255) DEFAULT NULL,
-  `USER_SESSION_STATE` int DEFAULT NULL,
-  `BROKER_SESSION_ID` varchar(255) DEFAULT NULL,
-  `BROKER_USER_ID` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `user_session_note`
---
-
-DROP TABLE IF EXISTS `user_session_note`;
-CREATE TABLE IF NOT EXISTS `user_session_note` (
-  `USER_SESSION` varchar(36) NOT NULL,
-  `NAME` varchar(255) NOT NULL,
-  `VALUE` text,
-  PRIMARY KEY (`USER_SESSION`,`NAME`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `web_origins`
---
-
-DROP TABLE IF EXISTS `web_origins`;
-CREATE TABLE IF NOT EXISTS `web_origins` (
-  `CLIENT_ID` varchar(36) NOT NULL,
-  `VALUE` varchar(255) NOT NULL,
-  PRIMARY KEY (`CLIENT_ID`,`VALUE`),
-  KEY `IDX_WEB_ORIG_CLIENT` (`CLIENT_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Extraindo dados da tabela `web_origins`
---
-
-INSERT INTO `web_origins` (`CLIENT_ID`, `VALUE`) VALUES
-('0aa176c1-8d28-4a8b-8e97-7e4b49a289ff', '+'),
-('1eabef67-6473-4ba8-b07c-14bdbae4aaed', '*'),
-('ab9a50dd-ef39-46cf-add0-af8ce9a00e61', '+');
-
---
--- Restrições para despejos de tabelas
---
-
---
--- Limitadores para a tabela `associated_policy`
---
-ALTER TABLE `associated_policy`
-  ADD CONSTRAINT `FK_FRSR5S213XCX4WNKOG82SSRFY` FOREIGN KEY (`ASSOCIATED_POLICY_ID`) REFERENCES `resource_server_policy` (`ID`),
-  ADD CONSTRAINT `FK_FRSRPAS14XCX4WNKOG82SSRFY` FOREIGN KEY (`POLICY_ID`) REFERENCES `resource_server_policy` (`ID`);
-
---
--- Limitadores para a tabela `authentication_execution`
---
-ALTER TABLE `authentication_execution`
-  ADD CONSTRAINT `FK_AUTH_EXEC_FLOW` FOREIGN KEY (`FLOW_ID`) REFERENCES `authentication_flow` (`ID`),
-  ADD CONSTRAINT `FK_AUTH_EXEC_REALM` FOREIGN KEY (`REALM_ID`) REFERENCES `realm` (`ID`);
-
---
--- Limitadores para a tabela `authentication_flow`
---
-ALTER TABLE `authentication_flow`
-  ADD CONSTRAINT `FK_AUTH_FLOW_REALM` FOREIGN KEY (`REALM_ID`) REFERENCES `realm` (`ID`);
-
---
--- Limitadores para a tabela `authenticator_config`
---
-ALTER TABLE `authenticator_config`
-  ADD CONSTRAINT `FK_AUTH_REALM` FOREIGN KEY (`REALM_ID`) REFERENCES `realm` (`ID`);
-
---
--- Limitadores para a tabela `client`
---
-ALTER TABLE `client`
-  ADD CONSTRAINT `FK_P56CTINXXB9GSK57FO49F9TAC` FOREIGN KEY (`REALM_ID`) REFERENCES `realm` (`ID`);
-
---
--- Limitadores para a tabela `client_attributes`
---
-ALTER TABLE `client_attributes`
-  ADD CONSTRAINT `FK3C47C64BEACCA966` FOREIGN KEY (`CLIENT_ID`) REFERENCES `client` (`ID`);
-
---
--- Limitadores para a tabela `client_default_roles`
---
-ALTER TABLE `client_default_roles`
-  ADD CONSTRAINT `FK_8AELWNIBJI49AVXSRTUF6XJOW` FOREIGN KEY (`ROLE_ID`) REFERENCES `keycloak_role` (`ID`),
-  ADD CONSTRAINT `FK_NUILTS7KLWQW2H8M2B5JOYTKY` FOREIGN KEY (`CLIENT_ID`) REFERENCES `client` (`ID`);
-
---
--- Limitadores para a tabela `client_initial_access`
---
-ALTER TABLE `client_initial_access`
-  ADD CONSTRAINT `FK_CLIENT_INIT_ACC_REALM` FOREIGN KEY (`REALM_ID`) REFERENCES `realm` (`ID`);
-
---
--- Limitadores para a tabela `client_node_registrations`
---
-ALTER TABLE `client_node_registrations`
-  ADD CONSTRAINT `FK4129723BA992F594` FOREIGN KEY (`CLIENT_ID`) REFERENCES `client` (`ID`);
-
---
--- Limitadores para a tabela `client_scope`
---
-ALTER TABLE `client_scope`
-  ADD CONSTRAINT `FK_REALM_CLI_SCOPE` FOREIGN KEY (`REALM_ID`) REFERENCES `realm` (`ID`);
-
---
--- Limitadores para a tabela `client_scope_attributes`
---
-ALTER TABLE `client_scope_attributes`
-  ADD CONSTRAINT `FK_CL_SCOPE_ATTR_SCOPE` FOREIGN KEY (`SCOPE_ID`) REFERENCES `client_scope` (`ID`);
-
---
--- Limitadores para a tabela `client_scope_client`
---
-ALTER TABLE `client_scope_client`
-  ADD CONSTRAINT `FK_C_CLI_SCOPE_CLIENT` FOREIGN KEY (`CLIENT_ID`) REFERENCES `client` (`ID`),
-  ADD CONSTRAINT `FK_C_CLI_SCOPE_SCOPE` FOREIGN KEY (`SCOPE_ID`) REFERENCES `client_scope` (`ID`);
-
---
--- Limitadores para a tabela `client_scope_role_mapping`
---
-ALTER TABLE `client_scope_role_mapping`
-  ADD CONSTRAINT `FK_CL_SCOPE_RM_ROLE` FOREIGN KEY (`ROLE_ID`) REFERENCES `keycloak_role` (`ID`),
-  ADD CONSTRAINT `FK_CL_SCOPE_RM_SCOPE` FOREIGN KEY (`SCOPE_ID`) REFERENCES `client_scope` (`ID`);
-
---
--- Limitadores para a tabela `client_session`
---
-ALTER TABLE `client_session`
-  ADD CONSTRAINT `FK_B4AO2VCVAT6UKAU74WBWTFQO1` FOREIGN KEY (`SESSION_ID`) REFERENCES `user_session` (`ID`);
-
---
--- Limitadores para a tabela `client_session_auth_status`
---
-ALTER TABLE `client_session_auth_status`
-  ADD CONSTRAINT `AUTH_STATUS_CONSTRAINT` FOREIGN KEY (`CLIENT_SESSION`) REFERENCES `client_session` (`ID`);
-
---
--- Limitadores para a tabela `client_session_note`
---
-ALTER TABLE `client_session_note`
-  ADD CONSTRAINT `FK5EDFB00FF51C2736` FOREIGN KEY (`CLIENT_SESSION`) REFERENCES `client_session` (`ID`);
-
---
--- Limitadores para a tabela `client_session_prot_mapper`
---
-ALTER TABLE `client_session_prot_mapper`
-  ADD CONSTRAINT `FK_33A8SGQW18I532811V7O2DK89` FOREIGN KEY (`CLIENT_SESSION`) REFERENCES `client_session` (`ID`);
-
---
--- Limitadores para a tabela `client_session_role`
---
-ALTER TABLE `client_session_role`
-  ADD CONSTRAINT `FK_11B7SGQW18I532811V7O2DV76` FOREIGN KEY (`CLIENT_SESSION`) REFERENCES `client_session` (`ID`);
-
---
--- Limitadores para a tabela `client_user_session_note`
---
-ALTER TABLE `client_user_session_note`
-  ADD CONSTRAINT `FK_CL_USR_SES_NOTE` FOREIGN KEY (`CLIENT_SESSION`) REFERENCES `client_session` (`ID`);
-
---
--- Limitadores para a tabela `component`
---
-ALTER TABLE `component`
-  ADD CONSTRAINT `FK_COMPONENT_REALM` FOREIGN KEY (`REALM_ID`) REFERENCES `realm` (`ID`);
-
---
--- Limitadores para a tabela `component_config`
---
-ALTER TABLE `component_config`
-  ADD CONSTRAINT `FK_COMPONENT_CONFIG` FOREIGN KEY (`COMPONENT_ID`) REFERENCES `component` (`ID`);
-
---
--- Limitadores para a tabela `composite_role`
---
-ALTER TABLE `composite_role`
-  ADD CONSTRAINT `FK_A63WVEKFTU8JO1PNJ81E7MCE2` FOREIGN KEY (`COMPOSITE`) REFERENCES `keycloak_role` (`ID`),
-  ADD CONSTRAINT `FK_GR7THLLB9LU8Q4VQA4524JJY8` FOREIGN KEY (`CHILD_ROLE`) REFERENCES `keycloak_role` (`ID`);
-
---
--- Limitadores para a tabela `credential`
---
-ALTER TABLE `credential`
-  ADD CONSTRAINT `FK_PFYR0GLASQYL0DEI3KL69R6V0` FOREIGN KEY (`USER_ID`) REFERENCES `user_entity` (`ID`);
-
---
--- Limitadores para a tabela `default_client_scope`
---
-ALTER TABLE `default_client_scope`
-  ADD CONSTRAINT `FK_R_DEF_CLI_SCOPE_REALM` FOREIGN KEY (`REALM_ID`) REFERENCES `realm` (`ID`),
-  ADD CONSTRAINT `FK_R_DEF_CLI_SCOPE_SCOPE` FOREIGN KEY (`SCOPE_ID`) REFERENCES `client_scope` (`ID`);
-
---
--- Limitadores para a tabela `federated_identity`
---
-ALTER TABLE `federated_identity`
-  ADD CONSTRAINT `FK404288B92EF007A6` FOREIGN KEY (`USER_ID`) REFERENCES `user_entity` (`ID`);
-
---
--- Limitadores para a tabela `group_attribute`
---
-ALTER TABLE `group_attribute`
-  ADD CONSTRAINT `FK_GROUP_ATTRIBUTE_GROUP` FOREIGN KEY (`GROUP_ID`) REFERENCES `keycloak_group` (`ID`);
-
---
--- Limitadores para a tabela `group_role_mapping`
---
-ALTER TABLE `group_role_mapping`
-  ADD CONSTRAINT `FK_GROUP_ROLE_GROUP` FOREIGN KEY (`GROUP_ID`) REFERENCES `keycloak_group` (`ID`),
-  ADD CONSTRAINT `FK_GROUP_ROLE_ROLE` FOREIGN KEY (`ROLE_ID`) REFERENCES `keycloak_role` (`ID`);
-
---
--- Limitadores para a tabela `identity_provider`
---
-ALTER TABLE `identity_provider`
-  ADD CONSTRAINT `FK2B4EBC52AE5C3B34` FOREIGN KEY (`REALM_ID`) REFERENCES `realm` (`ID`);
-
---
--- Limitadores para a tabela `identity_provider_config`
---
-ALTER TABLE `identity_provider_config`
-  ADD CONSTRAINT `FKDC4897CF864C4E43` FOREIGN KEY (`IDENTITY_PROVIDER_ID`) REFERENCES `identity_provider` (`INTERNAL_ID`);
-
---
--- Limitadores para a tabela `identity_provider_mapper`
---
-ALTER TABLE `identity_provider_mapper`
-  ADD CONSTRAINT `FK_IDPM_REALM` FOREIGN KEY (`REALM_ID`) REFERENCES `realm` (`ID`);
-
---
--- Limitadores para a tabela `idp_mapper_config`
---
-ALTER TABLE `idp_mapper_config`
-  ADD CONSTRAINT `FK_IDPMCONFIG` FOREIGN KEY (`IDP_MAPPER_ID`) REFERENCES `identity_provider_mapper` (`ID`);
-
---
--- Limitadores para a tabela `keycloak_group`
---
-ALTER TABLE `keycloak_group`
-  ADD CONSTRAINT `FK_GROUP_REALM` FOREIGN KEY (`REALM_ID`) REFERENCES `realm` (`ID`);
-
---
--- Limitadores para a tabela `keycloak_role`
---
-ALTER TABLE `keycloak_role`
-  ADD CONSTRAINT `FK_6VYQFE4CN4WLQ8R6KT5VDSJ5C` FOREIGN KEY (`REALM`) REFERENCES `realm` (`ID`),
-  ADD CONSTRAINT `FK_KJHO5LE2C0RAL09FL8CM9WFW9` FOREIGN KEY (`CLIENT`) REFERENCES `client` (`ID`);
-
---
--- Limitadores para a tabela `policy_config`
---
-ALTER TABLE `policy_config`
-  ADD CONSTRAINT `FKDC34197CF864C4E43` FOREIGN KEY (`POLICY_ID`) REFERENCES `resource_server_policy` (`ID`);
-
---
--- Limitadores para a tabela `protocol_mapper`
---
-ALTER TABLE `protocol_mapper`
-  ADD CONSTRAINT `FK_CLI_SCOPE_MAPPER` FOREIGN KEY (`CLIENT_SCOPE_ID`) REFERENCES `client_scope` (`ID`),
-  ADD CONSTRAINT `FK_PCM_REALM` FOREIGN KEY (`CLIENT_ID`) REFERENCES `client` (`ID`);
-
---
--- Limitadores para a tabela `protocol_mapper_config`
---
-ALTER TABLE `protocol_mapper_config`
-  ADD CONSTRAINT `FK_PMCONFIG` FOREIGN KEY (`PROTOCOL_MAPPER_ID`) REFERENCES `protocol_mapper` (`ID`);
-
---
--- Limitadores para a tabela `realm`
---
-ALTER TABLE `realm`
-  ADD CONSTRAINT `FK_TRAF444KK6QRKMS7N56AIWQ5Y` FOREIGN KEY (`MASTER_ADMIN_CLIENT`) REFERENCES `client` (`ID`);
-
---
--- Limitadores para a tabela `realm_attribute`
---
-ALTER TABLE `realm_attribute`
-  ADD CONSTRAINT `FK_8SHXD6L3E9ATQUKACXGPFFPTW` FOREIGN KEY (`REALM_ID`) REFERENCES `realm` (`ID`);
-
---
--- Limitadores para a tabela `realm_default_groups`
---
-ALTER TABLE `realm_default_groups`
-  ADD CONSTRAINT `FK_DEF_GROUPS_GROUP` FOREIGN KEY (`GROUP_ID`) REFERENCES `keycloak_group` (`ID`),
-  ADD CONSTRAINT `FK_DEF_GROUPS_REALM` FOREIGN KEY (`REALM_ID`) REFERENCES `realm` (`ID`);
-
---
--- Limitadores para a tabela `realm_default_roles`
---
-ALTER TABLE `realm_default_roles`
-  ADD CONSTRAINT `FK_EVUDB1PPW84OXFAX2DRS03ICC` FOREIGN KEY (`REALM_ID`) REFERENCES `realm` (`ID`),
-  ADD CONSTRAINT `FK_H4WPD7W4HSOOLNI3H0SW7BTJE` FOREIGN KEY (`ROLE_ID`) REFERENCES `keycloak_role` (`ID`);
-
---
--- Limitadores para a tabela `realm_enabled_event_types`
---
-ALTER TABLE `realm_enabled_event_types`
-  ADD CONSTRAINT `FK_H846O4H0W8EPX5NWEDRF5Y69J` FOREIGN KEY (`REALM_ID`) REFERENCES `realm` (`ID`);
-
---
--- Limitadores para a tabela `realm_events_listeners`
---
-ALTER TABLE `realm_events_listeners`
-  ADD CONSTRAINT `FK_H846O4H0W8EPX5NXEV9F5Y69J` FOREIGN KEY (`REALM_ID`) REFERENCES `realm` (`ID`);
-
---
--- Limitadores para a tabela `realm_required_credential`
---
-ALTER TABLE `realm_required_credential`
-  ADD CONSTRAINT `FK_5HG65LYBEVAVKQFKI3KPONH9V` FOREIGN KEY (`REALM_ID`) REFERENCES `realm` (`ID`);
-
---
--- Limitadores para a tabela `realm_smtp_config`
---
-ALTER TABLE `realm_smtp_config`
-  ADD CONSTRAINT `FK_70EJ8XDXGXD0B9HH6180IRR0O` FOREIGN KEY (`REALM_ID`) REFERENCES `realm` (`ID`);
-
---
--- Limitadores para a tabela `realm_supported_locales`
---
-ALTER TABLE `realm_supported_locales`
-  ADD CONSTRAINT `FK_SUPPORTED_LOCALES_REALM` FOREIGN KEY (`REALM_ID`) REFERENCES `realm` (`ID`);
-
---
--- Limitadores para a tabela `redirect_uris`
---
-ALTER TABLE `redirect_uris`
-  ADD CONSTRAINT `FK_1BURS8PB4OUJ97H5WUPPAHV9F` FOREIGN KEY (`CLIENT_ID`) REFERENCES `client` (`ID`);
-
---
--- Limitadores para a tabela `required_action_provider`
---
-ALTER TABLE `required_action_provider`
-  ADD CONSTRAINT `FK_REQ_ACT_REALM` FOREIGN KEY (`REALM_ID`) REFERENCES `realm` (`ID`);
-
---
--- Limitadores para a tabela `resource_attribute`
---
-ALTER TABLE `resource_attribute`
-  ADD CONSTRAINT `FK_5HRM2VLF9QL5FU022KQEPOVBR` FOREIGN KEY (`RESOURCE_ID`) REFERENCES `resource_server_resource` (`ID`);
-
---
--- Limitadores para a tabela `resource_policy`
---
-ALTER TABLE `resource_policy`
-  ADD CONSTRAINT `FK_FRSRPOS53XCX4WNKOG82SSRFY` FOREIGN KEY (`RESOURCE_ID`) REFERENCES `resource_server_resource` (`ID`),
-  ADD CONSTRAINT `FK_FRSRPP213XCX4WNKOG82SSRFY` FOREIGN KEY (`POLICY_ID`) REFERENCES `resource_server_policy` (`ID`);
-
---
--- Limitadores para a tabela `resource_scope`
---
-ALTER TABLE `resource_scope`
-  ADD CONSTRAINT `FK_FRSRPOS13XCX4WNKOG82SSRFY` FOREIGN KEY (`RESOURCE_ID`) REFERENCES `resource_server_resource` (`ID`),
-  ADD CONSTRAINT `FK_FRSRPS213XCX4WNKOG82SSRFY` FOREIGN KEY (`SCOPE_ID`) REFERENCES `resource_server_scope` (`ID`);
-
---
--- Limitadores para a tabela `resource_server_perm_ticket`
---
-ALTER TABLE `resource_server_perm_ticket`
-  ADD CONSTRAINT `FK_FRSRHO213XCX4WNKOG82SSPMT` FOREIGN KEY (`RESOURCE_SERVER_ID`) REFERENCES `resource_server` (`ID`),
-  ADD CONSTRAINT `FK_FRSRHO213XCX4WNKOG83SSPMT` FOREIGN KEY (`RESOURCE_ID`) REFERENCES `resource_server_resource` (`ID`),
-  ADD CONSTRAINT `FK_FRSRHO213XCX4WNKOG84SSPMT` FOREIGN KEY (`SCOPE_ID`) REFERENCES `resource_server_scope` (`ID`),
-  ADD CONSTRAINT `FK_FRSRPO2128CX4WNKOG82SSRFY` FOREIGN KEY (`POLICY_ID`) REFERENCES `resource_server_policy` (`ID`);
-
---
--- Limitadores para a tabela `resource_server_policy`
---
-ALTER TABLE `resource_server_policy`
-  ADD CONSTRAINT `FK_FRSRPO213XCX4WNKOG82SSRFY` FOREIGN KEY (`RESOURCE_SERVER_ID`) REFERENCES `resource_server` (`ID`);
-
---
--- Limitadores para a tabela `resource_server_resource`
---
-ALTER TABLE `resource_server_resource`
-  ADD CONSTRAINT `FK_FRSRHO213XCX4WNKOG82SSRFY` FOREIGN KEY (`RESOURCE_SERVER_ID`) REFERENCES `resource_server` (`ID`);
-
---
--- Limitadores para a tabela `resource_server_scope`
---
-ALTER TABLE `resource_server_scope`
-  ADD CONSTRAINT `FK_FRSRSO213XCX4WNKOG82SSRFY` FOREIGN KEY (`RESOURCE_SERVER_ID`) REFERENCES `resource_server` (`ID`);
-
---
--- Limitadores para a tabela `resource_uris`
---
-ALTER TABLE `resource_uris`
-  ADD CONSTRAINT `FK_RESOURCE_SERVER_URIS` FOREIGN KEY (`RESOURCE_ID`) REFERENCES `resource_server_resource` (`ID`);
-
---
--- Limitadores para a tabela `role_attribute`
---
-ALTER TABLE `role_attribute`
-  ADD CONSTRAINT `FK_ROLE_ATTRIBUTE_ID` FOREIGN KEY (`ROLE_ID`) REFERENCES `keycloak_role` (`ID`);
-
---
--- Limitadores para a tabela `scope_mapping`
---
-ALTER TABLE `scope_mapping`
-  ADD CONSTRAINT `FK_OUSE064PLMLR732LXJCN1Q5F1` FOREIGN KEY (`CLIENT_ID`) REFERENCES `client` (`ID`),
-  ADD CONSTRAINT `FK_P3RH9GRKU11KQFRS4FLTT7RNQ` FOREIGN KEY (`ROLE_ID`) REFERENCES `keycloak_role` (`ID`);
-
---
--- Limitadores para a tabela `scope_policy`
---
-ALTER TABLE `scope_policy`
-  ADD CONSTRAINT `FK_FRSRASP13XCX4WNKOG82SSRFY` FOREIGN KEY (`POLICY_ID`) REFERENCES `resource_server_policy` (`ID`),
-  ADD CONSTRAINT `FK_FRSRPASS3XCX4WNKOG82SSRFY` FOREIGN KEY (`SCOPE_ID`) REFERENCES `resource_server_scope` (`ID`);
-
---
--- Limitadores para a tabela `user_attribute`
---
-ALTER TABLE `user_attribute`
-  ADD CONSTRAINT `FK_5HRM2VLF9QL5FU043KQEPOVBR` FOREIGN KEY (`USER_ID`) REFERENCES `user_entity` (`ID`);
-
---
--- Limitadores para a tabela `user_consent`
---
-ALTER TABLE `user_consent`
-  ADD CONSTRAINT `FK_GRNTCSNT_USER` FOREIGN KEY (`USER_ID`) REFERENCES `user_entity` (`ID`);
-
---
--- Limitadores para a tabela `user_consent_client_scope`
---
-ALTER TABLE `user_consent_client_scope`
-  ADD CONSTRAINT `FK_GRNTCSNT_CLSC_USC` FOREIGN KEY (`USER_CONSENT_ID`) REFERENCES `user_consent` (`ID`);
-
---
--- Limitadores para a tabela `user_federation_config`
---
-ALTER TABLE `user_federation_config`
-  ADD CONSTRAINT `FK_T13HPU1J94R2EBPEKR39X5EU5` FOREIGN KEY (`USER_FEDERATION_PROVIDER_ID`) REFERENCES `user_federation_provider` (`ID`);
-
---
--- Limitadores para a tabela `user_federation_mapper`
---
-ALTER TABLE `user_federation_mapper`
-  ADD CONSTRAINT `FK_FEDMAPPERPM_FEDPRV` FOREIGN KEY (`FEDERATION_PROVIDER_ID`) REFERENCES `user_federation_provider` (`ID`),
-  ADD CONSTRAINT `FK_FEDMAPPERPM_REALM` FOREIGN KEY (`REALM_ID`) REFERENCES `realm` (`ID`);
-
---
--- Limitadores para a tabela `user_federation_mapper_config`
---
-ALTER TABLE `user_federation_mapper_config`
-  ADD CONSTRAINT `FK_FEDMAPPER_CFG` FOREIGN KEY (`USER_FEDERATION_MAPPER_ID`) REFERENCES `user_federation_mapper` (`ID`);
-
---
--- Limitadores para a tabela `user_federation_provider`
---
-ALTER TABLE `user_federation_provider`
-  ADD CONSTRAINT `FK_1FJ32F6PTOLW2QY60CD8N01E8` FOREIGN KEY (`REALM_ID`) REFERENCES `realm` (`ID`);
-
---
--- Limitadores para a tabela `user_group_membership`
---
-ALTER TABLE `user_group_membership`
-  ADD CONSTRAINT `FK_USER_GROUP_USER` FOREIGN KEY (`USER_ID`) REFERENCES `user_entity` (`ID`);
-
---
--- Limitadores para a tabela `user_required_action`
---
-ALTER TABLE `user_required_action`
-  ADD CONSTRAINT `FK_6QJ3W1JW9CVAFHE19BWSIUVMD` FOREIGN KEY (`USER_ID`) REFERENCES `user_entity` (`ID`);
-
---
--- Limitadores para a tabela `user_role_mapping`
---
-ALTER TABLE `user_role_mapping`
-  ADD CONSTRAINT `FK_C4FQV34P1MBYLLOXANG7B1Q3L` FOREIGN KEY (`USER_ID`) REFERENCES `user_entity` (`ID`);
-
---
--- Limitadores para a tabela `user_session_note`
---
-ALTER TABLE `user_session_note`
-  ADD CONSTRAINT `FK5EDFB00FF51D3472` FOREIGN KEY (`USER_SESSION`) REFERENCES `user_session` (`ID`);
-
---
--- Limitadores para a tabela `web_origins`
---
-ALTER TABLE `web_origins`
-  ADD CONSTRAINT `FK_LOJPHO213XCX4WNKOG82SSRFY` FOREIGN KEY (`CLIENT_ID`) REFERENCES `client` (`ID`);
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+-- PostgreSQL database dump complete
+--
+

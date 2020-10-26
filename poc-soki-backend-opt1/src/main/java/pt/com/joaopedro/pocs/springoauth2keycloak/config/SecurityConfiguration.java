@@ -16,8 +16,8 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import pt.com.joaopedro.pocs.springoauth2keycloak.security.JwtAccessTokenCustomizer;
-import pt.com.joaopedro.pocs.springoauth2keycloak.security.SecurityProperties;
+import pt.com.joaopedro.pocs.springoauth2keycloak.security.utils.JwtAccessTokenCustomizer;
+import pt.com.joaopedro.pocs.springoauth2keycloak.security.utils.AppSecurityProperties;
 
 /**
  * SecurityConfigurer is to configure ResourceServer and HTTP Security.
@@ -25,24 +25,24 @@ import pt.com.joaopedro.pocs.springoauth2keycloak.security.SecurityProperties;
  *   Please make sure you check HTTP Security configuration and change is as per your needs.
  * </p>
  *
- * Note: Use {@link SecurityProperties} to configure required CORs configuration and enable or disable security of application.
+ * Note: Use {@link AppSecurityProperties} to configure required CORs configuration and enable or disable security of application.
  */
 @Configuration
 @EnableWebSecurity
 @EnableResourceServer
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @ConditionalOnProperty(prefix = "rest.security", value = "enabled", havingValue = "true")
-@Import({SecurityProperties.class})
+@Import({AppSecurityProperties.class})
 public class SecurityConfiguration extends ResourceServerConfigurerAdapter {
 
   private ResourceServerProperties resourceServerProperties;
 
-  private SecurityProperties securityProperties;
+  private AppSecurityProperties appSecurityProperties;
 
   /* Using spring constructor injection, @Autowired is implicit */
-  public SecurityConfiguration(ResourceServerProperties resourceServerProperties, SecurityProperties securityProperties) {
+  public SecurityConfiguration(ResourceServerProperties resourceServerProperties, AppSecurityProperties appSecurityProperties) {
     this.resourceServerProperties = resourceServerProperties;
-    this.securityProperties = securityProperties;
+    this.appSecurityProperties = appSecurityProperties;
   }
 
   @Override
@@ -74,7 +74,7 @@ public class SecurityConfiguration extends ResourceServerConfigurerAdapter {
         .csrf()
         .disable()
         .authorizeRequests()
-        .antMatchers(securityProperties.getApiMatcher()).authenticated()
+        .antMatchers(appSecurityProperties.getApiMatcher()).authenticated()
         .antMatchers("/swagger-ui/**").permitAll();
 
   }
@@ -82,8 +82,8 @@ public class SecurityConfiguration extends ResourceServerConfigurerAdapter {
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    if (null != securityProperties.getCorsConfiguration()) {
-      source.registerCorsConfiguration("/**", securityProperties.getCorsConfiguration());
+    if (null != appSecurityProperties.getCorsConfiguration()) {
+      source.registerCorsConfiguration("/**", appSecurityProperties.getCorsConfiguration());
     }
     return source;
   }

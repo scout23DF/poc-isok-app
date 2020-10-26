@@ -1,5 +1,5 @@
-# version: '3'
-version: '2.0'
+version: '3'
+# version: '2.0'
 
 # TO START THE DESIRED CONTAINERS:
 # - PostgreSQL and Web SQL Clients Databases Only:
@@ -18,23 +18,24 @@ services:
         image: kartoza/postgis:${POSTGRESQL_VERSION}
         container_name: app-infra-db-postgresql-poc-01
         environment:
-            POSTGRES_DB: DBPoc-SpringOAuth2-Keycloak
-            #  POSTGRES_DBNAME: DBPoc-SpringOAuth2-Keycloak
-            POSTGRES_USER: dbamaster01
-            POSTGRES_PASSWORD: 1a88a1
-            POSTGRES_MULTIPLE_EXTENSIONS: "postgis,hstore,postgis_topology,postgis_raster,pgrouting,postgres_fdw"
+            # POSTGRES_DB: DBPoc-SpringOAuth2-Keycloak
+            # POSTGRES_DBNAME: DBPoc-SpringOAuth2-Keycloak
+            # POSTGRES_USER: dbamaster01
+            # POSTGRES_PASSWORD: 1a88a1
+            # POSTGRES_MULTIPLE_EXTENSIONS: "postgis,hstore,postgis_topology,postgis_raster,pgrouting,postgres_fdw"
+            # POSTGRES_TEMPLATE_EXTENSIONS: "true"
             DEFAULT_ENCODING: "UTF-8"
             DEFAULT_COLLATION: "id_ID.utf8"
             DEFAULT_CTYPE: "en_US.UTF-8"
             RECREATE_DATADIR: "false"
-            POSTGRES_TEMPLATE_EXTENSIONS: "true"
             IP_LIST: "*"
         ports:
             - "5432:5432"
         volumes:
             - vlmcfg-postgresql-srv-02-data:/var/lib/postgresql
-        #    - ${SCRIPTS_POSTGRESQL_SRV_01_PATH}/01-init-dbs-schemas.sql:/docker-entrypoint-initdb.d/01-init-dbs-schemas.sql
-        #    - ${SCRIPTS_POSTGRESQL_SRV_01_PATH}/00-create-users.sql:/docker-entrypoint-initdb.d/00-create-users.sql
+            - ${SCRIPTS_POSTGRESQL_SRV_01_PATH}/00-create-users.sql:/docker-entrypoint-initdb.d/00-create-users.sql
+            - ${SCRIPTS_POSTGRESQL_SRV_01_PATH}/01-init-dbs-schemas.sql:/docker-entrypoint-initdb.d/01-init-dbs-schemas.sql
+            - ${SCRIPTS_POSTGRESQL_SRV_01_PATH}/02-keycloak-dump-to-load.sql:/docker-entrypoint-initdb.d/02-keycloak-dump-to-load.sql
         networks:
             - PoC-DevToolsEnv-Network
 

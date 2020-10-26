@@ -1,1 +1,0 @@
-insert into public.resource_server_resource (id, name, type, icon_uri, owner, resource_server_id, owner_managed_access, display_name) values ('9c255e49-9189-46e5-949e-f97637a9e9c8', 'Default Resource', 'urn:PoC-Soki-App-Client-01:resources:default', null, '5067ce51-37f0-46a5-bfa2-984543e80361', '5067ce51-37f0-46a5-bfa2-984543e80361', 'false', null);
