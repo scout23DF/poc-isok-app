@@ -36,10 +36,8 @@ In the Development Environment, KeyCloak and its dependencies services can be ru
 
 [TO ADJUST]
 ````
-> Port 3306 : MySQL Instance for PhyCuS-HFC App database
-> Port 3307 : MySQL Instance for KeyCloak database;
-> Port 9999 : PhpMyAdmin tool;
-> Ports  25 / 465 / 587: MailServer
+> Port  5432 : MySQL Instance for PhyCuS-HFC App database
+> Port 16543 : pgAmdin 4 tool;
 > Port 9080 : KeyCloak Admin Console;
 ````
   
