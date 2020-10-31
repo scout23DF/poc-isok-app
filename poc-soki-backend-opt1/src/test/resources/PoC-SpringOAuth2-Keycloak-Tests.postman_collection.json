@@ -275,7 +275,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "[\n    {\n    \"id\": null,\n    \"username\": \"zezinho.simpleuser01\",\n    \"password\": \"654321\",\n    \"rememberMe\": true,\n    \"email\": \"zezinho1@jaburu.com.br\",\n    \"firstName\": \"Jose1\",\n    \"lastName\": \"Bocoio1\", \n    \"enabled\": \"true\",\n    \"realmRoles\":  [\"BASIC_REGISTERED_REALM_ROLE\"],\n    \"clientRoles\": [\"BASIC_REGISTERED_CLIENT_ROLE\"],\n    \"groups\": [\"REGION01_GROUP\"]\n    },\n    {\n    \"id\": null,\n    \"username\": \"joao.simpleuser02\",\n    \"password\": \"abcdef\",\n    \"rememberMe\": true,\n    \"email\": \"joao02@jaburu.com.br\",\n    \"firstName\": \"Joao2\",\n    \"lastName\": \"Simplicio2\", \n    \"enabled\": \"true\",\n    \"realmRoles\":  [\"OPERATOR_REALM_ROLE\"],\n    \"clientRoles\": [\"OPERATOR_CLIENT_ROLE\"],\n    \"groups\": [\"REGION02_GROUP\"]\n    },\n    {\n    \"id\": null,\n    \"username\": \"silva.simpleuser03\",\n    \"password\": \"123456\",\n    \"rememberMe\": true,\n    \"email\": \"silva03@jaburu.com.br\",\n    \"firstName\": \"Silva3\",\n    \"lastName\": \"Almeida3\", \n    \"enabled\": \"true\",\n    \"realmRoles\":  [\"ADMIN_REALM_ROLE\"],\n    \"clientRoles\": [\"ADMIN_CLIENT_ROLE\"],\n    \"groups\": [\"REGION03_GROUP\"]\n    }\n\n]    ",
+							"raw": "[\n    {\n    \"id\": null,\n    \"username\": \"zezinho.silva01\",\n    \"password\": \"654321\",\n    \"rememberMe\": true,\n    \"email\": \"zezinho1@jaburu.com.br\",\n    \"firstName\": \"Jose\",\n    \"lastName\": \"Silva\", \n    \"enabled\": \"true\",\n    \"realmRoles\":  [\"ADMIN_REALM_ROLE\"],\n    \"clientRoles\": [\"01_CHIEFS_CLIENT_ROLE\"],\n    \"groups\": [\"REGION0_NORTH_OFFICES_GROUP\"]\n    },\n    {\n    \"id\": null,\n    \"username\": \"pedro.sousa02\",\n    \"password\": \"abcdef\",\n    \"rememberMe\": true,\n    \"email\": \"pedro02@jaburu.com.br\",\n    \"firstName\": \"Pedro\",\n    \"lastName\": \"Sousa\", \n    \"enabled\": \"true\",\n    \"realmRoles\":  [\"OPERATOR_REALM_ROLE\"],\n    \"clientRoles\": [\"04_OPERATORS_CLIENT_ROLE\"],\n    \"groups\": [\"REGION02_GROUP\"]\n    },\n    {\n    \"id\": null,\n    \"username\": \"paulo.simplicio03\",\n    \"password\": \"123456\",\n    \"rememberMe\": true,\n    \"email\": \"paulo03@jaburu.com.br\",\n    \"firstName\": \"Paulo\",\n    \"lastName\": \"Simplicio\", \n    \"enabled\": \"true\",\n    \"realmRoles\":  [\"BASIC_REGISTERED_REALM_ROLE\"],\n    \"clientRoles\": [\"06_OUTSIDERS_CLIENT_ROLE\"],\n    \"groups\": [\"REGION03_GROUP\"]\n    }\n\n]    ",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -335,7 +335,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"zezinho.simpleuser01\",\n    \"password\": \"654321\",\n    \"rememberMe\": true\n}",
+							"raw": "{\n    \"username\": \"zezinho.silva01\",\n    \"password\": \"654321\",\n    \"rememberMe\": true\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -403,7 +403,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{vPoC-Soki-App-URL}}/api/sso/public/refresh-token/zezinho.simpleuser01",
+							"raw": "{{vPoC-Soki-App-URL}}/api/sso/public/refresh-token/zezinho.silva01",
 							"host": [
 								"{{vPoC-Soki-App-URL}}"
 							],
@@ -412,7 +412,7 @@
 								"sso",
 								"public",
 								"refresh-token",
-								"zezinho.simpleuser01"
+								"zezinho.silva01"
 							]
 						}
 					},
@@ -512,7 +512,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{vPoC-Soki-App-URL}}/api/sso/private/logout/zezinho.simpleuser01",
+							"raw": "{{vPoC-Soki-App-URL}}/api/sso/private/logout/zezinho.silva01",
 							"host": [
 								"{{vPoC-Soki-App-URL}}"
 							],
@@ -521,7 +521,7 @@
 								"sso",
 								"private",
 								"logout",
-								"zezinho.simpleuser01"
+								"zezinho.silva01"
 							]
 						}
 					},
@@ -775,12 +775,12 @@
 	],
 	"variable": [
 		{
-			"id": "6afe9b73-d240-408b-952a-2f516ba00bb6",
+			"id": "4fcc9079-175b-4f92-a979-24731b0126e6",
 			"key": "{{vKeycloakHostURL}}",
 			"value": "http://localhost:9080"
 		},
 		{
-			"id": "9fd757d7-7452-464f-9d85-d06d81123bbc",
+			"id": "81136f35-3f7c-4933-8492-8bff2abaf409",
 			"key": "{{vPoC-Soki-App-URL}}",
 			"value": "http://localhost:8085"
 		}

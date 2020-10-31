@@ -16,8 +16,8 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import pt.com.joaopedro.pocs.springoauth2keycloak.security.utils.JwtAccessTokenCustomizer;
 import pt.com.joaopedro.pocs.springoauth2keycloak.security.utils.AppSecurityProperties;
+import pt.com.joaopedro.pocs.springoauth2keycloak.security.utils.JwtAccessTokenCustomizer;
 
 /**
  * SecurityConfigurer is to configure ResourceServer and HTTP Security.
@@ -54,7 +54,7 @@ public class SecurityConfiguration extends ResourceServerConfigurerAdapter {
   public void configure(WebSecurity web) {
     web.ignoring()
             .antMatchers(HttpMethod.OPTIONS, "/**")
-            .antMatchers("/app/**/*.{js,html}")
+            .antMatchers("/**/*.{css,js,html,png,jpg,jpeg,gif}")
             .antMatchers("/i18n/**")
             .antMatchers("/content/**")
             .antMatchers("/swagger-ui/index.html")

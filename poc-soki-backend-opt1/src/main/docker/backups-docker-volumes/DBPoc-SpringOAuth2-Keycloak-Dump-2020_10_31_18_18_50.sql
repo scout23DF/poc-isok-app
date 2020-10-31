@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 12.4 (Debian 12.4-1.pgdg100+1)
+-- Dumped from database version 12.2 (Debian 12.2-2.pgdg100+1)
 -- Dumped by pg_dump version 12.4 (Ubuntu 12.4-0ubuntu0.20.04.1)
 
 SET statement_timeout = 0;
@@ -17,7 +17,6 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 DROP DATABASE IF EXISTS "DBPoc-SpringOAuth2-Keycloak";
-
 --
 -- Name: DBPoc-SpringOAuth2-Keycloak; Type: DATABASE; Schema: -; Owner: dbamaster01
 --
@@ -2157,15 +2156,22 @@ INSERT INTO public.composite_role (composite, child_role) VALUES ('cd6ee10f-e970
 INSERT INTO public.composite_role (composite, child_role) VALUES ('15237af2-823b-4642-9040-fa8983632762', '223905fd-8cbe-4b9d-bd1e-ce3dd513be9e');
 INSERT INTO public.composite_role (composite, child_role) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', '38f6297f-314d-4acf-9bc1-e175fa4491a1');
 INSERT INTO public.composite_role (composite, child_role) VALUES ('a6c8e12e-675b-443e-a680-a9a047314ec2', '771d8081-20e4-4565-a2f9-963931603e77');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('13340cb1-3c75-4490-9ab8-ddbb80b8735d', 'c17d0171-469d-4d1b-8cb3-bca5ac389f92');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('ce444fac-89c9-429f-a904-acdbd94b9883', '13340cb1-3c75-4490-9ab8-ddbb80b8735d');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('bb917b6f-33d8-47be-a1ca-b5fb3ad76122', 'b85ee99d-73e4-4373-9d5e-d2cfea8a4664');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('b85ee99d-73e4-4373-9d5e-d2cfea8a4664', '9aa9d7c0-c335-4062-ad1f-4a13f76b7d61');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('9aa9d7c0-c335-4062-ad1f-4a13f76b7d61', 'b1113bcc-e381-48f9-92c2-086a112a4280');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('b1113bcc-e381-48f9-92c2-086a112a4280', 'c515b86f-0b80-4523-90bd-df8e7b2c3239');
+INSERT INTO public.composite_role (composite, child_role) VALUES ('c515b86f-0b80-4523-90bd-df8e7b2c3239', '2f156c45-bc9c-41ce-8b6c-dd93f7339b8f');
 
 
 --
 -- Data for Name: credential; Type: TABLE DATA; Schema: public; Owner: dbamaster01
 --
 
-INSERT INTO public.credential (id, salt, type, user_id, created_date, user_label, secret_data, credential_data, priority) VALUES ('044f83e5-2098-494d-aae6-3fe03862b32c', NULL, 'password', '15b7da9a-5ddb-4f57-bd7e-bc21a314c05b', 1601768981675, NULL, '{"value":"BDJ7taOlygz3Vv7Oq2Mj33fM5hpC1e+C43dPCtOEu75WH0sZypwHVsNaN5M6snbVRnFCvxRG3mUYIADLJDWRMg==","salt":"kndg6Krn6D3uB9VuAjj2qA=="}', '{"hashIterations":27500,"algorithm":"pbkdf2-sha256"}', 10);
 INSERT INTO public.credential (id, salt, type, user_id, created_date, user_label, secret_data, credential_data, priority) VALUES ('9fc574b6-b8b4-45a3-ad85-11066f106a77', NULL, 'password', 'fb674332-03e0-4959-9fc7-2e8826a0de8a', 1601808459823, NULL, '{"value":"p/dPLCcgJm2wC00qlaHlPDcCZCW/R+3R345qMH4EhYQ1ubKXbwGG9oVPtl8bnSKcuSRI9VsQLLstDM2cgZyc7g==","salt":"0CIf/iB9dWAo5y4qahNovA=="}', '{"hashIterations":27500,"algorithm":"pbkdf2-sha256"}', 10);
 INSERT INTO public.credential (id, salt, type, user_id, created_date, user_label, secret_data, credential_data, priority) VALUES ('ad22fa55-f1dc-413b-9d1f-13a43532db3e', NULL, 'password', '1db85a5b-c7b8-4350-973d-c9fc90513819', 1601808710594, NULL, '{"value":"S9snE2vjLDV98WCO5Mig2pqWROPLLd7fVaOeppe6E/eLcCAvihJ48a9mkAQHqtE0jSK+SQtvO7jmdDvoFpAu9Q==","salt":"ObthJR3VJjBqmDW/EBorVQ=="}', '{"hashIterations":27500,"algorithm":"pbkdf2-sha256"}', 10);
+INSERT INTO public.credential (id, salt, type, user_id, created_date, user_label, secret_data, credential_data, priority) VALUES ('044f83e5-2098-494d-aae6-3fe03862b32c', NULL, 'password', '15b7da9a-5ddb-4f57-bd7e-bc21a314c05b', 1604164227250, NULL, '{"value":"h1hy9+Cth7i8RGsHu8mtZQKau445fbQwSNcqZqUvH3HvQC1tLLKXWD4u/XBACMq3Aw45nv1etE/iw6Fbd6jzwg==","salt":"Vzn+AaPWUv+gDl6SzEG6qA=="}', '{"hashIterations":27500,"algorithm":"pbkdf2-sha256"}', 10);
 
 
 --
@@ -2393,9 +2399,9 @@ INSERT INTO public.default_client_scope (realm_id, scope_id, default_scope) VALU
 -- Data for Name: keycloak_group; Type: TABLE DATA; Schema: public; Owner: dbamaster01
 --
 
-INSERT INTO public.keycloak_group (id, name, parent_group, realm_id) VALUES ('c2c30d34-ae5d-409e-a444-0a59ac7ccfe4', 'REGION01_GROUP', ' ', 'PoC-Soki-Realm-01');
-INSERT INTO public.keycloak_group (id, name, parent_group, realm_id) VALUES ('9e7488ea-1729-42d9-a561-304bdd2c17b5', 'REGION02_GROUP', ' ', 'PoC-Soki-Realm-01');
-INSERT INTO public.keycloak_group (id, name, parent_group, realm_id) VALUES ('9a2babf8-82a0-4031-b0e5-18276d5c69c6', 'REGION03_GROUP', ' ', 'PoC-Soki-Realm-01');
+INSERT INTO public.keycloak_group (id, name, parent_group, realm_id) VALUES ('c2c30d34-ae5d-409e-a444-0a59ac7ccfe4', 'REGION_CENTRAL_OFFICES_GROUP', ' ', 'PoC-Soki-Realm-01');
+INSERT INTO public.keycloak_group (id, name, parent_group, realm_id) VALUES ('9e7488ea-1729-42d9-a561-304bdd2c17b5', 'REGION0_NORTH_OFFICES_GROUP', ' ', 'PoC-Soki-Realm-01');
+INSERT INTO public.keycloak_group (id, name, parent_group, realm_id) VALUES ('9a2babf8-82a0-4031-b0e5-18276d5c69c6', 'REGION0_SOUTH_OFFICES_GROUP', ' ', 'PoC-Soki-Realm-01');
 
 
 --
@@ -2478,12 +2484,16 @@ INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, desc
 INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('68465770-630c-4aa4-98a4-63a810c7aa91', 'PoC-Soki-Realm-01', false, '${role_offline-access}', 'offline_access', 'PoC-Soki-Realm-01', NULL, 'PoC-Soki-Realm-01');
 INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('94f68f32-df10-4d4c-aa0c-f06fea1327d8', 'PoC-Soki-Realm-01', false, '${role_uma_authorization}', 'uma_authorization', 'PoC-Soki-Realm-01', NULL, 'PoC-Soki-Realm-01');
 INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('51adae9a-0f42-4e19-b43d-69aee2bc199b', '5067ce51-37f0-46a5-bfa2-984543e80361', true, NULL, 'uma_protection', 'PoC-Soki-Realm-01', '5067ce51-37f0-46a5-bfa2-984543e80361', NULL);
-INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('8fb0e3e3-fe73-48b1-8ed3-b52455c0406b', '5067ce51-37f0-46a5-bfa2-984543e80361', true, NULL, 'BASIC_REGISTERED_CLIENT_ROLE', 'PoC-Soki-Realm-01', '5067ce51-37f0-46a5-bfa2-984543e80361', NULL);
 INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('c17d0171-469d-4d1b-8cb3-bca5ac389f92', 'PoC-Soki-Realm-01', false, NULL, 'BASIC_REGISTERED_REALM_ROLE', 'PoC-Soki-Realm-01', NULL, 'PoC-Soki-Realm-01');
 INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('13340cb1-3c75-4490-9ab8-ddbb80b8735d', 'PoC-Soki-Realm-01', false, NULL, 'OPERATOR_REALM_ROLE', 'PoC-Soki-Realm-01', NULL, 'PoC-Soki-Realm-01');
 INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('ce444fac-89c9-429f-a904-acdbd94b9883', 'PoC-Soki-Realm-01', false, NULL, 'ADMIN_REALM_ROLE', 'PoC-Soki-Realm-01', NULL, 'PoC-Soki-Realm-01');
-INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('e93a1a43-7a5c-4187-8f0b-77d8a275b9cd', '5067ce51-37f0-46a5-bfa2-984543e80361', true, NULL, 'OPERATOR_CLIENT_ROLE', 'PoC-Soki-Realm-01', '5067ce51-37f0-46a5-bfa2-984543e80361', NULL);
-INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('98465380-81bb-4389-9f63-0da7896642bd', '5067ce51-37f0-46a5-bfa2-984543e80361', true, NULL, 'ADMIN_CLIENT_ROLE', 'PoC-Soki-Realm-01', '5067ce51-37f0-46a5-bfa2-984543e80361', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('bb917b6f-33d8-47be-a1ca-b5fb3ad76122', '5067ce51-37f0-46a5-bfa2-984543e80361', true, NULL, '01_CHIEFS_CLIENT_ROLE', 'PoC-Soki-Realm-01', '5067ce51-37f0-46a5-bfa2-984543e80361', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('b85ee99d-73e4-4373-9d5e-d2cfea8a4664', '5067ce51-37f0-46a5-bfa2-984543e80361', true, NULL, '02_MANAGERS_CLIENT_ROLE', 'PoC-Soki-Realm-01', '5067ce51-37f0-46a5-bfa2-984543e80361', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('9aa9d7c0-c335-4062-ad1f-4a13f76b7d61', '5067ce51-37f0-46a5-bfa2-984543e80361', true, NULL, '03_LEADERS_CLIENT_ROLE', 'PoC-Soki-Realm-01', '5067ce51-37f0-46a5-bfa2-984543e80361', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('b1113bcc-e381-48f9-92c2-086a112a4280', '5067ce51-37f0-46a5-bfa2-984543e80361', true, NULL, '04_OPERATORS_CLIENT_ROLE', 'PoC-Soki-Realm-01', '5067ce51-37f0-46a5-bfa2-984543e80361', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('c515b86f-0b80-4523-90bd-df8e7b2c3239', '5067ce51-37f0-46a5-bfa2-984543e80361', true, NULL, '05_BASIC_EMPLOYEES_CLIENT_ROLE', 'PoC-Soki-Realm-01', '5067ce51-37f0-46a5-bfa2-984543e80361', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('2f156c45-bc9c-41ce-8b6c-dd93f7339b8f', '5067ce51-37f0-46a5-bfa2-984543e80361', true, NULL, '06_OUTSIDERS_CLIENT_ROLE', 'PoC-Soki-Realm-01', '5067ce51-37f0-46a5-bfa2-984543e80361', NULL);
+INSERT INTO public.keycloak_role (id, client_realm_constraint, client_role, description, name, realm_id, client, realm) VALUES ('2e86ca1e-7c57-43c3-90f4-583757725fb2', '5067ce51-37f0-46a5-bfa2-984543e80361', true, NULL, '99_API_CONSUMERS_APP_CLIENT_ROLE', 'PoC-Soki-Realm-01', '5067ce51-37f0-46a5-bfa2-984543e80361', NULL);
 
 
 --
@@ -3224,6 +3234,7 @@ INSERT INTO public.user_entity (id, email, email_constraint, email_verified, ena
 -- Data for Name: user_group_membership; Type: TABLE DATA; Schema: public; Owner: dbamaster01
 --
 
+INSERT INTO public.user_group_membership (group_id, user_id) VALUES ('9a2babf8-82a0-4031-b0e5-18276d5c69c6', '15b7da9a-5ddb-4f57-bd7e-bc21a314c05b');
 
 
 --
@@ -3255,6 +3266,8 @@ INSERT INTO public.user_role_mapping (role_id, user_id) VALUES ('5325dae2-4ad5-4
 INSERT INTO public.user_role_mapping (role_id, user_id) VALUES ('c441ff20-25c7-4c70-88e6-431925120e72', '1db85a5b-c7b8-4350-973d-c9fc90513819');
 INSERT INTO public.user_role_mapping (role_id, user_id) VALUES ('1555f57b-d48a-4ac2-8064-16f203efc559', '1db85a5b-c7b8-4350-973d-c9fc90513819');
 INSERT INTO public.user_role_mapping (role_id, user_id) VALUES ('06297147-ec25-49e7-88fb-355ba9edb384', '1db85a5b-c7b8-4350-973d-c9fc90513819');
+INSERT INTO public.user_role_mapping (role_id, user_id) VALUES ('c17d0171-469d-4d1b-8cb3-bca5ac389f92', '15b7da9a-5ddb-4f57-bd7e-bc21a314c05b');
+INSERT INTO public.user_role_mapping (role_id, user_id) VALUES ('c515b86f-0b80-4523-90bd-df8e7b2c3239', '15b7da9a-5ddb-4f57-bd7e-bc21a314c05b');
 
 
 --

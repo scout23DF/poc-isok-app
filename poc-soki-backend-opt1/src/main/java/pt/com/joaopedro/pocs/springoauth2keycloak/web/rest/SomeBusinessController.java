@@ -1,5 +1,7 @@
 package pt.com.joaopedro.pocs.springoauth2keycloak.web.rest;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Authorization;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +27,7 @@ public class SomeBusinessController {
         this.someBusinessService = pISomeBusinessService;
     }
 
+    @ApiOperation(value = "", authorizations = { @Authorization(value="apiKey") })
     @GetMapping("/countries/public")
     @PreAuthorize("hasAnyAuthority('ROLE_ANONYMOUS')")
     public ResponseEntity<List<Country>> listAllCountries00() {
@@ -35,8 +38,9 @@ public class SomeBusinessController {
         return ResponseEntity.ok(resultList);
     }
 
+    @ApiOperation(value = "", authorizations = { @Authorization(value="apiKey") })
     @GetMapping("/countries/req-role-basic")
-    @PreAuthorize("hasAnyAuthority(\"" + ConstantsApp.DEFAULT_PREFIX_ROLES_NAMES + "BASIC_REGISTERED_CLIENT_ROLE\")")
+    @PreAuthorize("hasAnyAuthority(\"" + ConstantsApp.DEFAULT_PREFIX_ROLES_NAMES + "05_BASIC_EMPLOYEES_CLIENT_ROLE\")")
     public ResponseEntity<List<Country>> listAllCountries01() {
         List<Country> resultList = null;
 
@@ -45,8 +49,9 @@ public class SomeBusinessController {
         return ResponseEntity.ok(resultList);
     }
 
+    @ApiOperation(value = "", authorizations = { @Authorization(value="apiKey") })
     @GetMapping("/countries/req-role-operator")
-    @PreAuthorize("hasAnyAuthority(\"" + ConstantsApp.DEFAULT_PREFIX_ROLES_NAMES + "OPERATOR_CLIENT_ROLE\")")
+    @PreAuthorize("hasAnyAuthority(\"" + ConstantsApp.DEFAULT_PREFIX_ROLES_NAMES + "04_OPERATORS_CLIENT_ROLE\")")
     public ResponseEntity<List<Country>> listAllCountries02() {
         List<Country> resultList = null;
 
@@ -55,8 +60,9 @@ public class SomeBusinessController {
         return ResponseEntity.ok(resultList);
     }
 
+    @ApiOperation(value = "", authorizations = { @Authorization(value="apiKey") })
     @GetMapping("/countries/req-role-admin")
-    @PreAuthorize("hasAnyAuthority(\"" + ConstantsApp.DEFAULT_PREFIX_ROLES_NAMES + "ADMIN_CLIENT_ROLE\")")
+    @PreAuthorize("hasAnyAuthority(\"" + ConstantsApp.DEFAULT_PREFIX_ROLES_NAMES + "01_CHIEFS_CLIENT_ROLE\")")
     public ResponseEntity<List<Country>> listAllCountries03() {
         List<Country> resultList = null;
 
